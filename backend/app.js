@@ -7,7 +7,7 @@ const localDbEndpoints = require('./routes/localDbEndpoints');
 const steamEndpoints = require('./routes/steamEndpoints');
 
 app.use('/localdb', localDbEndpoints);
-app.use('/steam', steamEndpoints);
+app.use('/api', steamEndpoints);
 
 
 const port = process.env.PORT ?? 3000;
