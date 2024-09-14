@@ -3,7 +3,9 @@ const express = require('express');
 const sql = require('mssql');
 const {dbCon, closeDbCon} = require('../dbcon.js');
 const router = express.Router();
-const cors = require('cors');
+const cors= require('cors');
+
+router.use(cors());
 
 
 router.get("/allGames", async (req, res) => {  // res er et objekt sender respons tilbake til klienten
@@ -21,7 +23,7 @@ router.get("/allGames", async (req, res) => {  // res er et objekt sender respon
     }
 });
 
-router.post("./login", async (req, res) => {
+router.post("/login", async (req, res) => {
     try {
         const {username, password} = req.body; // bruker object destructoring til å hente ut username og password som blir sendt fra klienten. 
         await dbCon();
