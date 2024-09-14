@@ -1,5 +1,6 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { login } from '../api/loginAuth';
 
 function LogInBox({saveLogin, changePage}) {
 
@@ -20,16 +21,26 @@ function LogInBox({saveLogin, changePage}) {
         setPasswordVisability(!passwordVisable);
     }
 
-    function submitForm() {
+    async function submitForm() {
         if(!inputName.trim() || !inputPassword.trim()) {
             console.log("enter both username and password");
             return;
         }
 
-        saveLogin.current = {username: inputName, password: inputPassword};
-        console.log(saveLogin.current)
-        changePage('home');
-    }
+        try {
+            const response = await login(inputName, inputPassword);  //sender parametre til logInAuth sin login-funksjon
+            if(response.ok) {
+                saveLogin.current = inputName;
+                changePage('home');
+            }
+            else {
+                const result = await response.json();
+                console.error(result.message);
+            }
+        } catch (err) {
+            console.error('login failed:', err);
+        }
+    };
 
     return(
         <div className="container d-flex justify-content-center align-items-center min-vh-100">
@@ -43,14 +54,12 @@ function LogInBox({saveLogin, changePage}) {
                                 className='form-control mb-2' 
                                 placeholder='username' 
                                 onChange={handleNameChange} 
-                                // value={inputName}
                                 />
 
                             <input type={passwordVisable ? "text" : "password"} 
                                 className='form-control mb-2' 
                                 placeholder='password' 
                                 onChange={handlePasswordChange} 
-                                // value={inputPassword}
                                 />
                             <div className="d-flex justify-content-between p-2">
 

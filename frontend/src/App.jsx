@@ -1,11 +1,13 @@
 import 'bootstrap/dist/css/bootstrap.min.css' 
-import LogInBox from './LogInBox'
+import LogInBox from './components/LogInBox'
 import React, {useState, useRef} from 'react'
 
 function App() {
 
   const [page, setPage] = useState('login');
-  const loginref = useRef({username: null, password: null});
+  const loginref = useRef('');
+
+  
   
 
   function handlePageChange(page) {
