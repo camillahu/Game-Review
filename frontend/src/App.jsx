@@ -5,7 +5,8 @@ import React, {useState, useRef} from 'react'
 function App() {
 
   const [page, setPage] = useState('login');
-  const loginref = useRef();
+  const loginref = useRef({username: null, password: null});
+  
 
   function handlePageChange(page) {
     setPage(page);

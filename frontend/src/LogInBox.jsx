@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-function LogInBox(saveLogin) {
+function LogInBox({saveLogin}) {
 
     const [inputName, setInputName]= useState();
     const [inputPassword, setInputPassword]= useState();
@@ -11,7 +11,7 @@ function LogInBox(saveLogin) {
     function handleNameChange(event) {
         setInputName(event.target.value)
     }
-    
+
     function handlePasswordChange(event) {
         setInputPassword(event.target.value)
     }
@@ -23,9 +23,11 @@ function LogInBox(saveLogin) {
     function submitForm() {
         if(!inputName.trim() || !inputPassword.trim()) {
             console.log("enter both username and password");
+            return;
         }
 
-        console.log({username: inputName, password: inputPassword})
+        saveLogin.current = {username: inputName, password: inputPassword};
+        console.log(saveLogin.current)
     }
 
     return(
