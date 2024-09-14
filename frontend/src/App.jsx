@@ -15,7 +15,10 @@ function App() {
   function updateView() {
     switch (page) {
       case 'login':
-        return <LogInBox saveLogin={loginref}/>
+        return <LogInBox saveLogin={loginref} changePage={handlePageChange}/>
+        break;
+      case 'home':
+        return (<></>)
         break;
 
       default: 

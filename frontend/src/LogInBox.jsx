@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-function LogInBox({saveLogin}) {
+function LogInBox({saveLogin, changePage}) {
 
     const [inputName, setInputName]= useState();
     const [inputPassword, setInputPassword]= useState();
@@ -28,6 +28,7 @@ function LogInBox({saveLogin}) {
 
         saveLogin.current = {username: inputName, password: inputPassword};
         console.log(saveLogin.current)
+        changePage('home');
     }
 
     return(
