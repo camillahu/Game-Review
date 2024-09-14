@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-function LogInBox() {
+function LogInBox(saveLogin) {
 
     const [inputName, setInputName]= useState();
     const [inputPassword, setInputPassword]= useState();
@@ -11,6 +11,7 @@ function LogInBox() {
     function handleNameChange(event) {
         setInputName(event.target.value)
     }
+    
     function handlePasswordChange(event) {
         setInputPassword(event.target.value)
     }

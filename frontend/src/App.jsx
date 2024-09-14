@@ -1,26 +1,30 @@
-import 'bootstrap/dist/css/bootstrap.min.css' //ikke fjern!
+import 'bootstrap/dist/css/bootstrap.min.css' 
 import LogInBox from './LogInBox'
+import React, {useState, useRef} from 'react'
 
 function App() {
 
-  let page = 'login';
+  const [page, setPage] = useState('login');
+  const loginref = useRef();
 
-  function view() {
-    
+  function handlePageChange(page) {
+    setPage(page);
+  }
+
+  function updateView() {
     switch (page) {
       case 'login':
-        return <LogInBox/>
+        return <LogInBox saveLogin={loginref}/>
         break;
 
       default: 
       return console.log("error changing page")
     }
-      
   }
 
   return (
     <>
-      {view()}
+      {updateView()}
     </>
   )
 }
