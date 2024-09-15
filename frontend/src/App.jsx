@@ -6,10 +6,7 @@ function App() {
 
   const [page, setPage] = useState('login');
   const loginref = useRef('');
-
   
-  
-
   function handlePageChange(page) {
     setPage(page);
   }

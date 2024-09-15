@@ -12,6 +12,7 @@ const sqlConfig = {
 const dbCon = async () => {
     try {
         let connection = await sql.connect(sqlConfig);
+        
     } catch (err) {
         console.error(err);
     } 
@@ -19,7 +20,7 @@ const dbCon = async () => {
 
 const closeDbCon = async () => {
     try {
-        await sql.close(connection) 
+        await sql.close() 
     }
     catch(err) {
         console.error(err);

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { login } from '../api/loginAuth';
+import { login } from '../api/loginAuth.js';
 
 function LogInBox({saveLogin, changePage}) {
 
@@ -29,14 +29,9 @@ function LogInBox({saveLogin, changePage}) {
 
         try {
             const response = await login(inputName, inputPassword);  //sender parametre til logInAuth sin login-funksjon
-            if(response.ok) {
+            console.log(response)
                 saveLogin.current = inputName;
                 changePage('home');
-            }
-            else {
-                const result = await response.json();
-                console.error(result.message);
-            }
         } catch (err) {
             console.error('login failed:', err);
         }
