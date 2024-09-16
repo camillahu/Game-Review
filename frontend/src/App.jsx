@@ -19,6 +19,8 @@ function App() {
       case 'home':
         return (<></>)
         break;
+      case 'signup':
+        return 
 
       default: 
       return console.log("error changing page")

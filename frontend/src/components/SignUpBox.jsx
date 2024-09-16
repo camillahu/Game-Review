@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { login } from '../api/loginAuth.js';
 
-function LogInBox({saveLogin, changePage}) {
+function SignUpBox({saveLogin, changePage}) {
 
     const [inputName, setInputName]= useState();
     const [inputPassword, setInputPassword]= useState();
     const [passwordVisable, setPasswordVisability] = useState(false);
+    const [isValidInput, setIsValidInput] = useState(false); 
 
     
     function handleNameChange(event) {
@@ -22,10 +22,14 @@ function LogInBox({saveLogin, changePage}) {
     }
 
     async function submitForm() {
+        const usernameRegEx = /^[a-z0-9_\.]+$/;
+        isvalidUsername
+
         if(!inputName.trim() || !inputPassword.trim()) {
             console.log("enter both username and password");
             return;
         }
+        else if ()
 
         try {
             const response = await login(inputName, inputPassword);  //sender parametre til logInAuth sin login-funksjon
@@ -76,4 +80,4 @@ function LogInBox({saveLogin, changePage}) {
     )
 }
 
-export default LogInBox
+export default SignUpBox
