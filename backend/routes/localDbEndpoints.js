@@ -33,27 +33,49 @@ router.post("/login", async (req, res) => {
         const user = result.recordset[0]; //her brukes recordset til å hente ut kun en verdi som er det vi forventer. 
         
         if(user) {
-            // const hashedPassword = require('crypto') // crypto-modulen hasher password med sha-256.
-            // .createHash('sha256')  
-            // .update(password)
-            // .digest(); //denne koden hasher passordet på samme måten som i db (src chatgpt)
-
             if(password === user.UserPassword) {
                 res.status(200).json({message: 'login successful'});
                
             } else {
                 res.status(401).json({ message: 'invalid credentials' });
-             
             }
-        } else {
-            res.status(404).json({ message: 'user not found' });
         }
+     else {
+        res.status(404).json({ message: 'user not found' });
+    }
+        
     } catch (err) {
         console.error(err);
         res.status(500).send('database connection error');
     } finally {
         closeDbCon();
     }    
+});
+
+router.post("signup", async (req, res) => {
+    try {
+        const {username, password} = req.body;
+        await dbCon();
+
+        const userNameExists = async (username) => {
+            const usernameExistsResult = await sql.query`SELECT * FROM Users WHERE Username = ${username}`;
+            return usernameExistsResult.recordset.length > 0;
+        }
+        if(userNameExists) {
+            console.log('username already exists')
+        } else {
+            const result = await sql.query`INSERT INTO USERS (Username, Password) VALUES ('${username}', '${password}')`
+        console.log(result);
+        }
+
+    }
+    catch(err) {
+        console.error(err);
+        res.status(500).send('database connection error');
+    }
+    finally {
+        closeDbCon();
+    } 
 });
 
 module.exports = router;
