@@ -52,11 +52,11 @@ function LogInBox({saveLogin, changePage}) {
                                 />
 
                             <input type={passwordVisable ? "text" : "password"} 
-                                className='form-control mb-2' 
+                                className='form-control mb-3' 
                                 placeholder='password' 
                                 onChange={handlePasswordChange} 
                                 />
-                            <div className="d-flex justify-content-between p-2">
+                            <div className="d-flex justify-content-between mb-4">
 
                                 <button type="button" 
                                     onClick={togglePasswordVisability}
@@ -68,6 +68,8 @@ function LogInBox({saveLogin, changePage}) {
                                     className='btn btn-outline-primary btn-sm'>
                                         Login</button>
                             </div>
+                            <a role="button" className="card-link"
+                            onClick={() => changePage('signup')}>Don't have an account? Sign up here!</a>
                         </div>
                     </form>
                 </div>

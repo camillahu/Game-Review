@@ -1,44 +1,80 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { signup } from '../api/signupAuth.js';
 
 function SignUpBox({saveLogin, changePage}) {
 
     const [inputName, setInputName]= useState();
-    const [inputPassword, setInputPassword]= useState();
+    const [inputPassword1, setInputPassword1]= useState();
+    const [inputPassword2, setInputPassword2]= useState();
     const [passwordVisable, setPasswordVisability] = useState(false);
-    const [isValidInput, setIsValidInput] = useState(false); 
+
+    // const [isValidUsername, setIsValidUsername] = useState(false); 
+    // const [isValidPassword, setIsValidPassword] = useState(false); 
+    const [errorMsg1, setErrorMsg1] = useState('');
+    const [errorMsg2, setErrorMsg2] = useState('');
 
     
     function handleNameChange(event) {
         setInputName(event.target.value)
     }
 
-    function handlePasswordChange(event) {
-        setInputPassword(event.target.value)
+    function handlePasswordChange1(event) {
+        setInputPassword1(event.target.value)
+    }
+
+    function handlePasswordChange2(event) {
+        setInputPassword2(event.target.value)
     }
 
     function togglePasswordVisability() {
         setPasswordVisability(!passwordVisable);
     }
 
-    async function submitForm() {
-        const usernameRegEx = /^[a-z0-9_\.]+$/;
-        isvalidUsername
+    function checkPassword() {
+        const passwordRegEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
-        if(!inputName.trim() || !inputPassword.trim()) {
-            console.log("enter both username and password");
+        if(inputPassword1 !== inputPassword2) {
+            setErrorMsg2 ("Password doesn't match");
+        } else if(!passwordRegEx.test(inputPassword1)) {
+            setErrorMsg2("Not a valid password. Password must contain at least one number, uppercase letter and lowercase letter, and at least 8 characters. ")
+        } else {
+            setErrorMsg1('');
+        }
+    }
+
+    function checkUsername() {
+        const usernameRegEx = /^[a-z0-9_\.]+$/;
+
+        if (usernameRegEx.test(inputName)) {
+            // setIsValidUsername(true);
+            setErrorMsg1('')
+        } else {
+            // setIsValidUsername(false);
+            setErrorMsg1("Not a valid username. Username can only contain lowercase letters, numbers, _ or .")
+        }
+    }
+
+    async function submitForm() {
+        setErrorMsg1('');
+        setErrorMsg2('');
+
+        if(!inputName.trim() || !inputPassword1.trim()) {
+            setErrorMsg1('enter both username and password');
             return;
         }
-        else if ()
+
+        checkUsername();
+        checkPassword();
 
         try {
-            const response = await login(inputName, inputPassword);  //sender parametre til logInAuth sin login-funksjon
+            const response = await signup(inputName, inputPassword1);  
             console.log(response)
-                saveLogin.current = inputName;
-                changePage('home');
+                changePage('login');
         } catch (err) {
-            console.error('login failed:', err);
+            console.error('signup failed:', err);
         }
+        
     };
 
     return(
@@ -58,9 +94,15 @@ function SignUpBox({saveLogin, changePage}) {
                             <input type={passwordVisable ? "text" : "password"} 
                                 className='form-control mb-2' 
                                 placeholder='password' 
-                                onChange={handlePasswordChange} 
+                                onChange={handlePasswordChange1} 
                                 />
-                            <div className="d-flex justify-content-between p-2">
+
+                            <input type={passwordVisable ? "text" : "password"} 
+                                className='form-control mb-4' 
+                                placeholder='repeat password' 
+                                onChange={handlePasswordChange2} 
+                                />
+                            <div className="d-flex justify-content-between mb-4">
 
                                 <button type="button" 
                                     onClick={togglePasswordVisability}
@@ -70,8 +112,12 @@ function SignUpBox({saveLogin, changePage}) {
                                 <button type="button" 
                                     onClick={submitForm}
                                     className='btn btn-outline-primary btn-sm'>
-                                        Login</button>
+                                        Sign up</button>
                             </div>
+                            <a role="button" className="card-link"
+                            onClick={() => changePage('login')}>Already have an account? Log in here!</a>
+                            <div>{errorMsg1}</div>
+                            <div>{errorMsg2}</div>
                         </div>
                     </form>
                 </div>

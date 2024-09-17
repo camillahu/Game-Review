@@ -1,6 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css' 
 import LogInBox from './components/LogInBox'
 import React, {useState, useRef} from 'react'
+import SignUpBox from './components/SignUpBox';
 
 function App() {
 
@@ -20,7 +21,7 @@ function App() {
         return (<></>)
         break;
       case 'signup':
-        return 
+        return <SignUpBox/>
 
       default: 
       return console.log("error changing page")
