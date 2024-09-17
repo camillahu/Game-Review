@@ -5,7 +5,7 @@ import SignUpBox from './components/SignUpBox';
 
 function App() {
 
-  const [page, setPage] = useState('home');
+  const [page, setPage] = useState('login');
   const loginref = useRef('');
   
   function handlePageChange(page) {
