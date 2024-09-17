@@ -52,7 +52,7 @@ router.post("/login", async (req, res) => {
     }    
 });
 
-router.post("signup", async (req, res) => {
+router.post("/signup", async (req, res) => {
     try {
         const {username, password} = req.body;
         await dbCon();
@@ -61,17 +61,18 @@ router.post("signup", async (req, res) => {
             const usernameExistsResult = await sql.query`SELECT * FROM Users WHERE Username = ${username}`;
             return usernameExistsResult.recordset.length > 0;
         }
-        if(userNameExists) {
+        if(await userNameExists(username)) {
             console.log('username already exists')
+            return res.status(400).json({ message: 'Username already exists' });
         } else {
-            const result = await sql.query`INSERT INTO USERS (Username, Password) VALUES ('${username}', '${password}')`
-        console.log(result);
+            const result = await sql.query`INSERT INTO USERS (Username, UserPassword) VALUES ('${username}', '${password}')`
+            return result;
         }
-
     }
     catch(err) {
         console.error(err);
         res.status(500).send('database connection error');
+        return res.status(500).send('Internal Server Error');
     }
     finally {
         closeDbCon();

@@ -9,8 +9,6 @@ export async function login(username, password) {
             body: JSON.stringify({username, password})
         });
         if (!response.ok) {
-            const errorText = await response.text(); 
-            console.error("Error response:", errorText);
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 

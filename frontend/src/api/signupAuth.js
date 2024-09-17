@@ -8,9 +8,10 @@ export async function signup(username, password) {
             },
             body: JSON.stringify({username, password})
         });
+        console.log(response)
         if (!response.ok) {
-            const errorText = await response.text(); 
-            console.error("Error response:", errorText);
+        //     const errorText = await response.text(); 
+        //     console.error("Error response:", errorText);
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         return await response.json(); 

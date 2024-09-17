@@ -40,6 +40,7 @@ function SignUpBox({saveLogin, changePage}) {
             setErrorMsg2("Not a valid password. Password must contain at least one number, uppercase letter and lowercase letter, and at least 8 characters. ")
         } else {
             setErrorMsg1('');
+            setErrorMsg2('');
         }
     }
 

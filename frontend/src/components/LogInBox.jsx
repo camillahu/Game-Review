@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { login } from '../api/loginAuth.js';
+// import { use } from '../../../backend/routes/localDbEndpoints.js';
 
 function LogInBox({saveLogin, changePage}) {
 
     const [inputName, setInputName]= useState();
     const [inputPassword, setInputPassword]= useState();
     const [passwordVisable, setPasswordVisability] = useState(false);
-
+    const [errorMsg, setErrorMsg] = useState('');
     
     function handleNameChange(event) {
         setInputName(event.target.value)
@@ -23,7 +24,7 @@ function LogInBox({saveLogin, changePage}) {
 
     async function submitForm() {
         if(!inputName.trim() || !inputPassword.trim()) {
-            console.log("enter both username and password");
+            setErrorMsg("enter both username and password");
             return;
         }
 
@@ -33,7 +34,7 @@ function LogInBox({saveLogin, changePage}) {
                 saveLogin.current = inputName;
                 changePage('home');
         } catch (err) {
-            console.error('login failed:', err);
+            setErrorMsg('Invalid password or username');
         }
     };
 
@@ -70,6 +71,7 @@ function LogInBox({saveLogin, changePage}) {
                             </div>
                             <a role="button" className="card-link"
                             onClick={() => changePage('signup')}>Don't have an account? Sign up here!</a>
+                            <div>{errorMsg}</div>
                         </div>
                     </form>
                 </div>
