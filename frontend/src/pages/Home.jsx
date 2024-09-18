@@ -11,7 +11,7 @@ function Home() {
         async function fetchGames() {
             try{
                 const response = await gamesAndGenres();
-                console.log(response)
+                setGames(response);
             }
             catch (error) {
                 console.error('Error fetching games:', error);
@@ -21,8 +21,19 @@ function Home() {
     }, []);
 
 
-    return(<div className="p-2">
-        <GameCard/>
+    return(<div className="p-2 container">
+        <div className="row justify-content-center">
+            {games.map((game => <GameCard key={game.Id} 
+            title={game.Title}
+            developer={game.Developer}
+            publisher={game.Publisher}
+            releaseDate={game.ReleaseDate}
+            genres = {game.Genres}
+            imgPath = {game.ImgPath}
+            />
+            ))}
+        </div>
+        
     </div>)
 
 }

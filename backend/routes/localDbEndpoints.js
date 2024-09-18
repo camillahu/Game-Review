@@ -83,18 +83,15 @@ router.post("/signup", async (req, res) => {
 router.get("/games", async (_, res) => {
     try {
         await dbCon();
-        const result = await sql.query`Select g.Id AS Game_Id, g.Title, g.Developer, g.Publisher, g.ReleaseDate, 
+        const result = await sql.query`Select g.Id, g.Title, g.Developer, g.Publisher, g.ReleaseDate, g.ImgPath, 
                                         STRING_AGG(gen.Name, ', ') AS Genres
                                         FROM Games g
                                         JOIN Game_Genres gg ON g.Id = gg.Game_Id
                                         JOIN Genres gen ON gg.Genre_Id = gen.Id
-                                        Group BY g.Id, g.Title, g.Developer, g.Publisher, g.ReleaseDate`
-        
-        const gamesWithGenres = result.recordset.map(game => ({...game,
-            Genres: game.Genres ? game.Genres.split(', ') : []
-        }));
+                                        Group BY g.Id, g.Title, g.Developer, g.Publisher, g.ReleaseDate, g.ImgPath`
+        const games = result.recordset;
 
-        res.json(gamesWithGenres)
+        res.json(games)
     } catch (err) {
         console.error(err);
         res.status(500).send('Database connection error');
