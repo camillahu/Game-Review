@@ -4,6 +4,8 @@ import GameCard from '../components/GameCard';
 
 function Home() {
     
+    const [games, setGames] = useState([])
+
     return(<div className="p-2" style={{}}>
         <GameCard/>
     </div>)

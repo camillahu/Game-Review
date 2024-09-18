@@ -80,4 +80,23 @@ router.post("/signup", async (req, res) => {
     } 
 });
 
+router.get("/gamesAndGenres", async (req, res) => {
+    try {
+        await dbCon();
+        const result = await sql.query`Select g.Id AS Game_Id, g.Title, g.Developer, g.Publisher, g.ReleaseDate, 
+                                        STRING_AGG(gen.Name, ', ') AS Genres
+                                        FROM Games g
+                                        JOIN Game_Genres gg ON g.Id = gg.Game_Id
+                                        JOIN Genres gen ON gg.Genre_Id = gen.Id
+                                        Group BY g.Id, g.Title, g.Developer, g.Publisher, g.ReleaseDate`
+        res.json(result.recordset);  
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Database connection error');
+    } finally {
+        closeDbCon(); 
+    }
+
+})
+
 module.exports = router;
