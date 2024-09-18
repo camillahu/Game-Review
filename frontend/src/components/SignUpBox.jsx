@@ -8,8 +8,6 @@ function SignUpBox({ saveLogin, changePage }) {
   const [inputPassword2, setInputPassword2] = useState();
   const [passwordVisable, setPasswordVisability] = useState(false);
 
-  // const [isValidUsername, setIsValidUsername] = useState(false);
-  // const [isValidPassword, setIsValidPassword] = useState(false);
   const [errorMsg1, setErrorMsg1] = useState("");
   const [errorMsg2, setErrorMsg2] = useState("");
 
@@ -52,7 +50,6 @@ function SignUpBox({ saveLogin, changePage }) {
       return inputName;
       setErrorMsg1("");
     } else {
-      // setIsValidUsername(false);
       setErrorMsg1(
         "Not a valid username. Username can only contain lowercase letters, numbers, _ or ."
       );

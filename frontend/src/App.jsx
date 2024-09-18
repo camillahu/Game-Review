@@ -1,11 +1,13 @@
 import 'bootstrap/dist/css/bootstrap.min.css' 
-import LogInBox from './components/LogInBox'
 import React, {useState, useRef} from 'react'
+
 import SignUpBox from './components/SignUpBox';
+import LogInBox from './components/LogInBox'
+import Home from './pages/Home';
 
 function App() {
 
-  const [page, setPage] = useState('login');
+  const [page, setPage] = useState('home');
   const loginref = useRef('');
   
   function handlePageChange(page) {
@@ -18,7 +20,7 @@ function App() {
         return <LogInBox saveLogin={loginref} changePage={handlePageChange}/>
         break;
       case 'home':
-        return (<></>)
+        return <Home/>
         break;
       case 'signup':
         return <SignUpBox/>
