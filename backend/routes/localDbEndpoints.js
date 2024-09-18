@@ -9,7 +9,7 @@ router.use(cors());
 router.use(express.json())
 
 
-router.get("/allGames", async (req, res) => {  // res er et objekt sender respons tilbake til klienten
+router.get("/allGames", async (_, res) => {  // res er et objekt sender respons tilbake til klienten
     try {
         await dbCon();
         const result = await sql.query('SELECT * FROM dbo.Games'); // result er resultatet av sql-spørringen
@@ -80,7 +80,7 @@ router.post("/signup", async (req, res) => {
     } 
 });
 
-router.get("/gamesAndGenres", async (req, res) => {
+router.get("/games", async (_, res) => {
     try {
         await dbCon();
         const result = await sql.query`Select g.Id AS Game_Id, g.Title, g.Developer, g.Publisher, g.ReleaseDate, 
@@ -89,14 +89,18 @@ router.get("/gamesAndGenres", async (req, res) => {
                                         JOIN Game_Genres gg ON g.Id = gg.Game_Id
                                         JOIN Genres gen ON gg.Genre_Id = gen.Id
                                         Group BY g.Id, g.Title, g.Developer, g.Publisher, g.ReleaseDate`
-        res.json(result.recordset);  
+        
+        const gamesWithGenres = result.recordset.map(game => ({...game,
+            Genres: game.Genres ? game.Genres.split(', ') : []
+        }));
+
+        res.json(gamesWithGenres)
     } catch (err) {
         console.error(err);
         res.status(500).send('Database connection error');
     } finally {
         closeDbCon(); 
     }
-
 })
 
 module.exports = router;
