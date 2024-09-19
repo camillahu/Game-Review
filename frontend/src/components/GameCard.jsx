@@ -2,7 +2,7 @@ function GameCard(props) {
   return (
     <>
       <div
-        className="card p-3 col-md-3 m-4"
+        className="card p-3 m-4"
         style={{
           width: "20rem",
           height: "30rem",
@@ -28,7 +28,7 @@ function GameCard(props) {
             {props.genres}
           </p>
         </div>
-        <div className="d-flex justify-content-end ">
+        <div className="d-flex justify-content-end">
           <button className="btn btn-outline-light position-absolute bottom-0 mb-4">
             View details
           </button>

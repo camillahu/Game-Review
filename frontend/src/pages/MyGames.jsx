@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import GameCard from '../components/GameCard';
 import { gamesAndGenres } from '../api/gamesAndGenres';
 
-function Home() {
+function MyGames() {
     
     const [games, setGames] = useState([]);
 
@@ -22,6 +22,7 @@ function Home() {
 
 
     return(<div className="p-2 container">
+        <h2 className='display-3 text-center' style = {{color: "HSL(0, 0%, 80%)", fontWeight: 'bold'}}>My games</h2>
         <div className="row justify-content-center">
             {games.map((game => <GameCard key={game.Id} 
             title={game.Title}
@@ -38,4 +39,4 @@ function Home() {
 
 }
 
-export default Home;
+export default MyGames;

@@ -1,40 +1,52 @@
-import 'bootstrap/dist/css/bootstrap.min.css' 
-import React, {useState, useRef} from 'react'
+import "bootstrap/dist/css/bootstrap.min.css";
+import React, { useState, useRef, createContext } from "react";
 
-import SignUpBox from './components/SignUpBox';
-import LogInBox from './components/LogInBox'
-import Home from './pages/Home';
+import SignUp from "./pages/SignUp";
+import MyGames from "./pages/MyGames";
+import LogIn from "./pages/LogIn";
+
+import Header from "./components/Header";
 
 function App() {
+  const [page, setPage] = useState("myGames");
+  const loginref = useRef("");
 
-  const [page, setPage] = useState('home');
-  const loginref = useRef('');
-  
   function handlePageChange(page) {
     setPage(page);
   }
 
   function updateView() {
     switch (page) {
-      case 'login':
-        return <LogInBox saveLogin={loginref} changePage={handlePageChange}/>
+      case "login":
+        return (
+          <contextStuff.Provider value={{ loginref, handlePageChange }}>
+            <LogIn />
+          </contextStuff.Provider>
+        );
         break;
-      case 'home':
-        return <Home/>
+      case "home":
+        return <Home />;
         break;
-      case 'signup':
-        return <SignUpBox/>
+      case "signup":
+        return (
+          <contextStuff.Provider value={handlePageChange}>
+            <SignUp />
+          </contextStuff.Provider>
+        );
 
-      default: 
-      return console.log("error changing page")
+      case "myGames":
+        return <MyGames />;
+
+      default:
+        return console.log("error changing page");
     }
   }
 
-  return (
-    <>
-      {updateView()}
-    </>
-  )
+  return <>
+  <Header/>
+  {updateView()}
+  </>;
 }
 
-export default App
+export const contextStuff = createContext();
+export default App;
