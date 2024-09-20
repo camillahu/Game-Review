@@ -1,0 +1,31 @@
+body {
+  background-color: HSL(210, 15%, 15%);
+}
+
+.format-genre-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+  max-height: 3em;
+  max-width: 18rem;
+}
+
+.square-box {
+    width: 18rem;  /* Set width for the square */
+    height: 18rem; /* Set height for the square */
+    overflow: hidden; /* Hide overflowed parts of the image */
+}
+
+.img-cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensure the image covers the box while keeping aspect ratio */
+}
+
+.navbar-custom {
+  background-color: hsl(0, 0%, 70%);
+}
+
