@@ -25,3 +25,7 @@ body {
     object-fit: cover; /* Ensure the image covers the box while keeping aspect ratio */
 }
 
+.navbar-custom {
+  background-color: hsl(0, 0%, 70%);
+}
+

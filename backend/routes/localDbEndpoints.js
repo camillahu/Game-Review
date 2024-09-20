@@ -64,10 +64,10 @@ router.post("/signup", async (req, res) => {
             return usernameExistsResult.recordset.length > 0;
         }
         if(await userNameExists(username)) {
-            return res.status(400).json({ message: 'Username already exists' });
+            res.status(400).json({ message: 'Username already exists' });
         } else {
-             const result = await sql.query`INSERT INTO USERS (Username, UserPassword) VALUES (${username}, ${password})`
-            return result;
+            const result= await sql.query`INSERT INTO USERS (Username, UserPassword) VALUES (${username}, ${password})`
+            res.status(200).send(result);
         }
     }
     catch(err) {

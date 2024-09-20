@@ -8,7 +8,6 @@ export async function signup(username, password) {
             },
             body: JSON.stringify({username, password})
         });
-    
         return response; 
     } catch(error) {
         console.error('signup request failed ', error);

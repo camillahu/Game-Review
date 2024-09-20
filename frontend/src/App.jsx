@@ -4,15 +4,17 @@ import React, { useState, useRef, createContext } from "react";
 import SignUp from "./pages/SignUp";
 import MyGames from "./pages/MyGames";
 import LogIn from "./pages/LogIn";
+import Home from "./pages/Home";
 
 import Header from "./components/Header";
 
 function App() {
-  const [page, setPage] = useState("myGames");
+  const [page, setPage] = useState("signup");
   const loginref = useRef("");
 
   function handlePageChange(page) {
     setPage(page);
+    console.log(page);
   }
 
   function updateView() {
@@ -21,7 +23,7 @@ function App() {
         return (
           <contextStuff.Provider value={{ loginref, handlePageChange }}>
             <LogIn />
-          </contextStuff.Provider>
+            </contextStuff.Provider>
         );
         break;
       case "home":
@@ -29,7 +31,7 @@ function App() {
         break;
       case "signup":
         return (
-          <contextStuff.Provider value={handlePageChange}>
+          <contextStuff.Provider value={{ loginref, handlePageChange }}>
             <SignUp />
           </contextStuff.Provider>
         );
@@ -43,7 +45,7 @@ function App() {
   }
 
   return <>
-  <Header/>
+  <Header loginref={loginref} handlePageChange={handlePageChange}/>
   {updateView()}
   </>;
 }

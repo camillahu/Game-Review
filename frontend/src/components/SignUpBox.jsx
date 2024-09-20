@@ -13,7 +13,7 @@ function SignUpBox() {
   const [errorMsg1, setErrorMsg1] = useState("");
   const [errorMsg2, setErrorMsg2] = useState("");
 
-  const { handlePageChange } = useContext(contextStuff);
+  const { loginref, handlePageChange } = useContext(contextStuff);
 
   function handleNameChange(event) {
     setInputName(event.target.value);
@@ -64,21 +64,26 @@ function SignUpBox() {
     setErrorMsg1("");
     setErrorMsg2("");
 
-    if (!inputName.trim() || !inputPassword1.trim()) {
+    console.log("..." + loginref.current);
+
+    if (!inputName || !inputPassword1) {
       setErrorMsg1("enter both username and password");
-      return;
     }
 
     const userToSend = checkUsername();
     const passwordToSend = checkPassword();
-
+    
     const response = await signup(userToSend, passwordToSend);
+    
+    console.log(response)
 
     if (response.status == 400) {
       setErrorMsg1("username already taken");
-    } else if (response.status === 200) {
+    } else {
       handlePageChange("login");
-    } else setErrorMsg1("wtf happened");
+    }
+
+
   }
 
   return (
@@ -141,7 +146,7 @@ function SignUpBox() {
                 role="button"
                 className="card-link"
                 style={{ color: "HSL(0, 0%, 80%)" }}
-                onClick={() => changePage("login")}
+                onClick={() => handlePageChange("login")}
               >
                 Already have an account? Log in here!
               </a>
