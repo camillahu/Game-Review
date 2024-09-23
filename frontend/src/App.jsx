@@ -9,7 +9,7 @@ import Home from "./pages/Home";
 import Header from "./components/Header";
 
 function App() {
-  const [page, setPage] = useState("signup");
+  const [page, setPage] = useState("home");
   const loginref = useRef("");
 
   function handlePageChange(page) {
@@ -27,7 +27,11 @@ function App() {
         );
         break;
       case "home":
-        return <Home />;
+        return (
+          <contextStuff.Provider value={{ loginref, handlePageChange }}>
+            <Home />
+            </contextStuff.Provider>
+        );
         break;
       case "signup":
         return (
