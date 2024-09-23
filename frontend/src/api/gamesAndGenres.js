@@ -1,6 +1,6 @@
 export async function gamesAndGenres() {
   try {
-    const response = await fetch("http://localhost:3000/localdb/games", {
+    const response = await fetch('http://localhost:3000/localdb/games', {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

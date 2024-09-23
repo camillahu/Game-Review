@@ -34,7 +34,6 @@ function MyGames() {
             />
             ))}
         </div>
-        
     </div>)
 
 }

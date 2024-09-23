@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "live": "nodemon server.js" 
+    "live": "nodemon server.js"
   },
   "author": "",
   "license": "ISC",
@@ -13,6 +13,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.20.0",
-    "mssql": "^11.0.1"
+    "mssql": "^11.0.1",
+    "node-fetch": "^3.3.2"
   }
 }

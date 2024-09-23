@@ -14,7 +14,6 @@ function App() {
 
   function handlePageChange(page) {
     setPage(page);
-    console.log(page);
   }
 
   function updateView() {

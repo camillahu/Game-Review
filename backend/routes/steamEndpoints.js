@@ -1,20 +1,20 @@
 const express = require('express');
 const router = express.Router(); 
+const fetch = require('node-fetch')
+const cors= require('cors');
+
+router.use(cors());
+router.use(express.json())
 
 router.get("/steam", async (req, res) => {  // res er et objekt sender respons tilbake til klienten
     try {
-      const result= await GetAppList();
-      res.send(await result.json())
+      const response= await fetch('https://api.steampowered.com/ISteamApps/GetAppList/v0002/?format=json');
+      const result = await response.json();
+      res.send(result);
     } catch (err) {
         console.error(err);
         res.status(500).send('Database connection error');
     } 
 });
-
-async function GetAppList() {
-
-    const result = await fetch('https://api.steampowered.com/ISteamApps/GetAppList/v0002/?format=json')
-    return result;
-}
 
 module.exports = router;
