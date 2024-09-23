@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 
-function Header({loginref, handlePageChange}) {
+function Header({ loginref, handlePageChange }) {
   const [btnTxt, setBtnTxt] = useState("Sign in");
 
   function handleIsLoggedIn() {
@@ -18,31 +18,38 @@ function Header({loginref, handlePageChange}) {
 
   function handleSignInStatus() {
     if (btnTxt == "Sign out") {
-        loginref.current = "";
+      loginref.current = "";
       handlePageChange("home");
     } else {
       handlePageChange("login");
     }
-}
-
-    useEffect(() => {
-      handleIsLoggedIn();
-      console.log("login:" + loginref.current)
-    }, [loginref.current]);
-
-    return (
-      <nav className="navbar navbar-custom p-3">
-        <div className="container justify-content-between">
-          <span role="button" className="navbar-brand display-3" onClick={handleSignInStatus}>
-            GameReview!
-          </span>
-          <span role="button" className="navbar-brand display-3" onClick={handleSignInStatus}>
-            {btnTxt}
-          </span>
-        </div>
-      </nav>
-    );
   }
 
+  useEffect(() => {
+    handleIsLoggedIn();
+    console.log("login:" + loginref.current);
+  }, [loginref.current]);
+
+  return (
+    <nav className="navbar navbar-custom p-3">
+      <div className="container justify-content-between">
+        <span
+          role="button"
+          className="navbar-brand display-3"
+          onClick={() => handlePageChange("home")}
+        >
+          GameReview!
+        </span>
+        <span
+          role="button"
+          className="navbar-brand display-3"
+          onClick={handleSignInStatus}
+        >
+          {btnTxt}
+        </span>
+      </div>
+    </nav>
+  );
+}
 
 export default Header;
