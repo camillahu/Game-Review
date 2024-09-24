@@ -1,4 +1,4 @@
-import {useState, useEffect} from "react"
+import {useState, useEffect,useRef} from "react"
 import GameCard from "../components/GameCard";
 import {steamGames} from "../api/steamGames";
 
@@ -6,6 +6,8 @@ function Home() {
 
     const [games, setGames] = useState([]);
     const [loading, setLoading] = useState(false);
+    const pageNum = useRef(1);
+  
 
     useEffect(() => {
         async function fetchGames() {

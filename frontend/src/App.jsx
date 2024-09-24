@@ -9,7 +9,7 @@ import Home from "./pages/Home";
 import Header from "./components/Header";
 
 function App() {
-  const [page, setPage] = useState("home");
+  const [page, setPage] = useState("myGames");
   const loginref = useRef("");
 
   function handlePageChange(page) {
