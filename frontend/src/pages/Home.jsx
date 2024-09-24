@@ -5,10 +5,11 @@ import {steamGames} from "../api/steamGames";
 function Home() {
 
     const [games, setGames] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         async function fetchGames() {
+            setLoading(true);
             try{
                 const response = await steamGames();
                 console.log("res", response)
@@ -17,9 +18,7 @@ function Home() {
             }
             catch (error) {
                 console.error('Error fetching games:', error);
-                setLoading(false);
             }
-            
         }
         fetchGames();
     }, []);

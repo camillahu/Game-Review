@@ -1,12 +1,11 @@
 const express = require('express');
 const router = express.Router(); 
-const fetch = require('node-fetch')
 const cors= require('cors');
 
 router.use(cors());
 router.use(express.json())
 
-router.get("/steam", async (req, res) => {  // res er et objekt sender respons tilbake til klienten
+router.get("/steam", async (_, res) => { 
     try {
       const response= await fetch('https://api.steampowered.com/ISteamApps/GetAppList/v0002/?format=json');
       const result = await response.json();
@@ -18,3 +17,4 @@ router.get("/steam", async (req, res) => {  // res er et objekt sender respons t
 });
 
 module.exports = router;
+

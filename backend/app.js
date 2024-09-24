@@ -6,7 +6,6 @@ const app = express();
 const localDbEndpoints = require('./routes/localDbEndpoints');
 const steamEndpoints = require('./routes/steamEndpoints');
 
-
 app.use('/localdb', localDbEndpoints);
 app.use('/api', steamEndpoints);
 

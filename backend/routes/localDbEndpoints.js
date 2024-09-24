@@ -1,4 +1,3 @@
-
 const express = require('express');
 const sql = require('mssql');
 const {dbCon, closeDbCon} = require('../dbcon.js');
