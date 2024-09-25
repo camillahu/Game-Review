@@ -89,7 +89,7 @@ router.get("/games", async (_, res) => {
                                         JOIN Game_Genres gg ON g.Id = gg.Game_Id
                                         JOIN Genres gen ON gg.Genre_Id = gen.Id
                                         Group BY g.Id, g.Title, g.Developer, g.Publisher, g.ReleaseDate, g.ImgPath`
-        const games = result.recordset;
+        const games = result.recordset; 
 
         res.json(games)
     } catch (err) {
