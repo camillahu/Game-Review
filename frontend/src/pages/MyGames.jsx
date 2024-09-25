@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import GameCard from '../components/GameCard';
-import { gamesAndGenres } from '../api/gamesAndGenres';
+import { allUserGames } from '../api/userGames';
 
 function MyGames() {
     
@@ -10,7 +10,7 @@ function MyGames() {
     useEffect(() => {
         async function fetchGames() {
             try{
-                const response = await gamesAndGenres();
+                const response = await allUserGames();
                 setGames(response);
             }
             catch (error) {
