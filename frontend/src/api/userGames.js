@@ -1,6 +1,7 @@
-export const allUserGames = async () => {
+export const allUserGames = async (username) => {
+  
   try {
-    const response = await fetch("http://localhost:3000/localdb/allUserGames", {
+    const response = await fetch(`http://localhost:3000/localdb/allUserGames?username=${username}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import GameCard from '../components/GameCard';
 import { allUserGames } from '../api/userGames';
 
-function MyGames() {
+function MyGames({ loginref, handlePageChange }) {
     
     const [games, setGames] = useState([]);
 
     useEffect(() => {
         async function fetchGames() {
             try{
-                const response = await allUserGames();
+                const response = await allUserGames(loginref.current);
                 setGames(response);
             }
             catch (error) {

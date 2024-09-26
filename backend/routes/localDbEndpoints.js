@@ -101,7 +101,13 @@ router.get("/games", async (_, res) => {
     }
 })
 
-router.get("/allUserGames", async (_, res) => {
+router.get("/allUserGames", async (req, res) => {
+    const {username} = req.query; //henter brukernavnet som blir sendt fra loginref i frontend
+
+    if(!username) {
+        return res.status(400).send("Must be logged in to view games")
+    }
+
     try {
         await dbCon();
         const result = await sql.query`Select g.Id, g.Title, g.Developer, g.Publisher, g.ReleaseDate, g.ImgPath, 
@@ -110,13 +116,13 @@ router.get("/allUserGames", async (_, res) => {
                                         JOIN Game_Genres gg ON g.Id = gg.Game_Id
                                         JOIN Genres gen ON gg.Genre_Id = gen.Id
 										WHERE g.Id IN (
-										SELECT Game_Id FROM User_HasPlayed WHERE User_Id = {'camillzy'}
+										SELECT Game_Id FROM User_HasPlayed WHERE User_Id = ${username}
 										UNION
-										SELECT Game_Id FROM User_OwnedGames WHERE User_Id = 'camillzy'
+										SELECT Game_Id FROM User_OwnedGames WHERE User_Id = ${username}
 										UNION
-										SELECT Game_Id FROM User_CurrentlyPlaying WHERE User_Id = 'camillzy'
+										SELECT Game_Id FROM User_CurrentlyPlaying WHERE User_Id = ${username}
 										UNION
-										SELECT Game_Id FROM User_Wishlist WHERE User_Id = 'camillzy'
+										SELECT Game_Id FROM User_Wishlist WHERE User_Id = ${username}
 									)
                                         GROUP BY g.Id, g.Title, g.Developer, g.Publisher, g.ReleaseDate, g.ImgPath
                                         ORDER BY g.Title`

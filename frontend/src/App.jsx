@@ -10,7 +10,7 @@ import Header from "./components/Header";
 
 function App() {
   const [page, setPage] = useState("myGames");
-  const loginref = useRef("");
+  const loginref = useRef("camillzy");
 
   function handlePageChange(page) {
     setPage(page);
@@ -37,7 +37,7 @@ function App() {
         );
 
       case "myGames":
-        return <MyGames />;
+        return <MyGames loginref={loginref} handlePageChange={handlePageChange}/>;
 
       default:
         return console.log("error changing page");
