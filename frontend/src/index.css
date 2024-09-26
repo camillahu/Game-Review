@@ -29,3 +29,8 @@ body {
   background-color: hsl(0, 0%, 70%);
 }
 
+.customDropDown {
+  width: 200px;
+  margin-right: 127px; /*litt halvveis løsning menmen */
+}
+

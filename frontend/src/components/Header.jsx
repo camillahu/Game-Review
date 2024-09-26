@@ -27,7 +27,6 @@ function Header({ loginref, handlePageChange }) {
 
   useEffect(() => {
     handleIsLoggedIn();
-    console.log("login:" + loginref.current);
   }, [loginref.current]);
 
   return (
