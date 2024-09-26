@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import GameCard from "../components/GameCard";
-import { allUserGames } from "../api/userGames";
+import { allUserGames, ownedUserGames, wishlistUserGames, playedUserGames, currentlyPlayingUserGames } from "../api/userGames";
 
 function MyGames({ loginref, handlePageChange }) {
   const [games, setGames] = useState([]);
@@ -30,6 +30,7 @@ function MyGames({ loginref, handlePageChange }) {
 }
 
   useEffect(() => {
+    console.log(selectedView);
     async function fetchGames() {
       try {
         const response = await chooseView();
@@ -39,7 +40,7 @@ function MyGames({ loginref, handlePageChange }) {
       }
     }
     fetchGames();
-  }, []);
+  }, [selectedView]);
 
   return (
     <div className="p-2 container">
