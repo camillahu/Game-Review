@@ -1,47 +1,38 @@
 import React, { useState, useEffect, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import GameCard from "../components/GameCard";
-import { allUserGames, ownedUserGames, wishlistUserGames, playedUserGames, currentlyPlayingUserGames } from "../api/userGames";
+import { userGames } from "../api/userGames";
 
 function MyGames({ loginref, handlePageChange }) {
-  const [games, setGames] = useState([]);
-  const [selectedView, setSelectedView] = useState("all");
+  const [games, setGames] = useState(new Map());
+  const [selectedView, setSelectedView] = useState("allUserGames");
 
-  function chooseView() {
-    
-    switch(selectedView){
-        case "all":
-            return allUserGames(loginref.current);
-            break;
-        case "owned":
-            return ownedUserGames(loginref.current);
-            break;
-        case "wishlist":
-            return wishlistUserGames(loginref.current);
-            break;
-        case "played":
-            return playedUserGames(loginref.current);
-            break;
-        case "currently":
-            return currentlyPlayingUserGames(loginref.current);
-            break;
-        default: console.log("not valid view");
-    }
-}
+  const isInCategory = (gameId, category) =>
+    games.get(category).some((g) => g.Id === gameId);
+
+  const views = [
+    "allUserGames",
+    "ownedUserGames",
+    "wishlistUserGames",
+    "playedUserGames",
+    "currentlyPlayingUserGames",
+  ];
 
   useEffect(() => {
-    console.log(selectedView);
+   
     async function fetchGames() {
-      try {
-        const response = await chooseView();
-        setGames(response);
-      } catch (error) {
-        console.error("Error fetching games:", error);
+      let myGames = new Map();
+
+      for(let v of views) {
+        myGames.set(v, await userGames(loginref.current, v));
       }
+      console.log(myGames)
+      setGames(myGames);
     }
     fetchGames();
-  }, [selectedView]);
+  }, []);
 
+console.log(games);
   return (
     <div className="p-2 container">
       <h2
@@ -56,27 +47,37 @@ function MyGames({ loginref, handlePageChange }) {
           value={selectedView}
           onChange={(e) => setSelectedView(e.target.value)}
         >
-          <option value="all">All My Games</option>
-          <option value="owned">Owned Games</option>
-          <option value="wishlist">Wishlist</option>
-          <option value="played">Played Games</option>
-          <option value="currently">Currently Playing</option>
+          <option value="allUserGames">All My Games</option>
+          <option value="ownedUserGames">Owned Games</option>
+          <option value="wishlistUserGames">Wishlist</option>
+          <option value="playedUserGames">Played Games</option>
+          <option value="currentlyPlayingUserGames">Currently Playing</option>
         </select>
       </div>
 
       <div className="row justify-content-center">
-      
-        {games.map((game) => (
-          <GameCard
-            key={game.Id}
-            title={game.Title}
-            developer={game.Developer}
-            publisher={game.Publisher}
-            releaseDate={game.ReleaseDate}
-            genres={game.Genres}
-            imgPath={game.ImgPath}
-          />
-        ))}
+        {Array.isArray(games.get(selectedView)) ? (
+          (games.get(selectedView)).map((game) => (
+            <GameCard
+              key={game.Id}
+              title={game.Title}
+              developer={game.Developer}
+              publisher={game.Publisher}
+              releaseDate={game.ReleaseDate}
+              genres={game.Genres}
+              imgPath={game.ImgPath}
+              ownedGame={isInCategory(game.Id, "ownedUserGames")}
+              wishlistGame={isInCategory(game.Id, "wishlistUserGames")}
+              playedGame={isInCategory(game.Id, "playedUserGames")}
+              currentlyPlayingGame={isInCategory(
+                game.Id,
+                "currentlyPlayingUserGames"
+              )}
+            />
+          ))
+        ) : (
+          <div className="d-flex justify-content-center m-3" style={{color:"white"}}>{games.get(selectedView)}</div>
+        )}
       </div>
     </div>
   );

@@ -1,4 +1,30 @@
+import {useEffect, useState} from 'react'
+import {userGames} from "../api/userGames";
+
 function GameCard(props) {
+
+  // const [games, setGames] = useState([])
+  
+  // useEffect(() => {
+  //   console.log(selectedView);
+  //   async function fetchGames() {
+  //     try {
+  //       const response = await ownedUserGames();
+  //       setGames(response);
+  //     } catch (error) {
+  //       console.error("Error fetching games:", error);
+  //     }
+  //   }
+  //   fetchGames();
+  // }, [selectedView]);
+
+  function hei() {
+    if(props.ownedGame) {
+      return <div>owned</div>
+    }
+  }
+  
+
   return (
     <>
       <div
@@ -28,7 +54,11 @@ function GameCard(props) {
             {props.genres}
           </p>
         </div>
-        <div className="d-flex justify-content-end">
+        <div className="d-flex justify-content-between">
+          <div>
+            {hei()}
+            <div></div>
+          </div>
           <button className="btn btn-outline-light position-absolute bottom-0 mb-4">
             View details
           </button>
