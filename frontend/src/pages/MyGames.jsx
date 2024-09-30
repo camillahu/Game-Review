@@ -19,20 +19,18 @@ function MyGames({ loginref, handlePageChange }) {
   ];
 
   useEffect(() => {
-   
     async function fetchGames() {
       let myGames = new Map();
 
-      for(let v of views) {
+      for (let v of views) {
         myGames.set(v, await userGames(loginref.current, v));
       }
-      console.log(myGames)
+      console.log(myGames);
       setGames(myGames);
     }
     fetchGames();
   }, []);
 
-console.log(games);
   return (
     <div className="p-2 container">
       <h2
@@ -57,26 +55,33 @@ console.log(games);
 
       <div className="row justify-content-center">
         {Array.isArray(games.get(selectedView)) ? (
-          (games.get(selectedView)).map((game) => (
-            <GameCard
-              key={game.Id}
-              title={game.Title}
-              developer={game.Developer}
-              publisher={game.Publisher}
-              releaseDate={game.ReleaseDate}
-              genres={game.Genres}
-              imgPath={game.ImgPath}
-              ownedGame={isInCategory(game.Id, "ownedUserGames")}
-              wishlistGame={isInCategory(game.Id, "wishlistUserGames")}
-              playedGame={isInCategory(game.Id, "playedUserGames")}
-              currentlyPlayingGame={isInCategory(
-                game.Id,
-                "currentlyPlayingUserGames"
-              )}
-            />
-          ))
+          games
+            .get(selectedView)
+            .map((game) => (
+              <GameCard
+                key={game.Id}
+                title={game.Title}
+                developer={game.Developer}
+                publisher={game.Publisher}
+                releaseDate={game.ReleaseDate}
+                genres={game.Genres}
+                imgPath={game.ImgPath}
+                ownedGame={isInCategory(game.Id, "ownedUserGames")}
+                wishlistGame={isInCategory(game.Id, "wishlistUserGames")}
+                playedGame={isInCategory(game.Id, "playedUserGames")}
+                currentlyPlayingGame={isInCategory(
+                  game.Id,
+                  "currentlyPlayingUserGames"
+                )}
+              />
+            ))
         ) : (
-          <div className="d-flex justify-content-center m-3" style={{color:"white"}}>{games.get(selectedView)}</div>
+          <div
+            className="d-flex justify-content-center m-3"
+            style={{ color: "white" }}
+          >
+            {games.get(selectedView)}
+          </div>
         )}
       </div>
     </div>
