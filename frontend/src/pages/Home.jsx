@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import GameCard from "../components/GameCard";
-import { gamesAndGenres } from "../api/gamesAndGenres";
+import { gamesAndGenres, genres } from "../api/gamesAndGenres";
 import { login } from "../api/loginAuth";
 import { userGames } from "../api/userGames";
 
 function Home({ loginref, handlePageChange }) {
   const [games, setGames] = useState([]);
+  const [genres, setGenres] = useState([]);
   const [gamesByCategory, setGamesByCategory] = useState(new Map());
+  const [selectedView, setSelectedView] = useState("allGames");
 
   const isInCategory = (gameId, category) => {
     return gamesByCategory.has(category)
@@ -15,7 +17,7 @@ function Home({ loginref, handlePageChange }) {
       : false;
   };
 
-  const views = [
+  const categories = [
     "allUserGames",
     "ownedUserGames",
     "wishlistUserGames",
@@ -32,9 +34,9 @@ function Home({ loginref, handlePageChange }) {
         if (loginref) {
           const gameMap = new Map();
 
-          for (let v of views) {
-            const userGamesResponse = await userGames(loginref.current, v);
-            gameMap.set(v, userGamesResponse);
+          for (let c of categories) {
+            const userGamesResponse = await userGames(loginref.current, c);
+            gameMap.set(c, userGamesResponse);
           }
           setGamesByCategory(gameMap);
         }
@@ -45,6 +47,19 @@ function Home({ loginref, handlePageChange }) {
     fetchGames();
   }, [loginref]);
 
+  useEffect(() => {
+    async function fetchGenres() {
+        try {
+            const response = await genres();
+            setGenres(response);
+        }
+        catch (error) {
+            console.error("Error fetching genres", error);
+        }
+    }
+    fetchGenres();
+  }, [])
+
   return (
     <div className="p-2 container">
       <h2
@@ -53,6 +68,19 @@ function Home({ loginref, handlePageChange }) {
       >
         All Games
       </h2>
+      <div className="d-flex justify-content-end">
+        <select
+          className="form-select form-select-sm customDropDown"
+          value={selectedView}
+          onChange={(e) => setSelectedView(e.target.value)}
+        >
+          <option value="allGames">All My Games</option>
+          <option value="ownedUserGames">Owned Games</option>
+          <option value="wishlistUserGames">Wishlist</option>
+          <option value="playedUserGames">Played Games</option>
+          <option value="currentlyPlayingUserGames">Currently Playing</option>
+        </select>
+      </div>
       <div className="row justify-content-center">
         {games.map((game) => (
           <GameCard

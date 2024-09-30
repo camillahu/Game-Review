@@ -5,8 +5,6 @@ function GameCard(props) {
     } else if (props.wishlistGame) {
       return <div style = {{color: "HSL(30, 70%, 70%)"}}>Wishlist</div>;
     } 
-    else return <div></div>
-    
   }
 
   function gameStatus2() {
@@ -15,7 +13,6 @@ function GameCard(props) {
     }else if (props.currentlyPlayingGame) {
       return <div style = {{color: "HSL(280, 50%, 70%)"}}>Currently Playing</div>;
     }
-    else return <div></div>
   }
 
   return (

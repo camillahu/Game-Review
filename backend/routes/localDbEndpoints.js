@@ -99,6 +99,22 @@ router.get("/games", async (_, res) => {
   }
 });
 
+router.get("/genres", async (_, res) => {
+  try {
+    await dbCon();
+    const result =
+      await sql.query`Select Id, Name FROM Genres ORDER BY Id`
+    const games = result.recordset;
+
+    res.json(games);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Database connection error");
+  } finally {
+    closeDbCon();
+  }
+});
+
 router.get("/allUserGames", async (req, res) => {
   const { username } = req.query; //henter brukernavnet som blir sendt fra loginref i frontend
 
