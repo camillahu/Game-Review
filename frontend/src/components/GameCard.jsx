@@ -1,29 +1,22 @@
-import {useEffect, useState} from 'react'
-import {userGames} from "../api/userGames";
-
 function GameCard(props) {
-
-  // const [games, setGames] = useState([])
-  
-  // useEffect(() => {
-  //   console.log(selectedView);
-  //   async function fetchGames() {
-  //     try {
-  //       const response = await ownedUserGames();
-  //       setGames(response);
-  //     } catch (error) {
-  //       console.error("Error fetching games:", error);
-  //     }
-  //   }
-  //   fetchGames();
-  // }, [selectedView]);
-
-  function hei() {
-    if(props.ownedGame) {
-      return <div>owned</div>
-    }
+  function gameStatus1() {
+    if (props.ownedGame) {
+      return <div style = {{color: "HSL(120, 50%, 70%)"}}>Owned</div>;
+    } else if (props.wishlistGame) {
+      return <div style = {{color: "HSL(30, 70%, 70%)"}}>Wishlist</div>;
+    } 
+    else return <div></div>
+    
   }
-  
+
+  function gameStatus2() {
+    if (props.playedGame) {
+      return <div style = {{color: "HSL(200, 60%, 65%)"}}>Played</div>;
+    }else if (props.currentlyPlayingGame) {
+      return <div style = {{color: "HSL(280, 50%, 70%)"}}>Currently Playing</div>;
+    }
+    else return <div></div>
+  }
 
   return (
     <>
@@ -50,18 +43,22 @@ function GameCard(props) {
           >
             {props.title}
           </p>
-          <p className="format-genre-text" style={{ color: "HSL(0, 0%, 80%)", fontSize: '0.85rem' }}>
+          <p
+            className="format-genre-text"
+            style={{ color: "HSL(0, 0%, 80%)", fontSize: "0.85rem" }}
+          >
             {props.genres}
           </p>
         </div>
-        <div className="d-flex justify-content-between">
-          <div>
-            {hei()}
-            <div></div>
-          </div>
-          <button className="btn btn-outline-light position-absolute bottom-0 mb-4">
-            View details
-          </button>
+        <div className="d-flex justify-content-between align-items-center mb-2 mt-auto">
+          
+            <div style={{ color: "HSL(0, 0%, 80%)", fontSize: "0.70rem" }}>{gameStatus1()}{gameStatus2()}</div>
+            <div>
+              <button className="btn btn-outline-light">
+                View details
+              </button>
+            </div>
+          
         </div>
       </div>
     </>
