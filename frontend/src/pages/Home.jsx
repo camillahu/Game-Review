@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useContext } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import GameCard from "../components/GameCard";
 import { gamesAndGenres, genres } from "../api/gamesAndGenres";
-import { login } from "../api/loginAuth";
 import { userGames } from "../api/userGames";
+import { contextStuff } from "../App";
 
-function Home({ loginref, handlePageChange }) {
+function Home() {
   const [games, setGames] = useState([]);
   const [filteredGames, setFilteredGames] = useState([]);
   const [allGenres, setAllGenres] = useState([]);
   const [gamesByCategory, setGamesByCategory] = useState(new Map());
   const [selectedView, setSelectedView] = useState("allGames");
+
+  const { loginref } = useContext(contextStuff);
 
   const isInCategory = (gameId, category) => {
     return gamesByCategory.has(category)

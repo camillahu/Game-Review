@@ -1,6 +1,6 @@
 import SignUpBox from "../components/SignUpBox.jsx"
 
-function SignUp() {
+export default function SignUp() {
 
     return(
         <div>
@@ -8,5 +8,3 @@ function SignUp() {
         </div>
     )
 }
-
-export default SignUp

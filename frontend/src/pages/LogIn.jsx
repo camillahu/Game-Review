@@ -1,6 +1,6 @@
 import LogInBox from "../components/LogInBox.jsx"
 
-function LogIn({}) {
+export default function LogIn({}) {
 
     return(
         <div>
@@ -8,5 +8,3 @@ function LogIn({}) {
         </div>
     )
 }
-
-export default LogIn

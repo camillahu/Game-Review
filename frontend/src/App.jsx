@@ -5,12 +5,13 @@ import SignUp from "./pages/SignUp";
 import MyGames from "./pages/MyGames";
 import LogIn from "./pages/LogIn";
 import Home from "./pages/Home";
-
+import GamePage from "./pages/GamePage";
 import Header from "./components/Header";
 
 function App() {
-  const [page, setPage] = useState("home");
+  const [page, setPage] = useState("gamePage");
   const loginref = useRef("camillzy");
+  const gameref = useRef(1);
 
   function handlePageChange(page) {
     setPage(page);
@@ -23,11 +24,18 @@ function App() {
         return (
           <contextStuff.Provider value={{ loginref, handlePageChange }}>
             <LogIn />
-            </contextStuff.Provider>
+          </contextStuff.Provider>
         );
         break;
       case "home":
-        return <Home loginref={loginref} handlePageChange={handlePageChange}/>;
+        return (
+          <contextStuff.Provider
+            value={{ loginref, gameref, handlePageChange }}
+          >
+            <Home />
+          </contextStuff.Provider>
+        );
+
         break;
       case "signup":
         return (
@@ -37,17 +45,31 @@ function App() {
         );
 
       case "myGames":
-        return <MyGames loginref={loginref} handlePageChange={handlePageChange}/>;
+        return (
+          <MyGames loginref={loginref} handlePageChange={handlePageChange} />
+        );
+
+      case "gamePage":
+        return (
+          <contextStuff.Provider
+            value={{ loginref, gameref, handlePageChange }}
+          >
+            <GamePage />
+          </contextStuff.Provider>
+        );
+        break;
 
       default:
         return console.log("error changing page");
     }
   }
 
-  return <>
-  <Header loginref={loginref} handlePageChange={handlePageChange}/>
-  {updateView()}
-  </>;
+  return (
+    <>
+      <Header loginref={loginref} handlePageChange={handlePageChange} />
+      {updateView()}
+    </>
+  );
 }
 
 export const contextStuff = createContext();
