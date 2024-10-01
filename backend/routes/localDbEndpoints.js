@@ -288,7 +288,7 @@ router.get("/gameDetails", async (req, res) => {
 										                      WHERE g.Id = ${gameId}
                                           GROUP BY g.Id, g.Title, g.Developer, g.Publisher, g.ReleaseDate, g.rating, g.ImgPath`;
     const games = result.recordset;
-
+    console.log(gameId);
     res.json(games);
   } catch (err) {
     console.error(err);

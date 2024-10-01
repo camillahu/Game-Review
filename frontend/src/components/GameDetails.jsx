@@ -13,13 +13,14 @@ export default function GameDetails() {
     useEffect(() => {
         async function fetchGame() {
             try {
-                const gameResponse = await gameDetails(gameref);
-                const communityResponse = await gameDetailsCommunity(gameref);
+                const gameResponse = await gameDetails(gameref.current);
+                const communityResponse = await gameDetailsCommunity(gameref.current);
                 setGame(gameResponse);
                 setAllRatingsComments(communityResponse)
+                console.log(gameResponse)
 
                 if(loginref) {
-                    const userResponse = await gameDetailsUser(gameref, loginref);
+                    const userResponse = await gameDetailsUser(gameref.current, loginref.current);
                     setMyRatingComment(userResponse);
                 }
             }
@@ -28,11 +29,13 @@ export default function GameDetails() {
             }
         }
         fetchGame();
-    }, [userInput])
+    }, [])
 
 
-    return (<div>
-        
+    return (<div className="container justify-content-center custom-game-page-container">
+        <div className="d-flex justify-content-between">
+            <h2 className="h-2" style={{ color: "HSL(0, 0%, 80%)", fontWeight: "bold" }}>{game.Title}</h2>
+        </div>
     </div>)
 
 }

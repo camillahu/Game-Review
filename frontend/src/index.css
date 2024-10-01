@@ -34,3 +34,13 @@ body {
   margin-right: 127px; /*litt halvveis løsning menmen */
 }
 
+.custom-game-page-container {
+  backdrop-filter: blur(5px);
+  background-color: HSL(210, 10%, 25%);
+  border-radius: 5px;
+  width: 100vw;
+  height: auto;
+  padding: 15px;
+  margin: 50px;
+}
+
