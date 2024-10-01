@@ -51,10 +51,8 @@ function App() {
 
       case "gamePage":
         return (
-          <contextStuff.Provider
-            value={{ loginref, gameref, handlePageChange }}
-          >
-            <GamePage />
+          <contextStuff.Provider value={{ loginref, gameref, handlePageChange }}>
+            <GamePage /> 
           </contextStuff.Provider>
         );
         break;
