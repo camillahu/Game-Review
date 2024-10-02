@@ -11,7 +11,7 @@ export default function GameDetails() {
   const { loginref, gameref, handlePageChange } = useContext(contextStuff);
   const [game, setGame] = useState({});
   const [myRatingComment, setMyRatingComment] = useState({});
-  const [allRatingsComments, setAllRatingsComments] = useState({});
+  const [allRatingsComments, setAllRatingsComments] = useState([]);
   const [userInput, setUserInput] = useState({});
   const [gamesByCategory, setGamesByCategory] = useState(new Map());
 
@@ -46,6 +46,42 @@ export default function GameDetails() {
     }
   }
 
+  function showUserThings() {
+    if (loginref) {
+      return (
+        <div className="d-flex flex-row">
+          <p className="lead me-3">my rating:</p>
+          <div className="d-flex justify-content-start lead">
+            <p className="me-3">
+              {myRatingComment.Rating + "★" || "No rating"}
+            </p>
+            <p>{myRatingComment.Comment || "No comment"}</p>
+          </div>
+        </div>
+      );
+    }
+  }
+
+  function showCommunityThings() {
+    return (
+      <div>
+        {allRatingsComments
+          .filter((user) => user.User_Id !== loginref.current)
+          .map((user, index) => (
+            <div key={index} className="d-flex flex-row">
+              <p className="lead me-3">{user.User_Id}:</p>
+              <div className="d-flex justify-content-start lead">
+                <p className="me-3">
+                  {user.Rating ? user.Rating + "★" : "No rating"}
+                </p>
+                <p>{user.Comment || "No comment"}</p>
+              </div>
+            </div>
+          ))}
+      </div>
+    );
+  }
+
   useEffect(() => {
     async function fetchGame() {
       try {
@@ -54,7 +90,6 @@ export default function GameDetails() {
         const communityResponse = await gameDetailsCommunity(gameref.current);
         setGame(gameResponse);
         setAllRatingsComments(communityResponse);
-        console.log(gameResponse);
 
         if (loginref) {
           const userResponse = await gameDetailsUser(
@@ -80,58 +115,65 @@ export default function GameDetails() {
 
   return (
     <div className="container justify-content-center custom-game-page-container">
-      <div className="d-flex justify-content-between align-items-center mb-3 ps-3 pe-3 p-1" 
-        style={{backgroundColor:"HSL(210, 10%, 30%)", borderRadius: "1px"}}>
+      <div className="d-flex justify-content-between align-items-center mb-3 ps-3 pe-3 p-1 border-bottom border-secondary">
         <h2
-          className="h-2"
+          className="display-5"
           style={{ color: "HSL(0, 0%, 80%)", fontWeight: "bold" }}
         >
           {game.Title}
         </h2>
         <div
-        className="d-flex flex-row"
-        style={{ color: "HSL(0, 0%, 80%)", fontSize: "0.8rem" }}
-      >
-        <div className="me-3">{gameStatus1()}</div>
-        <div className="ms-3">{gameStatus2()}</div>
-      </div>
-      </div>
-      <div className="d-flex justify-content-around align-items-center mb-2">
-        <div className="square-box-2">
-          <img
-            className="img-fluid img-cover"
-            src={game.ImgPath}
-            alt="game img"
-          />
-        </div>
-        <div className="d-flex justify-content-start square-box-3 flex-column">
-          <p className="lead">
-            <strong>Developer: </strong>
-            {game.Developer}
-          </p>
-          <p className="lead">
-            <strong>Publisher: </strong>
-            {game.Publisher}
-          </p>
-          <p className="lead">
-            <strong>Release date: </strong>
-            {new Date(game.ReleaseDate).toLocaleDateString("en-GB", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            })}
-          </p>
-          <p className="lead">
-            <strong>Genres: </strong>
-            {game.Genres}
-          </p>
-          <p className="lead" style={{ marginTop: 'auto' }}>
-            <strong>Community Rating: </strong>
-            {game.Rating? game.Rating : "No ratings yet"}
-          </p>
+          className="d-flex flex-row"
+          style={{ color: "HSL(0, 0%, 80%)", fontSize: "0.8rem" }}
+        >
+          <div className="me-3">{gameStatus1()}</div>
+          <div className="ms-3">{gameStatus2()}</div>
         </div>
       </div>
-    
+      <div className="d-flex flex-column m-4">
+        <div className="d-flex justify-content-between align-items-center mb-2 ">
+          <div className="square-box-2">
+            <img
+              className="img-fluid img-cover"
+              src={game.ImgPath}
+              alt="game img"
+            />
+          </div>
+          <div className="d-flex justify-content-start square-box-3 flex-column">
+            <p className="lead">
+              <strong>Developer: </strong>
+              {game.Developer}
+            </p>
+            <p className="lead">
+              <strong>Publisher: </strong>
+              {game.Publisher}
+            </p>
+            <p className="lead">
+              <strong>Release date: </strong>
+              {new Date(game.ReleaseDate).toLocaleDateString("en-GB", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
+            </p>
+            <p className="lead">
+              <strong>Genres: </strong>
+              {game.Genres}
+            </p>
+            <p className="lead" style={{ marginTop: "auto" }}>
+              <strong>Community Rating: </strong>
+              {game.Rating ? game.Rating : "No ratings yet"}
+            </p>
+          </div>
+        </div>
+        <div>
+          <h3 className="display-6 mt-3">Ratings and comments</h3>
+          <div className="d-flex flex-column custom-comment-box">
+            {showUserThings()}
+            {showCommunityThings()}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

@@ -60,3 +60,9 @@ body {
   padding: 2% 4%;
 }
 
+.custom-comment-box {
+  padding: 10px;
+  background-color: HSL(45, 60%, 70%);
+  border-radius: 5px;
+}
+

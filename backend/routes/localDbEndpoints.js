@@ -309,8 +309,8 @@ router.get("/gameDetailsCommunity", async (req, res) => {
                                     WHERE Game_Id = ${gameId};`;
     const games = result.recordset;
 
-    if(games.length > 0) res.json(games[0]);
-    else res.status(404).send('Game not found');
+    res.json(games);
+    
   } catch (err) {
     console.error(err);
     res.status(500).send("Database connection error");
