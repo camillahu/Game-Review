@@ -49,10 +49,14 @@ export default function GameDetails() {
   function showUserThings() {
     if (loginref) {
       return (
-        <div className="d-flex flex-row">
-          <p className="lead me-3">my rating:</p>
-          <div className="d-flex justify-content-start lead">
-            <p className="me-3">
+        <div className="d-flex flex-column mb-2 custom-comment-box-2">
+            <div className="d-flex flex-row justify-content-between me-2">
+                <p className="lead" style={{fontWeight: "bold"}}>my rating:</p>
+                <span role="button">✎</span>
+                </div>
+          
+          <div className="d-flex justify-content-start lead me-2 ms-2">
+            <p className="me-3 ">
               {myRatingComment.Rating + "★" || "No rating"}
             </p>
             <p>{myRatingComment.Comment || "No comment"}</p>
@@ -68,9 +72,9 @@ export default function GameDetails() {
         {allRatingsComments
           .filter((user) => user.User_Id !== loginref.current)
           .map((user, index) => (
-            <div key={index} className="d-flex flex-row">
-              <p className="lead me-3">{user.User_Id}:</p>
-              <div className="d-flex justify-content-start lead">
+            <div key={index} className="d-flex flex-column mb-4 custom-comment-box">
+              <p className="lead" style={{fontWeight: "bold"}} role="button">{user.User_Id}:</p>
+              <div className="d-flex justify-content-start lead me-2 ms-2">
                 <p className="me-3">
                   {user.Rating ? user.Rating + "★" : "No rating"}
                 </p>
@@ -167,8 +171,8 @@ export default function GameDetails() {
           </div>
         </div>
         <div>
-          <h3 className="display-6 mt-3">Ratings and comments</h3>
-          <div className="d-flex flex-column custom-comment-box">
+          <h3 className="display-6 mt-2">Ratings and comments</h3>
+          <div className="d-flex flex-column ">
             {showUserThings()}
             {showCommunityThings()}
           </div>
