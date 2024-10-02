@@ -14,15 +14,30 @@ body {
 }
 
 .square-box {
-    width: 18rem;  /* Set width for the square */
-    height: 18rem; /* Set height for the square */
-    overflow: hidden; /* Hide overflowed parts of the image */
+    width: 18rem;  
+    height: 18rem; 
+    overflow: hidden; 
+}
+
+.square-box-2 {
+  width: 25rem;  
+  height: 25rem; 
+  overflow: hidden; 
+  border-radius: 5px;
+}
+.square-box-3 {
+  width: 20rem;  
+  height: 25rem; 
+  overflow: hidden; 
+  border-radius: 5px;
+  background-color: HSL(340, 20%, 70%);
+  padding: 10px;
 }
 
 .img-cover {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Ensure the image covers the box while keeping aspect ratio */
+    object-fit: cover; 
 }
 
 .navbar-custom {
@@ -38,9 +53,10 @@ body {
   backdrop-filter: blur(5px);
   background-color: HSL(210, 10%, 25%);
   border-radius: 5px;
-  width: 65vw;
+  width: 50vw;
   height: auto;
   padding: 15px;
   margin: 50px auto;
+  padding: 2% 4%;
 }
 

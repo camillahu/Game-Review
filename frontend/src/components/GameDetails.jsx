@@ -54,6 +54,7 @@ export default function GameDetails() {
         const communityResponse = await gameDetailsCommunity(gameref.current);
         setGame(gameResponse);
         setAllRatingsComments(communityResponse);
+        console.log(gameResponse);
 
         if (loginref) {
           const userResponse = await gameDetailsUser(
@@ -79,20 +80,58 @@ export default function GameDetails() {
 
   return (
     <div className="container justify-content-center custom-game-page-container">
-      <div className="d-flex justify-content-between">
+      <div className="d-flex justify-content-between align-items-center mb-3 ps-3 pe-3 p-1" 
+        style={{backgroundColor:"HSL(210, 10%, 30%)", borderRadius: "1px"}}>
         <h2
           className="h-2"
           style={{ color: "HSL(0, 0%, 80%)", fontWeight: "bold" }}
         >
           {game.Title}
         </h2>
-        <div className="d-flex justify-content-between align-items-center mb-2 mt-auto">
-          <div style={{ color: "HSL(0, 0%, 80%)", fontSize: "0.8rem" }}>
-            {gameStatus1()}
-            {gameStatus2()}
-          </div>
+        <div
+        className="d-flex flex-row"
+        style={{ color: "HSL(0, 0%, 80%)", fontSize: "0.8rem" }}
+      >
+        <div className="me-3">{gameStatus1()}</div>
+        <div className="ms-3">{gameStatus2()}</div>
+      </div>
+      </div>
+      <div className="d-flex justify-content-around align-items-center mb-2">
+        <div className="square-box-2">
+          <img
+            className="img-fluid img-cover"
+            src={game.ImgPath}
+            alt="game img"
+          />
+        </div>
+        <div className="d-flex justify-content-start square-box-3 flex-column">
+          <p className="lead">
+            <strong>Developer: </strong>
+            {game.Developer}
+          </p>
+          <p className="lead">
+            <strong>Publisher: </strong>
+            {game.Publisher}
+          </p>
+          <p className="lead">
+            <strong>Release date: </strong>
+            {new Date(game.ReleaseDate).toLocaleDateString("en-GB", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })}
+          </p>
+          <p className="lead">
+            <strong>Genres: </strong>
+            {game.Genres}
+          </p>
+          <p className="lead" style={{ marginTop: 'auto' }}>
+            <strong>Community Rating: </strong>
+            {game.Rating? game.Rating : "No ratings yet"}
+          </p>
         </div>
       </div>
+    
     </div>
   );
 }
