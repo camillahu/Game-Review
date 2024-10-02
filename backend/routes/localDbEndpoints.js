@@ -288,8 +288,10 @@ router.get("/gameDetails", async (req, res) => {
 										                      WHERE g.Id = ${gameId}
                                           GROUP BY g.Id, g.Title, g.Developer, g.Publisher, g.ReleaseDate, g.rating, g.ImgPath`;
     const games = result.recordset;
-    console.log(gameId);
-    res.json(games);
+    
+    if(games.length > 0) res.json(games[0]);
+    else res.status(404).send('Game not found');
+    
   } catch (err) {
     console.error(err);
     res.status(500).send("Database connection error");
@@ -307,7 +309,8 @@ router.get("/gameDetailsCommunity", async (req, res) => {
                                     WHERE Game_Id = ${gameId};`;
     const games = result.recordset;
 
-    res.json(games);
+    if(games.length > 0) res.json(games[0]);
+    else res.status(404).send('Game not found');
   } catch (err) {
     console.error(err);
     res.status(500).send("Database connection error");
@@ -325,7 +328,8 @@ router.get("/gameDetailsUser", async (req, res) => {
                                     WHERE Game_Id = ${gameId} AND [User_Id] = ${username};`;
     const games = result.recordset;
 
-    res.json(games);
+    if(games.length > 0) res.json(games[0]);
+    else res.status(404).send('Game not found');
   } catch (err) {
     console.error(err);
     res.status(500).send("Database connection error");

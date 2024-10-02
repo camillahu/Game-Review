@@ -1,6 +1,6 @@
 export async function gameDetails(gameId) {
     try {
-      const response = await fetch(`http://localhost:3000/localdb/gameDetails`, {
+      const response = await fetch(`http://localhost:3000/localdb/gameDetails?gameId=${gameId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -19,7 +19,7 @@ export async function gameDetails(gameId) {
 
 export async function gameDetailsCommunity(gameId) {
     try {
-      const response = await fetch(`http://localhost:3000/localdb/gameDetailsCommunity`, {
+      const response = await fetch(`http://localhost:3000/localdb/gameDetailsCommunity?gameId=${gameId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -38,7 +38,7 @@ export async function gameDetailsCommunity(gameId) {
 
 export async function gameDetailsUser(gameId, username) {
     try {
-      const response = await fetch(`http://localhost:3000/localdb/gameDetailsUser`, {
+      const response = await fetch(`http://localhost:3000/localdb/gameDetailsUser?gameId=${gameId}&username=${username}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
