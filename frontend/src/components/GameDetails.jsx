@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { contextStuff } from "../App";
 import { userGames } from "../api/userGames";
+import RatingBox from "./RatingBox"
 import {
   gameDetails,
   gameDetailsCommunity,
@@ -46,45 +47,6 @@ export default function GameDetails() {
     }
   }
 
-  function showUserThings() {
-    if (loginref) {
-      return (
-        <div className="d-flex flex-column mb-2 custom-comment-box-2">
-            <div className="d-flex flex-row justify-content-between me-2">
-                <p className="lead" style={{fontWeight: "bold"}}>my rating:</p>
-                <span role="button">✎</span>
-                </div>
-          
-          <div className="d-flex justify-content-start lead me-2 ms-2">
-            <p className="me-3 ">
-              {myRatingComment.Rating ? myRatingComment.Rating + "★" : "you have not rated this game yet."}
-            </p>
-            <p>{myRatingComment.Comment || ""}</p>
-          </div>
-        </div>
-      );
-    }
-  }
-
-  function showCommunityThings() {
-    return (
-      <div>
-        {allRatingsComments
-          .filter((user) => user.User_Id !== loginref.current)
-          .map((user, index) => (
-            <div key={index} className="d-flex flex-column mb-4 custom-comment-box">
-              <p className="lead" style={{fontWeight: "bold"}} role="button">{user.User_Id}:</p>
-              <div className="d-flex justify-content-start lead me-2 ms-2">
-                <p className="me-3">
-                  {user.Rating ? user.Rating + "★" : "No rating"}
-                </p>
-                <p>{user.Comment || "No comment"}</p>
-              </div>
-            </div>
-          ))}
-      </div>
-    );
-  }
 
   useEffect(() => {
     async function fetchGame() {
@@ -173,8 +135,24 @@ export default function GameDetails() {
         <div>
           <h3 className="display-6 mt-2">Ratings and comments</h3>
           <div className="d-flex flex-column ">
-            {showUserThings()}
-            {showCommunityThings()}
+          <RatingBox 
+          loggedInUser = {loginref.current}
+          username = {myRatingComment.User_Id}
+          rating = {myRatingComment.Rating}
+          comment= {myRatingComment.Comment}
+          />
+
+          {allRatingsComments
+                .filter((user) => user.User_Id !== loginref.current)
+                .map((user, index) => (
+                  <RatingBox 
+                  key = {index}
+                  loggedInUser = {loginref.current}
+                  username = {user.User_Id}
+                  rating = {user.Rating}
+                  comment= {user.Comment}/>
+                ))}
+          
           </div>
         </div>
       </div>
