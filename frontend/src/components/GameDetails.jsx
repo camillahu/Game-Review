@@ -1,7 +1,8 @@
 import { useState, useEffect, useContext } from "react";
 import { contextStuff } from "../App";
 import { userGames } from "../api/userGames";
-import RatingBox from "./RatingBox"
+import RatingBox from "./RatingBox";
+import EditRatingBox from "./EditRatingBox";
 import {
   gameDetails,
   gameDetailsCommunity,
@@ -14,6 +15,7 @@ export default function GameDetails() {
   const [myRatingComment, setMyRatingComment] = useState({});
   const [allRatingsComments, setAllRatingsComments] = useState([]);
   const [userInput, setUserInput] = useState({});
+  const [isEditing, setIsEditing] = useState(false);
   const [gamesByCategory, setGamesByCategory] = useState(new Map());
 
   const isInCategory = (gameId, category) => {
@@ -47,6 +49,9 @@ export default function GameDetails() {
     }
   }
 
+  function handleEditingStatus() {
+    isEditing ? setIsEditing(false) : setIsEditing(true);
+  }
 
   useEffect(() => {
     async function fetchGame() {
@@ -135,24 +140,25 @@ export default function GameDetails() {
         <div>
           <h3 className="display-6 mt-2">Ratings and comments</h3>
           <div className="d-flex flex-column ">
-          <RatingBox 
-          loggedInUser = {loginref.current}
-          username = {myRatingComment.User_Id}
-          rating = {myRatingComment.Rating}
-          comment= {myRatingComment.Comment}
-          />
+            {isEditing ? <EditRatingBox handleEditingStatus={handleEditingStatus}/> : <RatingBox
+              loggedInUser={loginref.current}
+              username={myRatingComment.User_Id}
+              rating={myRatingComment.Rating}
+              comment={myRatingComment.Comment}
+              handleEditingStatus = {handleEditingStatus}
+            /> }
 
-          {allRatingsComments
-                .filter((user) => user.User_Id !== loginref.current)
-                .map((user, index) => (
-                  <RatingBox 
-                  key = {index}
-                  loggedInUser = {loginref.current}
-                  username = {user.User_Id}
-                  rating = {user.Rating}
-                  comment= {user.Comment}/>
-                ))}
-          
+            {allRatingsComments
+              .filter((user) => user.User_Id !== loginref.current)
+              .map((user, index) => (
+                <RatingBox
+                  key={index}
+                  loggedInUser={loginref.current}
+                  username={user.User_Id}
+                  rating={user.Rating}
+                  comment={user.Comment}
+                />
+              ))}
           </div>
         </div>
       </div>
