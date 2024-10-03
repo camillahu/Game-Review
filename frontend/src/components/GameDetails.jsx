@@ -7,6 +7,7 @@ import {
   gameDetails,
   gameDetailsCommunity,
   gameDetailsUser,
+  postRatingComment,
 } from "../api/gameDetails";
 
 export default function GameDetails() {
@@ -60,6 +61,10 @@ export default function GameDetails() {
   function handleCommentChange(comment) {
     
     setMyRatingComment(r => ({...r, Comment: comment}))
+  }
+
+  function updateMyRating() {
+
   }
 
   useEffect(() => {
@@ -151,8 +156,7 @@ export default function GameDetails() {
           <div className="d-flex flex-column ">
             {isEditing ? (
               <EditRatingBox
-                loggedInUser={loginref.current}
-                username={myRatingComment.User_Id}
+                updateMyRating = {updateMyRating}
                 rating={myRatingComment.Rating}
                 comment={myRatingComment.Comment}
                 handleEditingStatus={handleEditingStatus}

@@ -54,3 +54,24 @@ export async function gameDetailsUser(gameId, username) {
       throw error;
     }
   }
+
+  export async function postRatingComment(gameId, username, newRating, newComment) {
+
+    try {
+      const response = await fetch(`http://localhost:3000/localdb/postRatingComment`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({gameId, username, newRating, newComment}) 
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error("Game request failed:", error);
+      throw error;
+    }
+  }

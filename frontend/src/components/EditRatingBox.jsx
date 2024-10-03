@@ -1,9 +1,8 @@
 function EditRatingBox({
-  loggedInUser,
-  username,
   rating,
   comment,
   handleEditingStatus,
+  updateMyRating,
   setRating,
   setComment,
 }) {
@@ -18,28 +17,38 @@ function EditRatingBox({
         <button
           className="btn btn-outline-dark "
           type="submit"
-          onClick={handleEditingStatus}
+          onClick={() => {
+            updateMyRating(), handleEditingStatus();
+          }}
         >
           save
         </button>
       </div>
 
-      <div className="d-flex justify-content-start lead me-2 ms-2">
-        <p className="me-3 ">
+      <div className="d-flex justify-content-start lead m-2">
+        <div>
           <label className="input-group-text" htmlFor="ratingSelect">
             Rating:
             <select
               className="custom-select ms-2"
-              value={rating}
+              value={rating || "no rating"}
               onChange={(e) => setRating(e.target.value)}
             >
               {ratingValues.map((v, i) => (
-                <option key={i + 1} value={v}>{v}</option>
+                <option key={i + 1} value={v}>
+                  {v}
+                </option>
               ))}
             </select>
           </label>
-        </p>
-        <p>{comment || ""}</p>
+        </div>
+
+        <input
+          className="form-control ms-3"
+          type="text"
+          value={comment || 'no comment'}
+          onChange={(e) => setComment(e.target.value)}
+        />
       </div>
     </div>
   );
