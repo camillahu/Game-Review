@@ -57,9 +57,9 @@ export default function GameDetails() {
           
           <div className="d-flex justify-content-start lead me-2 ms-2">
             <p className="me-3 ">
-              {myRatingComment.Rating ? myRatingComment.Rating + "★" : "No rating"}
+              {myRatingComment.Rating ? myRatingComment.Rating + "★" : "you have not rated this game yet."}
             </p>
-            <p>{myRatingComment.Comment || "No comment"}</p>
+            <p>{myRatingComment.Comment || ""}</p>
           </div>
         </div>
       );
