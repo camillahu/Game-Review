@@ -321,15 +321,27 @@ router.get("/gameDetailsCommunity", async (req, res) => {
 
 router.get("/gameDetailsUser", async (req, res) => {
   const { gameId, username } = req.query;
+  
   try {
     await dbCon();
-    const result = await sql.query`SELECT [User_Id] ,Game_Id, Rating ,Comment
-                                    FROM [GameReviewExpressDb].[dbo].[Game_Ratings_Comments]
-                                    WHERE Game_Id = ${gameId} AND [User_Id] = ${username};`;
+    
+    const result = await sql.query`
+      SELECT [User_Id], Game_Id, Rating, Comment
+      FROM [GameReviewExpressDb].[dbo].[Game_Ratings_Comments]
+      WHERE Game_Id = ${gameId} AND [User_Id] = ${username};`;
+
     const games = result.recordset;
 
-    if(games.length > 0) res.json(games[0]);
-    else res.status(404).send('Game not found');
+    if (games.length > 0) {
+      res.json(games[0]);
+    } else {
+      res.json({
+        User_Id: username,
+        Game_Id: gameId,
+        Rating: null,
+        Comment: null
+      });
+    }
   } catch (err) {
     console.error(err);
     res.status(500).send("Database connection error");
@@ -337,5 +349,6 @@ router.get("/gameDetailsUser", async (req, res) => {
     closeDbCon();
   }
 });
+
 
 module.exports = router;
