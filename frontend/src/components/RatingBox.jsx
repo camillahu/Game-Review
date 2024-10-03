@@ -12,7 +12,7 @@ function RatingBox({ loggedInUser, username, rating, comment, handleEditingStatu
   };
 
   return (
-    <div className="d-flex flex-column mb-2 custom-comment-box-2">
+    <div className="d-flex flex-column mb-2 custom-comment-box-1">
       <div className="d-flex flex-row justify-content-between me-2">
         <p className="lead" style={{ fontWeight: "bold" }}>
           {usernameView()}
