@@ -15,7 +15,7 @@ export default function GameDetails() {
   const [myRatingComment, setMyRatingComment] = useState({});
   const [allRatingsComments, setAllRatingsComments] = useState([]);
   const [userInput, setUserInput] = useState({});
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(true);
   const [gamesByCategory, setGamesByCategory] = useState(new Map());
 
   const isInCategory = (gameId, category) => {
@@ -51,6 +51,15 @@ export default function GameDetails() {
 
   function handleEditingStatus() {
     isEditing ? setIsEditing(false) : setIsEditing(true);
+  }
+
+  function handleRatingChange(rating) {
+    setMyRatingComment(r => ({...r, Rating: rating}))
+  }
+
+  function handleCommentChange(comment) {
+    
+    setMyRatingComment(r => ({...r, Comment: comment}))
   }
 
   useEffect(() => {
@@ -140,13 +149,25 @@ export default function GameDetails() {
         <div>
           <h3 className="display-6 mt-2">Ratings and comments</h3>
           <div className="d-flex flex-column ">
-            {isEditing ? <EditRatingBox handleEditingStatus={handleEditingStatus}/> : <RatingBox
-              loggedInUser={loginref.current}
-              username={myRatingComment.User_Id}
-              rating={myRatingComment.Rating}
-              comment={myRatingComment.Comment}
-              handleEditingStatus = {handleEditingStatus}
-            /> }
+            {isEditing ? (
+              <EditRatingBox
+                loggedInUser={loginref.current}
+                username={myRatingComment.User_Id}
+                rating={myRatingComment.Rating}
+                comment={myRatingComment.Comment}
+                handleEditingStatus={handleEditingStatus}
+                setRating = {handleRatingChange}
+                setComment = {handleCommentChange}
+              />
+            ) : (
+              <RatingBox
+                loggedInUser={loginref.current}
+                username={myRatingComment.User_Id}
+                rating={myRatingComment.Rating}
+                comment={myRatingComment.Comment}
+                handleEditingStatus={handleEditingStatus}
+              />
+            )}
 
             {allRatingsComments
               .filter((user) => user.User_Id !== loginref.current)
