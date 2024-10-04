@@ -60,6 +60,7 @@ function MyGames({ loginref, handlePageChange }) {
             .map((game) => (
               <GameCard
                 key={game.Id}
+                id= {game.Id}
                 title={game.Title}
                 developer={game.Developer}
                 publisher={game.Publisher}

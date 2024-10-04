@@ -352,7 +352,6 @@ router.get("/gameDetailsUser", async (req, res) => {
 
 router.post('/postRatingComment', async (req, res) => {
   const {gameId, username, newRating, newComment} = req.body;
-  
   try {
     await dbCon();
     
@@ -361,27 +360,26 @@ router.post('/postRatingComment', async (req, res) => {
       FROM [GameReviewExpressDb].[dbo].[Game_Ratings_Comments]
       WHERE Game_Id = ${gameId} AND [User_Id] = ${username};`;
 
-    const rows = checkQuery.recordset[0].count; 
+    
 
-    if(rows > 0) {
+    if(checkQuery.recordset.length > 0) {
       const updateQuery = await sql.query`
       UPDATE Game_Ratings_Comments
       SET Rating = ${newRating}, Comment = ${newComment}
       WHERE Game_Id = ${gameId} AND [User_Id] = ${username};
       `
-      const updatedRows = updateQuery.recordset[0];
 
-      if (updatedRows) {
-        res.status(200).json({ message: `Rating updated successfully with ${updatedRows} rows affected` });
-      } else res.json({message: 'something went wrong when updating db'})
+      if (updateQuery.rowsAffected[0] > 0) {
+        res.status(200).json({ message: `Rating updated successfully with` });
+      } else res.json({message: 'something went wrong when updating db 0, rows affected'})
     }
     else {
       const insertQuery = await sql.query`
       INSERT INTO Game_Ratings_Comments ([User_Id], Game_Id, Rating, Comment)
-      Values('${username}','${gameId}, '${newRating}', '${newComment}')`
+      Values(${username},${gameId}, ${newRating}, ${newComment})`
 
       if (insertQuery) {
-        res.status(200).json({ message: `Rating updated successfully with ${insertQuery} rows affected` });
+        res.status(200).json({ message: `Rating updated successfully with` });
       } else res.json({message: 'something went wrong when updating db'})
     }
     

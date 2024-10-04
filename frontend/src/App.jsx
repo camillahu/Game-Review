@@ -9,9 +9,9 @@ import GamePage from "./pages/GamePage";
 import Header from "./components/Header";
 
 function App() {
-  const [page, setPage] = useState("gamePage");
+  const [page, setPage] = useState("home");
   const loginref = useRef("camillzy");
-  const gameref = useRef(1);
+  const gameref = useRef(null);
 
   function handlePageChange(page) {
     setPage(page);

@@ -46,7 +46,7 @@ function EditRatingBox({
         <input
           className="form-control ms-3"
           type="text"
-          value={comment || 'no comment'}
+          value={comment || ''}
           onChange={(e) => setComment(e.target.value)}
         />
       </div>

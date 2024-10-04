@@ -56,7 +56,7 @@ export async function gameDetailsUser(gameId, username) {
   }
 
   export async function postRatingComment(gameId, username, newRating, newComment) {
-
+     
     try {
       const response = await fetch(`http://localhost:3000/localdb/postRatingComment`, {
         method: "POST",

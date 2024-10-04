@@ -16,7 +16,7 @@ export default function GameDetails() {
   const [myRatingComment, setMyRatingComment] = useState({});
   const [allRatingsComments, setAllRatingsComments] = useState([]);
   const [userInput, setUserInput] = useState({});
-  const [isEditing, setIsEditing] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
   const [gamesByCategory, setGamesByCategory] = useState(new Map());
 
   const isInCategory = (gameId, category) => {
@@ -55,16 +55,25 @@ export default function GameDetails() {
   }
 
   function handleRatingChange(rating) {
-    setMyRatingComment(r => ({...r, Rating: rating}))
+    setMyRatingComment((r) => ({ ...r, Rating: rating }));
   }
 
   function handleCommentChange(comment) {
-    
-    setMyRatingComment(r => ({...r, Comment: comment}))
+    setMyRatingComment((r) => ({ ...r, Comment: comment }));
   }
 
-  function updateMyRating() {
-
+  async function updateMyRating() {
+    try {
+      const response = await postRatingComment(
+        myRatingComment.Game_Id,
+        myRatingComment.User_Id,
+        myRatingComment.Rating,
+        myRatingComment.Comment
+      );
+      console.log(response);
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   useEffect(() => {
@@ -156,12 +165,12 @@ export default function GameDetails() {
           <div className="d-flex flex-column ">
             {isEditing ? (
               <EditRatingBox
-                updateMyRating = {updateMyRating}
+                updateMyRating={updateMyRating}
                 rating={myRatingComment.Rating}
                 comment={myRatingComment.Comment}
                 handleEditingStatus={handleEditingStatus}
-                setRating = {handleRatingChange}
-                setComment = {handleCommentChange}
+                setRating={handleRatingChange}
+                setComment={handleCommentChange}
               />
             ) : (
               <RatingBox

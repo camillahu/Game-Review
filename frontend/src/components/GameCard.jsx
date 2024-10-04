@@ -24,7 +24,7 @@ function GameCard(props) {
   }
 
   function viewGamePage() {
-    gameref.current = props.key;
+    gameref.current = props.id;
     handlePageChange("gamePage");
   }
 
