@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { contextStuff } from "../App";
 import { userGames } from "../api/userGames";
 import RatingBox from "./RatingBox";
+import AddGameButtons from "./AddGameButtons";
 import EditRatingBox from "./EditRatingBox";
 import {
   gameDetails,
@@ -161,6 +162,7 @@ export default function GameDetails() {
           </div>
         </div>
         <div>
+        <AddGameButtons/>
           <h3 className="display-6 mt-2">Ratings and comments</h3>
           <div className="d-flex flex-column ">
             {isEditing ? (
