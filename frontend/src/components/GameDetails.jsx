@@ -32,23 +32,23 @@ export default function GameDetails() {
     "currentlyPlayingUserGames",
   ];
 
-  function gameStatus1() {
-    if (isInCategory(game.Id, "ownedUserGames")) {
-      return <div style={{ color: "HSL(120, 50%, 70%)" }}>Owned</div>;
-    } else if (isInCategory(game.Id, "wishlistUserGames")) {
-      return <div style={{ color: "HSL(30, 70%, 70%)" }}>Wishlist</div>;
-    }
-  }
+  // function gameStatus1() {
+  //   if (isInCategory(game.Id, "ownedUserGames")) {
+  //     return <div style={{ color: "HSL(120, 50%, 70%)" }}>Owned</div>;
+  //   } else if (isInCategory(game.Id, "wishlistUserGames")) {
+  //     return <div style={{ color: "HSL(30, 70%, 70%)" }}>Wishlist</div>;
+  //   }
+  // }
 
-  function gameStatus2() {
-    if (isInCategory(game.Id, "playedUserGames")) {
-      return <div style={{ color: "HSL(200, 60%, 65%)" }}>Played</div>;
-    } else if (isInCategory(game.Id, "currentlyPlayingUserGames")) {
-      return (
-        <div style={{ color: "HSL(280, 50%, 70%)" }}>Currently Playing</div>
-      );
-    }
-  }
+  // function gameStatus2() {
+  //   if (isInCategory(game.Id, "playedUserGames")) {
+  //     return <div style={{ color: "HSL(200, 60%, 65%)" }}>Played</div>;
+  //   } else if (isInCategory(game.Id, "currentlyPlayingUserGames")) {
+  //     return (
+  //       <div style={{ color: "HSL(280, 50%, 70%)" }}>Currently Playing</div>
+  //     );
+  //   }
+  // }
 
   function handleEditingStatus() {
     isEditing ? setIsEditing(false) : setIsEditing(true);
@@ -132,14 +132,13 @@ export default function GameDetails() {
         >
           {game.Title}
         </h2>
-        <div
-          className="d-flex flex-row"
-          style={{ color: "HSL(0, 0%, 80%)", fontSize: "0.8rem" }}
-        >
-          <div className="me-3">{gameStatus1()}</div>
-          <div className="ms-3">{gameStatus2()}</div>
-        </div>
+        <AddGameButtons 
+          isOwned={gameCategories.isOwned}
+          isWishlist= {gameCategories.isWishlist}
+          isPlayed= {gameCategories.isPlayed}
+          isCurrentlyPlaying={gameCategories.isCurrentlyPlaying} />
       </div>
+      
       <div className="d-flex flex-column m-4">
         <div className="d-flex justify-content-between align-items-center mb-2 ">
           <div className="square-box-2">
@@ -177,11 +176,7 @@ export default function GameDetails() {
           </div>
         </div>
         <div>
-          <AddGameButtons 
-          isOwned={gameCategories.isOwned}
-          isWishlist= {gameCategories.isWishlist}
-          isPlayed= {gameCategories.isPlayed}
-          isCurrentlyPlaying={gameCategories.isCurrentlyPlaying} />
+          
           <h3 className="display-6 mt-2">Ratings and comments</h3>
           <div className="d-flex flex-column ">
             {isEditing ? (

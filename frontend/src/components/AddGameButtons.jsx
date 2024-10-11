@@ -7,15 +7,11 @@ const AddGameButtons = memo(function AddGameButtons({
   isCurrentlyPlaying,
 }) {
   return (
-    <div className="d-flex justify-content-between custom-button-box ">
-      <span role="button" style={{ color: "HSL(0, 0%, 80%)" }}>
-        Add to:
-      </span>
+    <div className="d-flex justify-content-between">
       <span
         role="button"
-        style={{
-          color: `HSL(120, 50%, 70%)`,
-        }}
+        className="me-3"
+        style={{ color: isOwned ? `HSL(120, 50%, 70%)`: "HSL(0, 0%, 80%)" }}
       >
         Owned
         {isOwned && (
@@ -25,7 +21,11 @@ const AddGameButtons = memo(function AddGameButtons({
           ></i>
         )}
       </span>
-      <span role="button" style={{ color: `HSL(30, 70%, 70%)` }}>
+      <span
+        role="button"
+        className="me-3"
+        style={{ color: isWishlist? `HSL(30, 70%, 70%)` :  "HSL(0, 0%, 80%)"}}
+      >
         Wishlist
         {isWishlist && (
           <i
@@ -34,7 +34,7 @@ const AddGameButtons = memo(function AddGameButtons({
           ></i>
         )}
       </span>
-      <span role="button" style={{ color: `HSL(200, 60%, 65%)` }}>
+      <span role="button" className="me-3" style={{ color: isPlayed? `HSL(200, 60%, 65%)`: "HSL(0, 0%, 80%)" }}>
         Played
         {isPlayed && (
           <i
@@ -43,7 +43,7 @@ const AddGameButtons = memo(function AddGameButtons({
           ></i>
         )}
       </span>
-      <span role="button" style={{ color: "HSL(280, 50%, 70%)" }}>
+      <span role="button" style={{ color: isCurrentlyPlaying? "HSL(280, 50%, 70%)": "HSL(0, 0%, 80%)" }}>
         Currently Playing
         {isCurrentlyPlaying && (
           <i
