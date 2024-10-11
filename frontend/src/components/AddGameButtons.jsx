@@ -1,20 +1,59 @@
-import { useState } from "react";
+import { memo } from "react";
 
-function AddGameButtons() {
-  const [isOwned, setIsOwned] = useState(false);
-  const [isWishlist, setIsWishlist] = useState(false);
-  const [isPlayed, setIsPlayed] = useState(false);
-  const [isCurrentlyPlaying, setIsCurrentlyPlaying] = useState(false);
-
+const AddGameButtons = memo(function AddGameButtons({
+  isOwned,
+  isWishlist,
+  isPlayed,
+  isCurrentlyPlaying,
+}) {
   return (
-    <div className="d-flex justify-content-between m-2" style>
-      <span>Add to: </span>
-      <span style={{ color: "HSL(120, 20%, 70%)" }}>Owned</span>
-      <span style={{ color: "HSL(30, 40%, 70%)" }}>Wishlist</span>
-      <span style={{ color: "HSL(200, 30%, 65%)" }}>Played</span>
-      <span style={{ color: "HSL(280, 20%, 70%)" }}>Currently Playing</span>
+    <div className="d-flex justify-content-between custom-button-box ">
+      <span role="button" style={{ color: "HSL(0, 0%, 80%)" }}>
+        Add to:
+      </span>
+      <span
+        role="button"
+        style={{
+          color: `HSL(120, 50%, 70%)`,
+        }}
+      >
+        Owned
+        {isOwned && (
+          <i
+            className="bi bi-check-circle-fill ms-1"
+            style={{ fontSize: "0.8em" }}
+          ></i>
+        )}
+      </span>
+      <span role="button" style={{ color: `HSL(30, 70%, 70%)` }}>
+        Wishlist
+        {isWishlist && (
+          <i
+            className="bi bi-check-circle-fill ms-1"
+            style={{ fontSize: "0.8em" }}
+          ></i>
+        )}
+      </span>
+      <span role="button" style={{ color: `HSL(200, 60%, 65%)` }}>
+        Played
+        {isPlayed && (
+          <i
+            className="bi bi-check-circle-fill ms-1"
+            style={{ fontSize: "0.8em" }}
+          ></i>
+        )}
+      </span>
+      <span role="button" style={{ color: "HSL(280, 50%, 70%)" }}>
+        Currently Playing
+        {isCurrentlyPlaying && (
+          <i
+            className="bi bi-check-circle-fill ms-1"
+            style={{ fontSize: "0.8em" }}
+          ></i>
+        )}
+      </span>
     </div>
   );
-}
+});
 
 export default AddGameButtons;

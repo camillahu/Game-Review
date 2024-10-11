@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useMemo } from "react";
 import { contextStuff } from "../App";
 import { userGames } from "../api/userGames";
 import RatingBox from "./RatingBox";
@@ -16,7 +16,6 @@ export default function GameDetails() {
   const [game, setGame] = useState({});
   const [myRatingComment, setMyRatingComment] = useState({});
   const [allRatingsComments, setAllRatingsComments] = useState([]);
-  const [userInput, setUserInput] = useState({});
   const [isEditing, setIsEditing] = useState(false);
   const [gamesByCategory, setGamesByCategory] = useState(new Map());
 
@@ -73,7 +72,7 @@ export default function GameDetails() {
       );
       console.log(response);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
@@ -81,7 +80,6 @@ export default function GameDetails() {
     async function fetchGame() {
       try {
         const gameResponse = await gameDetails(gameref.current);
-
         const communityResponse = await gameDetailsCommunity(gameref.current);
         setGame(gameResponse);
         setAllRatingsComments(communityResponse);
@@ -93,12 +91,18 @@ export default function GameDetails() {
           );
           setMyRatingComment(userResponse);
 
-          const gameMap = new Map();
+          const categoryPromises = categories.map((c) =>
+            userGames(loginref.current, c)
+          );
+          const results = await Promise.all(categoryPromises);
+          //optimalisert for å ikke bruke så mye ressurser med Promise.all.
+          //Promise.all kjører alle requestene parallelt.
 
-          for (let c of categories) {
-            const userGamesResponse = await userGames(loginref.current, c);
-            gameMap.set(c, userGamesResponse);
-          }
+          const gameMap = new Map();
+          categories.forEach((category, index) => {
+            gameMap.set(category, results[index]);
+          });
+
           setGamesByCategory(gameMap);
         }
       } catch (error) {
@@ -107,6 +111,17 @@ export default function GameDetails() {
     }
     fetchGame();
   }, []);
+
+  const gameCategories = useMemo(
+    () => ({
+      isOwned: isInCategory(game.Id, "ownedUserGames"),
+      isWishlist: isInCategory(game.Id, "wishlistUserGames"),
+      isPlayed: isInCategory(game.Id, "playedUserGames"),
+      isCurrentlyPlaying: isInCategory(game.Id, "currentlyPlayingUserGames"),
+    }),
+    [gamesByCategory, game.Id]
+  ); //useMemo gjør sånn at vi ikke trenger å fetche på nytt fra db
+  //med mindre gamesByCategory eller game.Id endres når de skal sendes til buttons.
 
   return (
     <div className="container justify-content-center custom-game-page-container">
@@ -162,7 +177,11 @@ export default function GameDetails() {
           </div>
         </div>
         <div>
-        <AddGameButtons/>
+          <AddGameButtons 
+          isOwned={gameCategories.isOwned}
+          isWishlist= {gameCategories.isWishlist}
+          isPlayed= {gameCategories.isPlayed}
+          isCurrentlyPlaying={gameCategories.isCurrentlyPlaying} />
           <h3 className="display-6 mt-2">Ratings and comments</h3>
           <div className="d-flex flex-column ">
             {isEditing ? (

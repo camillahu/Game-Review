@@ -74,4 +74,14 @@ body {
   margin-top: 1rem;
 }
 
+.custom-button-box {
+  background-color: HSL(210, 15%, 20%);
+  border: 2px solid HSL(210, 15%, 15%);
+  padding: 15px;
+  border-radius: 5px;
+  margin-left: 50px;
+  margin-right: 50px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
 
