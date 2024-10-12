@@ -380,6 +380,8 @@ router.post("/postRatingComment", async (req, res) => {
       WHERE Game_Id = @gameId AND [User_Id] = @username;
       `;
 
+      // console.log(isDNF)
+
       await ps.prepare(updateQuery);
       const resultUpdate = await ps.execute({gameId, username, newRating, newComment, isFinished, isDNF})
       await ps.unprepare();

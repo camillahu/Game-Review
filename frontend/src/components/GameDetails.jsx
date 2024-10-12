@@ -48,15 +48,23 @@ export default function GameDetails() {
     setMyRatingComment((r) => ({ ...r, Comment: comment }));
   }
 
-  function handleFinishedChange(status) {
-    const updatedStatus = {
-      ...myRatingComment, 
-      Finished: status.finished || false, 
-      dnf: status.dnf || false
+  function handleFinishedChange(finished) {
+    if (myRatingComment.dnf) {
+      setMyRatingComment((r) => ({ ...r, dnf: false }));
     }
-    setMyRatingComment(updatedStatus)
-    
+    setMyRatingComment((r) => ({ ...r, Finished: finished }));
   }
+
+  function handleDnfChange (dnf) {
+    setMyRatingComment((r) => ({ ...r, dnf: dnf }));
+    if (myRatingComment.Finished) {
+      setMyRatingComment((r) => ({ ...r, Finished: false }));
+    }
+  }
+
+  useEffect(() => {
+    console.log("Updated Rating Comment:", myRatingComment.dnf);
+  }, [myRatingComment]);
 
 
   async function updateMyRating() {
@@ -263,7 +271,7 @@ export default function GameDetails() {
                 setRating={handleRatingChange}
                 setComment={handleCommentChange}
                 setFinishedStatus = {handleFinishedChange}
-                
+                setDnfStatus = {handleDnfChange}
               />
             ) : (
               <RatingBox

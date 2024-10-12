@@ -9,39 +9,40 @@ function EditRatingBox({
   updateMyRating,
   setRating,
   setComment,
-  setFinishedStatus
+  setFinishedStatus,
+  setDnfStatus
 }) {
   const ratingValues = [1, 2, 3, 4, 5];
 
-  const [localFinished, setLocalFinished] = useState(isFinished);
-  const [localDNF, setLocalDNF] = useState(isDNF);
+  // const [localFinished, setLocalFinished] = useState(isFinished);
+  // const [localDNF, setLocalDNF] = useState(isDNF);
 
-  useEffect(()=> {
-    setLocalFinished(isFinished)
-    setLocalDNF(isDNF);
-  }, [isFinished, isDNF])
+  // useEffect(()=> {
+  //   setLocalFinished(isFinished)
+  //   setLocalDNF(isDNF);
+  // }, [isFinished, isDNF])
 
-  const handleCheckboxChange = (status) => {
-    if (status ===  "Finished") {
-      setLocalFinished(true);
-      setLocalDNF(false);
-    }
-    else if (status ===  "dnf") {
-      setLocalFinished(false);
-      setLocalDNF(true);
-    }
-  }
+  // const handleCheckboxChange = (status) => {
+  //   if (status ===  "Finished") {
+  //     setLocalFinished(true);
+  //     setLocalDNF(false);
+  //   }
+  //   else if (status ===  "dnf") {
+  //     setLocalFinished(false);
+  //     setLocalDNF(true);
+  //   }
+  // }
 
-  const handleSave = () => {
-    console.log("Finished status:", localFinished, "DNF status:", localDNF);
-    setFinishedStatus({
-      finished: localFinished,
-      dnf: localDNF,
-    });
+  // const handleSave = () => {
+  //   console.log("Finished status:", localFinished, "DNF status:", localDNF);
+  //   setFinishedStatus({
+  //     finished: localFinished,
+  //     dnf: localDNF,
+  //   });
     
-    updateMyRating();
-    handleEditingStatus();
-  }
+  //   updateMyRating();
+  //   handleEditingStatus();
+  // }
 
   
   return (
@@ -53,7 +54,10 @@ function EditRatingBox({
         <button
           className="btn btn-outline-dark "
           type="submit"
-          onClick={handleSave}
+          onClick={() => {
+            updateMyRating();
+            handleEditingStatus();
+          }}
         >
           save
         </button>
@@ -88,8 +92,8 @@ function EditRatingBox({
             <input
               value="finished"
               type="checkbox"
-              checked={localFinished === true}
-              onChange={(e) => handleCheckboxChange("Finished")}
+              checked={isFinished === true}
+              onChange={() => {isFinished? setFinishedStatus(false) : setFinishedStatus(true)}}
             />
             <span className="ms-1" style={{ fontSize: "70%" }}>
               finished
@@ -99,8 +103,8 @@ function EditRatingBox({
             <input
               value="dnf"
               type="checkbox"
-              checked={localDNF === true}
-              onChange={(e) => handleCheckboxChange("dnf")}
+              checked={isDNF === true}
+              onChange={() => isDNF? setDnfStatus(false) : setDnfStatus(true)}
             />
             <span className="ms-1" style={{ fontSize: "70%" }}>
               DNF
