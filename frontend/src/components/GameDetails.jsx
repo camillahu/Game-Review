@@ -18,7 +18,7 @@ export default function GameDetails() {
   const [myRatingComment, setMyRatingComment] = useState({});
   const [allRatingsComments, setAllRatingsComments] = useState([]);
   const [finishedStatus, setFinishedStatus] = useState(null);
-  const [isEditing, setIsEditing] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
   const [gamesByCategory, setGamesByCategory] = useState(new Map());
   const [isChangingStatus, setIsChangingStatus] = useState(false);
   const [statusChangeSuccess, setStatusChangeSuccess] = useState(false);
