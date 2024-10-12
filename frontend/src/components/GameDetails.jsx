@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext, useMemo } from "react";
 import { contextStuff } from "../App";
 import { userGames } from "../api/userGames";
+import { removeGameStatus, addGameStatus } from "../api/gameStatus";
 import RatingBox from "./RatingBox";
 import AddGameButtons from "./AddGameButtons";
 import EditRatingBox from "./EditRatingBox";
@@ -16,8 +17,11 @@ export default function GameDetails() {
   const [game, setGame] = useState({});
   const [myRatingComment, setMyRatingComment] = useState({});
   const [allRatingsComments, setAllRatingsComments] = useState([]);
-  const [isEditing, setIsEditing] = useState(false);
+  const [finishedStatus, setFinishedStatus] = useState(null);
+  const [isEditing, setIsEditing] = useState(true);
   const [gamesByCategory, setGamesByCategory] = useState(new Map());
+  const [isChangingStatus, setIsChangingStatus] = useState(false);
+  const [statusChangeSuccess, setStatusChangeSuccess] = useState(false);
 
   const isInCategory = (gameId, category) => {
     return gamesByCategory.has(category)
@@ -32,24 +36,6 @@ export default function GameDetails() {
     "currentlyPlayingUserGames",
   ];
 
-  // function gameStatus1() {
-  //   if (isInCategory(game.Id, "ownedUserGames")) {
-  //     return <div style={{ color: "HSL(120, 50%, 70%)" }}>Owned</div>;
-  //   } else if (isInCategory(game.Id, "wishlistUserGames")) {
-  //     return <div style={{ color: "HSL(30, 70%, 70%)" }}>Wishlist</div>;
-  //   }
-  // }
-
-  // function gameStatus2() {
-  //   if (isInCategory(game.Id, "playedUserGames")) {
-  //     return <div style={{ color: "HSL(200, 60%, 65%)" }}>Played</div>;
-  //   } else if (isInCategory(game.Id, "currentlyPlayingUserGames")) {
-  //     return (
-  //       <div style={{ color: "HSL(280, 50%, 70%)" }}>Currently Playing</div>
-  //     );
-  //   }
-  // }
-
   function handleEditingStatus() {
     isEditing ? setIsEditing(false) : setIsEditing(true);
   }
@@ -62,6 +48,7 @@ export default function GameDetails() {
     setMyRatingComment((r) => ({ ...r, Comment: comment }));
   }
 
+
   async function updateMyRating() {
     try {
       const response = await postRatingComment(
@@ -73,6 +60,81 @@ export default function GameDetails() {
       console.log(response);
     } catch (error) {
       console.log(error);
+    }
+  }
+
+  const gameCategories = useMemo(
+    () => ({
+      isOwned: isInCategory(game.Id, "ownedUserGames"),
+      isWishlist: isInCategory(game.Id, "wishlistUserGames"),
+      isPlayed: isInCategory(game.Id, "playedUserGames"),
+      isCurrentlyPlaying: isInCategory(game.Id, "currentlyPlayingUserGames"),
+    }),
+    [gamesByCategory, game.Id]
+  ); //useMemo gjør sånn at vi ikke trenger å fetche på nytt fra db
+  //med mindre gamesByCategory eller game.Id endres når de skal sendes til buttons.
+
+  async function changeGameStatus(clickedStatus) {
+    if (isChangingStatus) return;
+
+    try {
+      setIsChangingStatus(true);
+      let statusChanged = false;
+
+      switch (clickedStatus) {
+        case "owned":
+          gameCategories.isOwned
+            ? await removeStatus("owned")
+            : await addStatus("owned");
+          if (gameCategories.isWishlist) await removeStatus("wishlist");
+          statusChanged = true;
+          break;
+        case "wishlist":
+          gameCategories.isWishlist
+            ? await removeStatus("wishlist")
+            : await addStatus("wishlist");
+          if (gameCategories.isOwned) await removeStatus("owned");
+          statusChanged = true;
+          break;
+        case "played":
+          gameCategories.isPlayed
+            ? await removeStatus("played")
+            : await addStatus("played");
+          if (gameCategories.isCurrentlyPlaying)
+            await removeStatus("currentlyPlaying");
+          statusChanged = true;
+          break;
+        case "currentlyPlaying":
+          gameCategories.isCurrentlyPlaying
+            ? await removeStatus("currentlyPlaying")
+            : await addStatus("currentlyPlaying");
+          if (gameCategories.isPlayed) await removeStatus("played");
+          statusChanged = true;
+          break;
+        default:
+          console.error("Invalid status");
+      }
+      if (statusChanged) setStatusChangeSuccess(true);
+    } catch (error) {
+      console.error("Error changing game status", error);
+    } finally {
+      setIsChangingStatus(false);
+    }
+  }
+
+  async function removeStatus(chosenTable) {
+    try {
+      await removeGameStatus(chosenTable, game.Id, loginref.current);
+    } catch (error) {
+      console.error("Error removing status", error);
+    }
+  }
+
+  async function addStatus(chosenTable) {
+    try {
+      await addGameStatus(chosenTable, game.Id, loginref.current);
+    } catch (error) {
+      console.error("Error adding status", error);
     }
   }
 
@@ -109,36 +171,33 @@ export default function GameDetails() {
         console.error("Error fetching games:", error);
       }
     }
-    fetchGame();
-  }, []);
 
-  const gameCategories = useMemo(
-    () => ({
-      isOwned: isInCategory(game.Id, "ownedUserGames"),
-      isWishlist: isInCategory(game.Id, "wishlistUserGames"),
-      isPlayed: isInCategory(game.Id, "playedUserGames"),
-      isCurrentlyPlaying: isInCategory(game.Id, "currentlyPlayingUserGames"),
-    }),
-    [gamesByCategory, game.Id]
-  ); //useMemo gjør sånn at vi ikke trenger å fetche på nytt fra db
-  //med mindre gamesByCategory eller game.Id endres når de skal sendes til buttons.
+    fetchGame();
+
+    if (statusChangeSuccess) {
+      fetchGame();
+      setStatusChangeSuccess(false);
+    }
+  }, [loginref, gameref, statusChangeSuccess]);
 
   return (
     <div className="container justify-content-center custom-game-page-container">
       <div className="d-flex justify-content-between align-items-center mb-3 ps-3 pe-3 p-1 border-bottom border-secondary">
         <h2
           className="display-5"
-          style={{ color: "HSL(0, 0%, 80%)", fontWeight: "bold" }}
+          style={{ color: "HSL(30, 20%, 85%)", fontWeight: 500 }}
         >
           {game.Title}
         </h2>
-        <AddGameButtons 
+        <AddGameButtons
           isOwned={gameCategories.isOwned}
-          isWishlist= {gameCategories.isWishlist}
-          isPlayed= {gameCategories.isPlayed}
-          isCurrentlyPlaying={gameCategories.isCurrentlyPlaying} />
+          isWishlist={gameCategories.isWishlist}
+          isPlayed={gameCategories.isPlayed}
+          isCurrentlyPlaying={gameCategories.isCurrentlyPlaying}
+          changeGameStatus={changeGameStatus}
+        />
       </div>
-      
+
       <div className="d-flex flex-column m-4">
         <div className="d-flex justify-content-between align-items-center mb-2 ">
           <div className="square-box-2">
@@ -176,8 +235,9 @@ export default function GameDetails() {
           </div>
         </div>
         <div>
-          
-          <h3 className="display-6 mt-2">Ratings and comments</h3>
+          <h3 className="display-6 mt-2" style={{ color: "HSL(30, 20%, 85%)" }}>
+            Ratings and comments
+          </h3>
           <div className="d-flex flex-column ">
             {isEditing ? (
               <EditRatingBox
@@ -187,6 +247,8 @@ export default function GameDetails() {
                 handleEditingStatus={handleEditingStatus}
                 setRating={handleRatingChange}
                 setComment={handleCommentChange}
+                finishedStatus= {finishedStatus}
+                setFinishedStatus= {setFinishedStatus}
               />
             ) : (
               <RatingBox
@@ -195,6 +257,7 @@ export default function GameDetails() {
                 rating={myRatingComment.Rating}
                 comment={myRatingComment.Comment}
                 handleEditingStatus={handleEditingStatus}
+                finishedStatus= {finishedStatus}
               />
             )}
 

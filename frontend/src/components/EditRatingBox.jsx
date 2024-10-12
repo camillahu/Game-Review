@@ -5,8 +5,14 @@ function EditRatingBox({
   updateMyRating,
   setRating,
   setComment,
+  finishedStatus,
+  setFinishedStatus,
 }) {
   const ratingValues = [1, 2, 3, 4, 5];
+
+  const handleCheckboxChange = (value) => {
+   finishedStatus === value ? setFinishedStatus(null) : setFinishedStatus(value)
+  }
 
   return (
     <div className="d-flex flex-column mb-2 custom-comment-box-2">
@@ -46,9 +52,33 @@ function EditRatingBox({
         <input
           className="form-control ms-3"
           type="text"
-          value={comment || ''}
+          value={comment || ""}
           onChange={(e) => setComment(e.target.value)}
         />
+        <div className="d-flex flex-column ms-3">
+          <div className="d-flex flex-row">
+            <input
+              value="finished"
+              type="checkbox"
+              checked={finishedStatus === "finished"}
+              onChange={() => handleCheckboxChange("finished")}
+            />
+            <span className="ms-1" style={{ fontSize: "70%" }}>
+              finished
+            </span>
+          </div>
+          <div className="d-flex flex-row">
+            <input
+              value="DNF"
+              type="checkbox"
+              checked={finishedStatus === "DNF"}
+              onChange={() => handleCheckboxChange("DNF")}
+            />
+            <span className="ms-1" style={{ fontSize: "70%" }}>
+              DNF
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   );
