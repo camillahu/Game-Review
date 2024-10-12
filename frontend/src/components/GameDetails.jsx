@@ -170,6 +170,7 @@ export default function GameDetails() {
         
         setGame(gameResponse);
         setAllRatingsComments(communityResponse);
+        console.log(communityResponse);
         
         const gameRatings = await ratingsByGame(gameref.current); //ikke rør  rekkefølgen her, endelig funka det!
         calculateAvgRating(gameRatings); 
@@ -302,6 +303,8 @@ export default function GameDetails() {
                   username={user.User_Id}
                   rating={user.Rating}
                   comment={user.Comment}
+                  isFinished= {user.Finished}
+                  isDNF = {user.dnf}
                 />
               ))}
           </div>

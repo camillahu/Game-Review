@@ -303,7 +303,7 @@ router.get("/gameDetailsCommunity", async (req, res) => {
   const { gameId } = req.query;
   try {
     await dbCon();
-    const result = await sql.query`SELECT [User_Id] ,Game_Id, Rating ,Comment
+    const result = await sql.query`SELECT [User_Id] ,Game_Id, Rating ,Comment, Finished, dnf
                                     FROM [GameReviewExpressDb].[dbo].[Game_Ratings_Comments]
                                     WHERE Game_Id = ${gameId};`;
     const games = result.recordset;
