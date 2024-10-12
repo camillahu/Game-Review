@@ -156,34 +156,23 @@ export default function GameDetails() {
     }
   }
 
-  // useEffect(()=> {
-  //   async function fetchRatings() {
-  //     try {
-        
-  //     console.log(ratingsResponse);
-  //     }
-  //     catch(error) {
-  //       console.error("Error fetching games:", error);
-  //     }
-  //   }
-  //   fetchRatings();
-  // }, [myRatingComment, allRatingsComments, gameref])
-
   function calculateAvgRating(gameRatings)  {
-    console.log(gameRatings);
+
+    const sum = gameRatings.reduce((a, c) => a + c, 0);
+    const average = (sum / gameRatings.length).toFixed(2); 
+    !isNaN(average) ?  setAverageRating(average) : setAverageRating(null);
   }
 
   useEffect(() => {
     async function fetchGame() {
       try {
         const [gameResponse, communityResponse] = await Promise.all([gameDetails(gameref.current), gameDetailsCommunity(gameref.current)])
-        // const gameResponse = await gameDetails(gameref.current);
-        // const communityResponse = await gameDetailsCommunity(gameref.current);
+        
         setGame(gameResponse);
         setAllRatingsComments(communityResponse);
         
-        const gameRatings = await ratingsByGame(gameref.current);
-        calculateAvgRating(gameRatings);
+        const gameRatings = await ratingsByGame(gameref.current); //ikke rør  rekkefølgen her, endelig funka det!
+        calculateAvgRating(gameRatings); 
 
         if (loginref) {
           const userResponse = await gameDetailsUser(
@@ -269,7 +258,7 @@ export default function GameDetails() {
             </p>
             <p className="lead" style={{ marginTop: "auto" }}>
               <strong>Community Rating: </strong>
-              {game.Rating ? game.Rating : "No ratings yet"}
+              {averageRating ? averageRating : "No ratings yet"}
             </p>
           </div>
         </div>

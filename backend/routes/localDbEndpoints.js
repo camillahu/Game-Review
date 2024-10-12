@@ -536,14 +536,16 @@ router.get("/ratingsByGame", async (req, res) => {
 
     // ps.input("gameId", sql.Int);
 
-    const query = await sql.query `SELECT Rating 
+    const result = await sql.query `SELECT Rating
                     FROM [GameReviewExpressDb].[dbo].[Game_Ratings_Comments]
                     WHERE Game_Id = ${gameId}`;
+
+    const ratingsArray = result.recordset.map(row => row.Rating);
 
     // await ps.prepare(query);
     // const result =  await ps.execute({ gameId });
 
-    res.status(200).json(query.recordset);
+    res.status(200).json(ratingsArray);
 
     // await ps.unprepare();
     
