@@ -77,3 +77,22 @@ export async function gameDetailsUser(gameId, username) {
       throw error;
     }
   }
+
+  export async function ratingsByGame(gameId) {
+    try {
+      const response = await fetch(`http://localhost:3000/localdb/ratingsByGame?gameId=${gameId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error("Game request failed:", error);
+      throw error;
+    }
+  }

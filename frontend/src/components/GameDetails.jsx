@@ -10,6 +10,7 @@ import {
   gameDetailsCommunity,
   gameDetailsUser,
   postRatingComment,
+  ratingsByGame,
 } from "../api/gameDetails";
 
 export default function GameDetails() {
@@ -17,6 +18,7 @@ export default function GameDetails() {
   const [game, setGame] = useState({});
   const [myRatingComment, setMyRatingComment] = useState({});
   const [allRatingsComments, setAllRatingsComments] = useState([]);
+  const [averageRating, setAverageRating] = useState(null)
   
   const [isEditing, setIsEditing] = useState(false);
   const [gamesByCategory, setGamesByCategory] = useState(new Map());
@@ -61,11 +63,6 @@ export default function GameDetails() {
       setMyRatingComment((r) => ({ ...r, Finished: false }));
     }
   }
-
-  useEffect(() => {
-    console.log("Updated Rating Comment:", myRatingComment.dnf);
-  }, [myRatingComment]);
-
 
   async function updateMyRating() {
     try {
@@ -159,13 +156,34 @@ export default function GameDetails() {
     }
   }
 
+  // useEffect(()=> {
+  //   async function fetchRatings() {
+  //     try {
+        
+  //     console.log(ratingsResponse);
+  //     }
+  //     catch(error) {
+  //       console.error("Error fetching games:", error);
+  //     }
+  //   }
+  //   fetchRatings();
+  // }, [myRatingComment, allRatingsComments, gameref])
+
+  function calculateAvgRating(gameRatings)  {
+    console.log(gameRatings);
+  }
+
   useEffect(() => {
     async function fetchGame() {
       try {
-        const gameResponse = await gameDetails(gameref.current);
-        const communityResponse = await gameDetailsCommunity(gameref.current);
+        const [gameResponse, communityResponse] = await Promise.all([gameDetails(gameref.current), gameDetailsCommunity(gameref.current)])
+        // const gameResponse = await gameDetails(gameref.current);
+        // const communityResponse = await gameDetailsCommunity(gameref.current);
         setGame(gameResponse);
         setAllRatingsComments(communityResponse);
+        
+        const gameRatings = await ratingsByGame(gameref.current);
+        calculateAvgRating(gameRatings);
 
         if (loginref) {
           const userResponse = await gameDetailsUser(
