@@ -1,19 +1,49 @@
+import {useState, useEffect} from 'react'
+
 function EditRatingBox({
   rating,
   comment,
+  isFinished,
+  isDNF,
   handleEditingStatus,
   updateMyRating,
   setRating,
   setComment,
-  finishedStatus,
-  setFinishedStatus,
+  setFinishedStatus
 }) {
   const ratingValues = [1, 2, 3, 4, 5];
 
-  const handleCheckboxChange = (value) => {
-   finishedStatus === value ? setFinishedStatus(null) : setFinishedStatus(value)
+  const [localFinished, setLocalFinished] = useState(isFinished);
+  const [localDNF, setLocalDNF] = useState(isDNF);
+
+  useEffect(()=> {
+    setLocalFinished(isFinished)
+    setLocalDNF(isDNF);
+  }, [isFinished, isDNF])
+
+  const handleCheckboxChange = (status) => {
+    if (status ===  "Finished") {
+      setLocalFinished(true);
+      setLocalDNF(false);
+    }
+    else if (status ===  "dnf") {
+      setLocalFinished(false);
+      setLocalDNF(true);
+    }
   }
 
+  const handleSave = () => {
+    console.log("f :" + localFinished, "d: " + localDNF)
+    setFinishedStatus({
+      finished: localFinished,
+      dnf: localDNF,
+    });
+    
+    updateMyRating();
+    handleEditingStatus();
+  }
+
+  
   return (
     <div className="d-flex flex-column mb-2 custom-comment-box-2">
       <div className="d-flex flex-row justify-content-between me-2">
@@ -23,9 +53,7 @@ function EditRatingBox({
         <button
           className="btn btn-outline-dark "
           type="submit"
-          onClick={() => {
-            updateMyRating(), handleEditingStatus();
-          }}
+          onClick={handleSave}
         >
           save
         </button>
@@ -60,8 +88,8 @@ function EditRatingBox({
             <input
               value="finished"
               type="checkbox"
-              checked={finishedStatus === "finished"}
-              onChange={() => handleCheckboxChange("finished")}
+              checked={localFinished === true}
+              onChange={(e) => handleCheckboxChange("Finished")}
             />
             <span className="ms-1" style={{ fontSize: "70%" }}>
               finished
@@ -69,10 +97,10 @@ function EditRatingBox({
           </div>
           <div className="d-flex flex-row">
             <input
-              value="DNF"
+              value="dnf"
               type="checkbox"
-              checked={finishedStatus === "DNF"}
-              onChange={() => handleCheckboxChange("DNF")}
+              checked={localDNF === true}
+              onChange={(e) => handleCheckboxChange("dnf")}
             />
             <span className="ms-1" style={{ fontSize: "70%" }}>
               DNF

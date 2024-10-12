@@ -17,7 +17,7 @@ export default function GameDetails() {
   const [game, setGame] = useState({});
   const [myRatingComment, setMyRatingComment] = useState({});
   const [allRatingsComments, setAllRatingsComments] = useState([]);
-  const [finishedStatus, setFinishedStatus] = useState(null);
+  
   const [isEditing, setIsEditing] = useState(false);
   const [gamesByCategory, setGamesByCategory] = useState(new Map());
   const [isChangingStatus, setIsChangingStatus] = useState(false);
@@ -48,6 +48,22 @@ export default function GameDetails() {
     setMyRatingComment((r) => ({ ...r, Comment: comment }));
   }
 
+  function handleFinishedChange(status) {
+    console.log("1 :" + myRatingComment.dnf);
+    const updatedStatus = {
+      ...myRatingComment, 
+      Finished: status.finished || false, 
+      dnf: status.dnf || false
+    }
+    setMyRatingComment(updatedStatus)
+    
+  }
+
+  useEffect(() => {
+    console.log("Updated myRatingComment:", myRatingComment);
+    console.log("Current dnf value:", myRatingComment.dnf);
+  }, [myRatingComment]);
+
 
   async function updateMyRating() {
     try {
@@ -55,9 +71,12 @@ export default function GameDetails() {
         myRatingComment.Game_Id,
         myRatingComment.User_Id,
         myRatingComment.Rating,
-        myRatingComment.Comment
+        myRatingComment.Comment,
+        myRatingComment.Finished,
+        myRatingComment.dnf
       );
-      console.log(response);
+      console.log(response.message); 
+      
     } catch (error) {
       console.log(error);
     }
@@ -244,11 +263,13 @@ export default function GameDetails() {
                 updateMyRating={updateMyRating}
                 rating={myRatingComment.Rating}
                 comment={myRatingComment.Comment}
+                isFinished= {myRatingComment.Finished}
+                isDNF= {myRatingComment.dnf}
                 handleEditingStatus={handleEditingStatus}
                 setRating={handleRatingChange}
                 setComment={handleCommentChange}
-                finishedStatus= {finishedStatus}
-                setFinishedStatus= {setFinishedStatus}
+                setFinishedStatus = {handleFinishedChange}
+                
               />
             ) : (
               <RatingBox
@@ -256,8 +277,10 @@ export default function GameDetails() {
                 username={myRatingComment.User_Id}
                 rating={myRatingComment.Rating}
                 comment={myRatingComment.Comment}
+                isFinished= {myRatingComment.Finished}
+                isDNF= {myRatingComment.dnf}
                 handleEditingStatus={handleEditingStatus}
-                finishedStatus= {finishedStatus}
+           
               />
             )}
 

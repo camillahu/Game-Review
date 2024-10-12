@@ -324,7 +324,7 @@ router.get("/gameDetailsUser", async (req, res) => {
     await dbCon();
 
     const result = await sql.query`
-      SELECT [User_Id], Game_Id, Rating, Comment
+      SELECT [User_Id], Game_Id, Rating, Comment, Finished, dnf
       FROM [GameReviewExpressDb].[dbo].[Game_Ratings_Comments]
       WHERE Game_Id = ${gameId} AND [User_Id] = ${username};`;
 
@@ -338,6 +338,8 @@ router.get("/gameDetailsUser", async (req, res) => {
         Game_Id: gameId,
         Rating: null,
         Comment: null,
+        Finished: null,
+        dnf: null
       });
     }
   } catch (err) {
@@ -349,19 +351,19 @@ router.get("/gameDetailsUser", async (req, res) => {
 });
 
 router.post("/postRatingComment", async (req, res) => {
-  const { gameId, username, newRating, newComment } = req.body;
+  const { gameId, username, newRating, newComment, isFinished, isDNF } = req.body;
   try {
     await dbCon();
 
     const checkQuery = await sql.query`
-      SELECT [User_Id], Game_Id, Rating, Comment
+      SELECT [User_Id], Game_Id, Rating, Comment, Finished, dnf
       FROM [GameReviewExpressDb].[dbo].[Game_Ratings_Comments]
       WHERE Game_Id = ${gameId} AND [User_Id] = ${username};`;
 
     if (checkQuery.recordset.length > 0) {
       const updateQuery = await sql.query`
       UPDATE Game_Ratings_Comments
-      SET Rating = ${newRating}, Comment = ${newComment}
+      SET Rating = ${newRating}, Comment = ${newComment}, Finished = ${isFinished}, dnf = ${isDNF}
       WHERE Game_Id = ${gameId} AND [User_Id] = ${username};
       `;
 
@@ -373,8 +375,8 @@ router.post("/postRatingComment", async (req, res) => {
         });
     } else {
       const insertQuery = await sql.query`
-      INSERT INTO Game_Ratings_Comments ([User_Id], Game_Id, Rating, Comment)
-      Values(${username},${gameId}, ${newRating}, ${newComment})`;
+      INSERT INTO Game_Ratings_Comments ([User_Id], Game_Id, Rating, Comment, Finished, dnf)
+      Values(${username},${gameId}, ${newRating}, ${newComment}, ${isFinished}, ${isDNF})`;
 
       if (insertQuery) {
         res.status(200).json({ message: `Rating updated successfully with` });
