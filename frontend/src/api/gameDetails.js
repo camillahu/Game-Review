@@ -58,13 +58,15 @@ export async function gameDetailsUser(gameId, username) {
   export async function postRatingComment(gameId, username, newRating, newComment, isFinished, isDNF) {
      
     try {
+      console.log(isFinished, isDNF)
       const response = await fetch(`http://localhost:3000/localdb/postRatingComment`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({gameId, username, newRating, newComment, isFinished, isDNF}) 
-      });
+        
+      } );
   
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

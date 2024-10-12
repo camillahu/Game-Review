@@ -33,7 +33,7 @@ function EditRatingBox({
   }
 
   const handleSave = () => {
-    console.log("f :" + localFinished, "d: " + localDNF)
+    console.log("Finished status:", localFinished, "DNF status:", localDNF);
     setFinishedStatus({
       finished: localFinished,
       dnf: localDNF,

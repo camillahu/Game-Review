@@ -49,7 +49,6 @@ export default function GameDetails() {
   }
 
   function handleFinishedChange(status) {
-    console.log("1 :" + myRatingComment.dnf);
     const updatedStatus = {
       ...myRatingComment, 
       Finished: status.finished || false, 
@@ -58,11 +57,6 @@ export default function GameDetails() {
     setMyRatingComment(updatedStatus)
     
   }
-
-  useEffect(() => {
-    console.log("Updated myRatingComment:", myRatingComment);
-    console.log("Current dnf value:", myRatingComment.dnf);
-  }, [myRatingComment]);
 
 
   async function updateMyRating() {

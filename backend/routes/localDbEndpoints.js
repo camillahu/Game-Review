@@ -352,34 +352,54 @@ router.get("/gameDetailsUser", async (req, res) => {
 
 router.post("/postRatingComment", async (req, res) => {
   const { gameId, username, newRating, newComment, isFinished, isDNF } = req.body;
+
+
   try {
-    await dbCon();
+    const pool = await dbCon();
+    const ps = new sql.PreparedStatement(pool);
 
-    const checkQuery = await sql.query`
-      SELECT [User_Id], Game_Id, Rating, Comment, Finished, dnf
+    ps.input('gameId', sql.Int);
+    ps.input('username', sql.VarChar);
+    ps.input('newRating', sql.Int);
+    ps.input('newComment', sql.NVarChar);
+    ps.input('isFinished', sql.Bit);
+    ps.input('isDNF', sql.Bit);
+
+    const checkQuery = ` SELECT [User_Id], Game_Id, Rating, Comment, Finished, dnf
       FROM [GameReviewExpressDb].[dbo].[Game_Ratings_Comments]
-      WHERE Game_Id = ${gameId} AND [User_Id] = ${username};`;
+      WHERE Game_Id = @gameId AND [User_Id] = @username;`;
 
-    if (checkQuery.recordset.length > 0) {
-      const updateQuery = await sql.query`
-      UPDATE Game_Ratings_Comments
-      SET Rating = ${newRating}, Comment = ${newComment}, Finished = ${isFinished}, dnf = ${isDNF}
-      WHERE Game_Id = ${gameId} AND [User_Id] = ${username};
+    await ps.prepare(checkQuery);
+    const result = await ps.execute({gameId, username})
+    await ps.unprepare();
+
+
+    if (result.recordset.length > 0) {
+      const updateQuery = ` UPDATE Game_Ratings_Comments
+      SET Rating = @newRating, Comment = @newComment, Finished = @isFinished, dnf = @isDNF
+      WHERE Game_Id = @gameId AND [User_Id] = @username;
       `;
 
-      if (updateQuery.rowsAffected[0] > 0) {
+      await ps.prepare(updateQuery);
+      const resultUpdate = await ps.execute({gameId, username, newRating, newComment, isFinished, isDNF})
+      await ps.unprepare();
+
+      if (resultUpdate.rowsAffected[0] > 0) {
         res.status(200).json({ message: `Rating updated successfully with` });
       } else
         res.json({
           message: "something went wrong when updating db 0, rows affected",
         });
     } else {
-      const insertQuery = await sql.query`
-      INSERT INTO Game_Ratings_Comments ([User_Id], Game_Id, Rating, Comment, Finished, dnf)
-      Values(${username},${gameId}, ${newRating}, ${newComment}, ${isFinished}, ${isDNF})`;
+      const insertQuery = ` INSERT INTO Game_Ratings_Comments ([User_Id], Game_Id, Rating, Comment, Finished, dnf)
+      Values(@username, @gameId, @newRating, @newComment, @isFinished, @isDNF)`;
+
+      await ps.prepare(insertQuery);
+      await ps.execute({gameId, username, newRating, newComment, isFinished, isDNF})
+      await ps.unprepare();
 
       if (insertQuery) {
-        res.status(200).json({ message: `Rating updated successfully with` });
+        res.status(200).json({ message: `Rating updated successfully` });
       } else res.json({ message: "something went wrong when updating db" });
     }
   } catch (err) {
