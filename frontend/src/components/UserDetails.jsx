@@ -1,8 +1,21 @@
 import { useContext, useState, useEffect } from "react";
 import { contextStuff } from "../App";
+import { userDetails } from "../api/userDetails.js";
 
 export default function UserDetails() {
   const { loginref, gameref, handlePageChange } = useContext(contextStuff);
+
+  const [userInfo, setUserInfo] = useState({})
+    
+  useEffect(() => {
+      async function fetchDetails() {
+        const result = await userDetails(loginref.current)
+         setUserInfo(result)
+      }
+      fetchDetails();
+      
+    }, [loginref]);
+    console.log(userInfo)
 
   return (
     <div className="container justify-content-center custom-game-page-container">
@@ -20,13 +33,13 @@ export default function UserDetails() {
             <div className="square-box-4">
               <img
                 className="img-fluid img-cover"
-                src="/img/IMG_1707.JPEG"
+                src={userInfo.ImgPath}
                 alt="game img"
               />
             </div>
             <p className="lead">
               <strong>Bio:</strong>
-              user bio here
+              {userInfo.Bio}
             </p>
           </div>
           <div className="d-flex justify-content-start square-box-3 flex-column">
@@ -46,7 +59,6 @@ export default function UserDetails() {
                 alt="game img"
               />
             </div>
-            
           </div>
         </div>
         <div>

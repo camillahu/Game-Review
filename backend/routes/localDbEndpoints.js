@@ -303,7 +303,8 @@ router.get("/gameDetailsCommunity", async (req, res) => {
   const { gameId } = req.query;
   try {
     await dbCon();
-    const result = await sql.query`SELECT [User_Id] ,Game_Id, Rating ,Comment, Finished, dnf
+    const result =
+      await sql.query`SELECT [User_Id] ,Game_Id, Rating ,Comment, Finished, dnf
                                     FROM [GameReviewExpressDb].[dbo].[Game_Ratings_Comments]
                                     WHERE Game_Id = ${gameId};`;
     const games = result.recordset;
@@ -469,8 +470,7 @@ router.delete("/removeGameStatus", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send("Database connection error");
-  } 
-  finally {
+  } finally {
     closeDbCon();
   }
 });
@@ -515,19 +515,16 @@ router.post("/addGameStatus", async (req, res) => {
 
     await ps.unprepare();
     res.status(200).send("Record added");
-    
   } catch (err) {
     console.error(err);
     res.status(500).send("Database connection error");
-  } 
-  finally {
+  } finally {
     closeDbCon();
   }
 });
 
 router.get("/ratingsByGame", async (req, res) => {
   const { gameId } = req.query;
-
 
   try {
     await dbCon();
@@ -536,11 +533,11 @@ router.get("/ratingsByGame", async (req, res) => {
 
     // ps.input("gameId", sql.Int);
 
-    const result = await sql.query `SELECT Rating
+    const result = await sql.query`SELECT Rating
                     FROM [GameReviewExpressDb].[dbo].[Game_Ratings_Comments]
                     WHERE Game_Id = ${gameId}`;
 
-    const ratingsArray = result.recordset.map(row => row.Rating);
+    const ratingsArray = result.recordset.map((row) => row.Rating);
 
     // await ps.prepare(query);
     // const result =  await ps.execute({ gameId });
@@ -548,12 +545,30 @@ router.get("/ratingsByGame", async (req, res) => {
     res.status(200).json(ratingsArray);
 
     // await ps.unprepare();
-    
   } catch (err) {
     console.error(err);
     res.status(500).send("Database connection error");
-  } 
-  finally {
+  } finally {
+    closeDbCon();
+  }
+});
+
+router.get("/userDetails", async (req, res) => {
+  const { username } = req.query;
+
+  try {
+    await dbCon();
+
+    const result = await sql.query` SELECT [Username] ,[ImgPath] ,[Bio] ,[FavoriteGameId]
+                              FROM [GameReviewExpressDb].[dbo].[Users]
+                              WHERE Username = ${username}
+    `;
+    const info = result.recordset
+    res.status(200).json(info);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Database connection error");
+  } finally {
     closeDbCon();
   }
 });
