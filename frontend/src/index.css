@@ -34,6 +34,22 @@ body {
   padding: 10px;
 }
 
+.square-box-4 {
+  width: 12rem;  
+  height: 12rem; 
+  
+  overflow: hidden; 
+  border-radius: 5px;
+}
+
+.square-box-5 {
+  width: 12rem;  
+  height: 12rem; 
+  
+  overflow: hidden; 
+  border-radius: 5px;
+}
+
 .img-cover {
     width: 100%;
     height: 100%;

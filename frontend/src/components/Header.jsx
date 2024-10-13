@@ -2,22 +2,14 @@ import React from "react";
 import { useState, useEffect } from "react";
 
 function Header({ loginref, handlePageChange }) {
-  const [btnTxt, setBtnTxt] = useState("Sign in");
+  const [signinTxt, setSigninTxt] = useState("Sign in");
+  const [profileTxt, setProfileTxt] = useState("");
+ 
 
-  function handleIsLoggedIn() {
-    if (
-      loginref.current == "" ||
-      loginref.current == null ||
-      loginref.current == undefined
-    ) {
-      setBtnTxt("Sign in");
-    } else {
-      setBtnTxt("Sign out");
-    }
-  }
+
 
   function handleSignInStatus() {
-    if (btnTxt == "Sign out") {
+    if (signinTxt == "Sign out") {
       loginref.current = "";
       handlePageChange("home");
     } else {
@@ -26,7 +18,17 @@ function Header({ loginref, handlePageChange }) {
   }
 
   useEffect(() => {
-    handleIsLoggedIn();
+    if (
+      loginref.current == "" ||
+      loginref.current == null ||
+      loginref.current == undefined
+    ) {
+      setSigninTxt("Sign in");
+      setProfileTxt("")
+    } else {
+      setSigninTxt("Sign out");
+      setProfileTxt("Profile")
+    }
   }, [loginref.current]);
 
   return (
@@ -39,12 +41,15 @@ function Header({ loginref, handlePageChange }) {
         >
           GameReview!
         </span>
+        <span role="button"
+          className="navbar-brand display-3"
+          onClick={() => handlePageChange("profile")}>{profileTxt}</span>
         <span
           role="button"
           className="navbar-brand display-3"
           onClick={handleSignInStatus}
         >
-          {btnTxt}
+          {signinTxt}
         </span>
       </div>
     </nav>
