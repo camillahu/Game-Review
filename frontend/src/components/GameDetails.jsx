@@ -18,8 +18,8 @@ export default function GameDetails() {
   const [game, setGame] = useState({});
   const [myRatingComment, setMyRatingComment] = useState({});
   const [allRatingsComments, setAllRatingsComments] = useState([]);
-  const [averageRating, setAverageRating] = useState(null)
-  
+  const [averageRating, setAverageRating] = useState(null);
+
   const [isEditing, setIsEditing] = useState(false);
   const [gamesByCategory, setGamesByCategory] = useState(new Map());
   const [isChangingStatus, setIsChangingStatus] = useState(false);
@@ -41,9 +41,30 @@ export default function GameDetails() {
   function handleEditingStatus() {
     isEditing ? setIsEditing(false) : setIsEditing(true);
   }
-
   function handleRatingChange(rating) {
-    setMyRatingComment((r) => ({ ...r, Rating: rating }));
+    const nullableRating = () => {
+      return rating === "no rating" ? null : rating;
+    };
+
+    if (nullableRating() === null) {
+      const userConfirmed = window.confirm(
+        "If you remove your rating, your comment and finished status will also be removed. Do you want to proceed?"
+      );
+
+      if (!userConfirmed) {
+        return;
+      }
+
+      setMyRatingComment((r) => ({
+        ...r,
+        Rating: nullableRating(),
+        Comment: "",
+        Finished: false,
+        dnf: false,
+      }));
+    } else {
+      setMyRatingComment((r) => ({ ...r, Rating: nullableRating() }));
+    }
   }
 
   function handleCommentChange(comment) {
@@ -51,13 +72,13 @@ export default function GameDetails() {
   }
 
   function handleFinishedChange(finished) {
+    setMyRatingComment((r) => ({ ...r, Finished: finished }));
     if (myRatingComment.dnf) {
       setMyRatingComment((r) => ({ ...r, dnf: false }));
     }
-    setMyRatingComment((r) => ({ ...r, Finished: finished }));
   }
 
-  function handleDnfChange (dnf) {
+  function handleDnfChange(dnf) {
     setMyRatingComment((r) => ({ ...r, dnf: dnf }));
     if (myRatingComment.Finished) {
       setMyRatingComment((r) => ({ ...r, Finished: false }));
@@ -74,8 +95,7 @@ export default function GameDetails() {
         myRatingComment.Finished,
         myRatingComment.dnf
       );
-      console.log(response.message); 
-      
+      handleEditingStatus();
     } catch (error) {
       console.log(error);
     }
@@ -156,24 +176,25 @@ export default function GameDetails() {
     }
   }
 
-  function calculateAvgRating(gameRatings)  {
-
+  function calculateAvgRating(gameRatings) {
     const sum = gameRatings.reduce((a, c) => a + c, 0);
-    const average = (sum / gameRatings.length).toFixed(2); 
-    !isNaN(average) ?  setAverageRating(average) : setAverageRating(null);
+    const average = (sum / gameRatings.length).toFixed(2);
+    !isNaN(average) ? setAverageRating(average) : setAverageRating(null);
   }
 
   useEffect(() => {
     async function fetchGame() {
       try {
-        const [gameResponse, communityResponse] = await Promise.all([gameDetails(gameref.current), gameDetailsCommunity(gameref.current)])
-        
+        const [gameResponse, communityResponse] = await Promise.all([
+          gameDetails(gameref.current),
+          gameDetailsCommunity(gameref.current),
+        ]);
+
         setGame(gameResponse);
         setAllRatingsComments(communityResponse);
-        console.log(communityResponse);
-        
+
         const gameRatings = await ratingsByGame(gameref.current); //ikke rør  rekkefølgen her, endelig funka det!
-        calculateAvgRating(gameRatings); 
+        calculateAvgRating(gameRatings);
 
         if (loginref) {
           const userResponse = await gameDetailsUser(
@@ -273,13 +294,12 @@ export default function GameDetails() {
                 updateMyRating={updateMyRating}
                 rating={myRatingComment.Rating}
                 comment={myRatingComment.Comment}
-                isFinished= {myRatingComment.Finished}
-                isDNF= {myRatingComment.dnf}
-                handleEditingStatus={handleEditingStatus}
+                isFinished={myRatingComment.Finished}
+                isDNF={myRatingComment.dnf}
                 setRating={handleRatingChange}
                 setComment={handleCommentChange}
-                setFinishedStatus = {handleFinishedChange}
-                setDnfStatus = {handleDnfChange}
+                setFinishedStatus={handleFinishedChange}
+                setDnfStatus={handleDnfChange}
               />
             ) : (
               <RatingBox
@@ -287,10 +307,9 @@ export default function GameDetails() {
                 username={myRatingComment.User_Id}
                 rating={myRatingComment.Rating}
                 comment={myRatingComment.Comment}
-                isFinished= {myRatingComment.Finished}
-                isDNF= {myRatingComment.dnf}
+                isFinished={myRatingComment.Finished}
+                isDNF={myRatingComment.dnf}
                 handleEditingStatus={handleEditingStatus}
-           
               />
             )}
 
@@ -303,8 +322,8 @@ export default function GameDetails() {
                   username={user.User_Id}
                   rating={user.Rating}
                   comment={user.Comment}
-                  isFinished= {user.Finished}
-                  isDNF = {user.dnf}
+                  isFinished={user.Finished}
+                  isDNF={user.dnf}
                 />
               ))}
           </div>

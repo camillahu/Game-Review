@@ -13,7 +13,9 @@ import Header from "./components/Header";
 function App() {
   const [page, setPage] = useState("gamePage");
   const loginref = useRef("camillzy");
-  const gameref = useRef(1);
+  const gameref = useRef(1
+    
+  );
 
   function handlePageChange(page) {
     setPage(page);

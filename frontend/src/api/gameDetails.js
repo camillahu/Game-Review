@@ -58,7 +58,7 @@ export async function gameDetailsUser(gameId, username) {
   export async function postRatingComment(gameId, username, newRating, newComment, isFinished, isDNF) {
      
     try {
-      console.log(isDNF)
+
       const response = await fetch(`http://localhost:3000/localdb/postRatingComment`, {
         method: "POST",
         headers: {

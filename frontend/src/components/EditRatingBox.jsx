@@ -5,7 +5,6 @@ function EditRatingBox({
   comment,
   isFinished,
   isDNF,
-  handleEditingStatus,
   updateMyRating,
   setRating,
   setComment,
@@ -13,37 +12,8 @@ function EditRatingBox({
   setDnfStatus
 }) {
   const ratingValues = [1, 2, 3, 4, 5];
-
-  // const [localFinished, setLocalFinished] = useState(isFinished);
-  // const [localDNF, setLocalDNF] = useState(isDNF);
-
-  // useEffect(()=> {
-  //   setLocalFinished(isFinished)
-  //   setLocalDNF(isDNF);
-  // }, [isFinished, isDNF])
-
-  // const handleCheckboxChange = (status) => {
-  //   if (status ===  "Finished") {
-  //     setLocalFinished(true);
-  //     setLocalDNF(false);
-  //   }
-  //   else if (status ===  "dnf") {
-  //     setLocalFinished(false);
-  //     setLocalDNF(true);
-  //   }
-  // }
-
-  // const handleSave = () => {
-  //   console.log("Finished status:", localFinished, "DNF status:", localDNF);
-  //   setFinishedStatus({
-  //     finished: localFinished,
-  //     dnf: localDNF,
-  //   });
-    
-  //   updateMyRating();
-  //   handleEditingStatus();
-  // }
-
+  
+  
   
   return (
     <div className="d-flex flex-column mb-2 custom-comment-box-2">
@@ -56,7 +26,6 @@ function EditRatingBox({
           type="submit"
           onClick={() => {
             updateMyRating();
-            handleEditingStatus();
           }}
         >
           save
@@ -72,6 +41,9 @@ function EditRatingBox({
               value={rating || "no rating"}
               onChange={(e) => setRating(e.target.value)}
             >
+              <option key={0} value="no rating">
+                  no rating
+                </option>
               {ratingValues.map((v, i) => (
                 <option key={i + 1} value={v}>
                   {v}
