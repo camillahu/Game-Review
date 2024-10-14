@@ -9,6 +9,10 @@ export default function UserDetails() {
   const [userInfo, setUserInfo] = useState({});
   const [allGames, setAllGames] = useState(new Map());
 
+  const gamesOwnedNum = allGames.get("ownedUserGames")?.length || 0;
+  const gamesPlayedNum = allGames.get("playedUserGames")?.length || 0;
+  
+
   useEffect(() => {
     async function fetchDetails() {
       const result = await userDetails(loginref.current);
@@ -45,7 +49,7 @@ export default function UserDetails() {
     }
     fetchDetails();
   }, [loginref]);
-  console.log(allGames);
+
 
   return (
     <div className="container justify-content-center custom-game-page-container">
@@ -88,11 +92,11 @@ export default function UserDetails() {
           <div className="d-flex justify-content-start square-box-3 flex-column">
             <p className="lead">
               <strong> Games owned: </strong>
-              number
+              {gamesOwnedNum}
             </p>
             <p className="lead">
               <strong> Games played: </strong>
-              number
+              {gamesPlayedNum}
             </p>
             <p className="lead" style={{ marginTop: "auto" }}>
               <strong> Favorite game: </strong>
