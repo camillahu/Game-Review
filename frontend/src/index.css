@@ -37,17 +37,13 @@ body {
 .square-box-4 {
   width: 12rem;  
   height: 12rem; 
-  
   overflow: hidden; 
   border-radius: 5px;
 }
 
 .square-box-5 {
-  width: 12rem;  
-  height: 12rem; 
-  
-  overflow: hidden; 
-  border-radius: 5px;
+  width: 25rem;  
+  height: 25rem; 
 }
 
 .img-cover {
@@ -99,5 +95,14 @@ body {
   margin-right: 50px;
   margin-top: 10px;
   margin-bottom: 20px;
+}
+
+.custom-bio-box {
+  padding: 10px;
+  background-color: HSL(45, 70%, 70%);
+  border-radius: 5px;
+  margin-bottom: 0;
+  height: 12rem;
+  width: 25rem;
 }
 

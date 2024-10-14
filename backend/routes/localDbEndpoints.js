@@ -559,11 +559,11 @@ router.get("/userDetails", async (req, res) => {
   try {
     await dbCon();
 
-    const result = await sql.query` SELECT [Username] ,[ImgPath] ,[Bio] ,[FavoriteGameId]
+    const result = await sql.query` SELECT [Username] ,[ImgPath] ,[Bio] ,[FavoriteGameId], [Birthday], [Country]
                               FROM [GameReviewExpressDb].[dbo].[Users]
                               WHERE Username = ${username}
     `;
-    const info = result.recordset
+    const info = result.recordset[0];
     res.status(200).json(info);
   } catch (err) {
     console.error(err);
