@@ -11,6 +11,13 @@ export default function UserDetails() {
 
   const gamesOwnedNum = allGames.get("ownedUserGames")?.length || 0;
   const gamesPlayedNum = allGames.get("playedUserGames")?.length || 0;
+
+  function viewFavoriteGame() {
+    if(userInfo.FavoriteGame_Id){
+      gameref.current = userInfo.FavoriteGame_Id;
+    handlePageChange("gamePage");
+    }
+  }
   
 
   useEffect(() => {
@@ -106,6 +113,7 @@ export default function UserDetails() {
                 className="img-fluid img-cover"
                 src={userInfo.FaveGamePic || "img/default.png"}
                 alt="game img"
+                onClick={viewFavoriteGame}
               />
             </div>
           </div>

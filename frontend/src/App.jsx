@@ -14,7 +14,7 @@ import Header from "./components/Header";
 function App() {
   const [page, setPage] = useState("profile");
   const loginref = useRef("camillzy");
-  const gameref = useRef(2);
+  const gameref = useRef(1);
 
   function handlePageChange(page) {
     setPage(page);
@@ -64,7 +64,7 @@ function App() {
       
         case "profile":
           return (
-            <contextStuff.Provider value={{ loginref, handlePageChange }}>
+            <contextStuff.Provider value={{ loginref, gameref, handlePageChange }}>
               <Profile/> 
             </contextStuff.Provider>
           );
