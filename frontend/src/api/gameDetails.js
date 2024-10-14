@@ -55,15 +55,36 @@ export async function gameDetailsUser(gameId, username) {
     }
   }
 
-  export async function postRatingComment(gameId, username, newRating, newComment) {
+  export async function postRatingComment(gameId, username, newRating, newComment, isFinished, isDNF) {
      
     try {
+
       const response = await fetch(`http://localhost:3000/localdb/postRatingComment`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({gameId, username, newRating, newComment}) 
+        body: JSON.stringify({gameId, username, newRating, newComment, isFinished, isDNF}) 
+        
+      } );
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error("Game request failed:", error);
+      throw error;
+    }
+  }
+
+  export async function ratingsByGame(gameId) {
+    try {
+      const response = await fetch(`http://localhost:3000/localdb/ratingsByGame?gameId=${gameId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
   
       if (!response.ok) {

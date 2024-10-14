@@ -1,5 +1,5 @@
 
-function RatingBox({ loggedInUser, username, rating, comment, handleEditingStatus, finishedStatus }) {
+function RatingBox({ loggedInUser, username, rating, comment, isFinished, isDNF, handleEditingStatus}) {
   
   const usernameView = () => {
     if (username === loggedInUser) return "my rating:";
@@ -12,10 +12,11 @@ function RatingBox({ loggedInUser, username, rating, comment, handleEditingStatu
   };
 
   const finishedStatusText = () => {
-    if (finishedStatus === "finished") return "finished";
-    else if (finishedStatus === "DNF") return "DNF";
+    if (isFinished) return "finished";
+    else if (isDNF) return "DNF";
     else return "";
   }
+
 
   return (
     <div className="d-flex flex-column mb-2 custom-comment-box-1">

@@ -303,7 +303,8 @@ router.get("/gameDetailsCommunity", async (req, res) => {
   const { gameId } = req.query;
   try {
     await dbCon();
-    const result = await sql.query`SELECT [User_Id] ,Game_Id, Rating ,Comment
+    const result =
+      await sql.query`SELECT [User_Id] ,Game_Id, Rating ,Comment, Finished, dnf
                                     FROM [GameReviewExpressDb].[dbo].[Game_Ratings_Comments]
                                     WHERE Game_Id = ${gameId};`;
     const games = result.recordset;
@@ -324,7 +325,7 @@ router.get("/gameDetailsUser", async (req, res) => {
     await dbCon();
 
     const result = await sql.query`
-      SELECT [User_Id], Game_Id, Rating, Comment
+      SELECT [User_Id], Game_Id, Rating, Comment, Finished, dnf
       FROM [GameReviewExpressDb].[dbo].[Game_Ratings_Comments]
       WHERE Game_Id = ${gameId} AND [User_Id] = ${username};`;
 
@@ -338,6 +339,8 @@ router.get("/gameDetailsUser", async (req, res) => {
         Game_Id: gameId,
         Rating: null,
         Comment: null,
+        Finished: null,
+        dnf: null,
       });
     }
   } catch (err) {
@@ -349,35 +352,70 @@ router.get("/gameDetailsUser", async (req, res) => {
 });
 
 router.post("/postRatingComment", async (req, res) => {
-  const { gameId, username, newRating, newComment } = req.body;
+  const { gameId, username, newRating, newComment, isFinished, isDNF } =
+    req.body;
+
   try {
-    await dbCon();
+    const pool = await dbCon();
+    const ps = new sql.PreparedStatement(pool);
 
-    const checkQuery = await sql.query`
-      SELECT [User_Id], Game_Id, Rating, Comment
+    ps.input("gameId", sql.Int);
+    ps.input("username", sql.VarChar);
+    ps.input("newRating", sql.Int);
+    ps.input("newComment", sql.NVarChar);
+    ps.input("isFinished", sql.Bit);
+    ps.input("isDNF", sql.Bit);
+
+    const checkQuery = ` SELECT [User_Id], Game_Id, Rating, Comment, Finished, dnf
       FROM [GameReviewExpressDb].[dbo].[Game_Ratings_Comments]
-      WHERE Game_Id = ${gameId} AND [User_Id] = ${username};`;
+      WHERE Game_Id = @gameId AND [User_Id] = @username;`;
 
-    if (checkQuery.recordset.length > 0) {
-      const updateQuery = await sql.query`
-      UPDATE Game_Ratings_Comments
-      SET Rating = ${newRating}, Comment = ${newComment}
-      WHERE Game_Id = ${gameId} AND [User_Id] = ${username};
+    await ps.prepare(checkQuery);
+    const result = await ps.execute({ gameId, username });
+    await ps.unprepare();
+
+    if (result.recordset.length > 0) {
+      const updateQuery = ` UPDATE Game_Ratings_Comments
+      SET Rating = @newRating, Comment = @newComment, Finished = @isFinished, dnf = @isDNF
+      WHERE Game_Id = @gameId AND [User_Id] = @username;
       `;
 
-      if (updateQuery.rowsAffected[0] > 0) {
+      // console.log(isDNF)
+
+      await ps.prepare(updateQuery);
+      const resultUpdate = await ps.execute({
+        gameId,
+        username,
+        newRating,
+        newComment,
+        isFinished,
+        isDNF,
+      });
+      await ps.unprepare();
+
+      if (resultUpdate.rowsAffected[0] > 0) {
         res.status(200).json({ message: `Rating updated successfully with` });
       } else
         res.json({
           message: "something went wrong when updating db 0, rows affected",
         });
     } else {
-      const insertQuery = await sql.query`
-      INSERT INTO Game_Ratings_Comments ([User_Id], Game_Id, Rating, Comment)
-      Values(${username},${gameId}, ${newRating}, ${newComment})`;
+      const insertQuery = ` INSERT INTO Game_Ratings_Comments ([User_Id], Game_Id, Rating, Comment, Finished, dnf)
+      Values(@username, @gameId, @newRating, @newComment, @isFinished, @isDNF)`;
+
+      await ps.prepare(insertQuery);
+      await ps.execute({
+        gameId,
+        username,
+        newRating,
+        newComment,
+        isFinished,
+        isDNF,
+      });
+      await ps.unprepare();
 
       if (insertQuery) {
-        res.status(200).json({ message: `Rating updated successfully with` });
+        res.status(200).json({ message: `Rating updated successfully` });
       } else res.json({ message: "something went wrong when updating db" });
     }
   } catch (err) {
@@ -392,44 +430,43 @@ router.delete("/removeGameStatus", async (req, res) => {
   // console.log("Request body:", req.body);
   const { chosenStatus, gameId, username } = req.body;
 
-  const getTableName  = () => {
+  const getTableName = () => {
     switch (chosenStatus) {
       case "owned":
-        return "User_OwnedGames"
+        return "User_OwnedGames";
         break;
       case "wishlist":
-        return "User_Wishlist"
+        return "User_Wishlist";
         break;
       case "played":
-        return "User_HasPlayed"
+        return "User_HasPlayed";
         break;
       case "currentlyPlaying":
-        return "User_CurrentlyPlaying"
+        return "User_CurrentlyPlaying";
         break;
-      default: 
+      default:
         return null;
     }
-  }
+  };
 
   const tableName = getTableName();
-  if(!tableName) {
-    return res.status(400).send("invalid status")
+  if (!tableName) {
+    return res.status(400).send("invalid status");
   }
 
   try {
     const pool = await dbCon();
     const ps = new sql.PreparedStatement(pool);
 
-    ps.input('gameId', sql.Int);
-    ps.input('username', sql.VarChar);
+    ps.input("gameId", sql.Int);
+    ps.input("username", sql.VarChar);
 
-    const query = `DELETE FROM ${tableName} WHERE Game_Id = @gameId AND [User_Id] = @username`
+    const query = `DELETE FROM ${tableName} WHERE Game_Id = @gameId AND [User_Id] = @username`;
     await ps.prepare(query);
-    await ps.execute({gameId, username })
+    await ps.execute({ gameId, username });
 
     await ps.unprepare();
     res.status(200).send("Record deleted");
-
   } catch (err) {
     console.error(err);
     res.status(500).send("Database connection error");
@@ -444,47 +481,90 @@ router.post("/addGameStatus", async (req, res) => {
   const getTableName = () => {
     switch (chosenStatus) {
       case "owned":
-        return "User_OwnedGames"
+        return "User_OwnedGames";
         break;
       case "wishlist":
-        return "User_Wishlist"
+        return "User_Wishlist";
         break;
       case "played":
-        return "User_HasPlayed"
+        return "User_HasPlayed";
         break;
       case "currentlyPlaying":
-        return "User_CurrentlyPlaying"
+        return "User_CurrentlyPlaying";
         break;
-      default: 
+      default:
         return null;
     }
-  }
+  };
 
   const tableName = getTableName();
-  if(!tableName) {
+  if (!tableName) {
     return res.status(400).send("Invalid status");
   }
   try {
     const pool = await dbCon();
     const ps = new sql.PreparedStatement(pool);
 
-    ps.input('gameId', sql.Int);
-    ps.input('username', sql.VarChar);
+    ps.input("gameId", sql.Int);
+    ps.input("username", sql.VarChar);
 
     const query = `INSERT INTO [GameReviewExpressDb].[dbo].[${tableName}]
         VALUES (@username, @gameId);`;
     await ps.prepare(query);
-    await ps.execute({gameId, username})
+    await ps.execute({ gameId, username });
 
-    // const result = await sql.query`
-    //     INSERT INTO [GameReviewExpressDb].[dbo].[${tableName}]
-    //     VALUES (${username}, ${gameId});`;
-
-    // const rows = result.recordset;
-
-    // res.json(rows);
-
+    await ps.unprepare();
     res.status(200).send("Record added");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Database connection error");
+  } finally {
+    closeDbCon();
+  }
+});
+
+router.get("/ratingsByGame", async (req, res) => {
+  const { gameId } = req.query;
+
+  try {
+    await dbCon();
+    // const pool = await dbCon();
+    // const ps = new sql.PreparedStatement(pool);
+
+    // ps.input("gameId", sql.Int);
+
+    const result = await sql.query`SELECT Rating
+                    FROM [GameReviewExpressDb].[dbo].[Game_Ratings_Comments]
+                    WHERE Game_Id = ${gameId}`;
+
+    const ratingsArray = result.recordset.map((row) => row.Rating);
+
+    // await ps.prepare(query);
+    // const result =  await ps.execute({ gameId });
+
+    res.status(200).json(ratingsArray);
+
+    // await ps.unprepare();
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Database connection error");
+  } finally {
+    closeDbCon();
+  }
+});
+
+router.get("/userDetails", async (req, res) => {
+  const { username } = req.query;
+
+  try {
+    await dbCon();
+
+    const result = await sql.query` SELECT [Username] ,[ImgPath] ,[Bio] ,[FavoriteGameId]
+                              FROM [GameReviewExpressDb].[dbo].[Users]
+                              WHERE Username = ${username}
+    `;
+    const info = result.recordset
+    res.status(200).json(info);
   } catch (err) {
     console.error(err);
     res.status(500).send("Database connection error");

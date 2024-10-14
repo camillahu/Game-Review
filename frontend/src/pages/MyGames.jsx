@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import GameCard from "../components/GameCard";
 import { userGames } from "../api/userGames";
 
-function MyGames({ loginref, handlePageChange }) {
+function MyGames({ loginref }) {
   const [games, setGames] = useState(new Map());
   const [selectedView, setSelectedView] = useState("allUserGames");
 

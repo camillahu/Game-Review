@@ -1,19 +1,20 @@
+import {useState, useEffect} from 'react'
+
 function EditRatingBox({
   rating,
   comment,
-  handleEditingStatus,
+  isFinished,
+  isDNF,
   updateMyRating,
   setRating,
   setComment,
-  finishedStatus,
   setFinishedStatus,
+  setDnfStatus
 }) {
   const ratingValues = [1, 2, 3, 4, 5];
-
-  const handleCheckboxChange = (value) => {
-   finishedStatus === value ? setFinishedStatus(null) : setFinishedStatus(value)
-  }
-
+  
+  
+  
   return (
     <div className="d-flex flex-column mb-2 custom-comment-box-2">
       <div className="d-flex flex-row justify-content-between me-2">
@@ -24,7 +25,7 @@ function EditRatingBox({
           className="btn btn-outline-dark "
           type="submit"
           onClick={() => {
-            updateMyRating(), handleEditingStatus();
+            updateMyRating();
           }}
         >
           save
@@ -40,6 +41,9 @@ function EditRatingBox({
               value={rating || "no rating"}
               onChange={(e) => setRating(e.target.value)}
             >
+              <option key={0} value="no rating">
+                  no rating
+                </option>
               {ratingValues.map((v, i) => (
                 <option key={i + 1} value={v}>
                   {v}
@@ -60,8 +64,8 @@ function EditRatingBox({
             <input
               value="finished"
               type="checkbox"
-              checked={finishedStatus === "finished"}
-              onChange={() => handleCheckboxChange("finished")}
+              checked={isFinished === true}
+              onChange={() => {isFinished? setFinishedStatus(false) : setFinishedStatus(true)}}
             />
             <span className="ms-1" style={{ fontSize: "70%" }}>
               finished
@@ -69,10 +73,10 @@ function EditRatingBox({
           </div>
           <div className="d-flex flex-row">
             <input
-              value="DNF"
+              value="dnf"
               type="checkbox"
-              checked={finishedStatus === "DNF"}
-              onChange={() => handleCheckboxChange("DNF")}
+              checked={isDNF === true}
+              onChange={() => isDNF? setDnfStatus(false) : setDnfStatus(true)}
             />
             <span className="ms-1" style={{ fontSize: "70%" }}>
               DNF

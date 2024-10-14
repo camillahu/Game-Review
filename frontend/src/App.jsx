@@ -8,12 +8,13 @@ import MyGames from "./pages/MyGames";
 import LogIn from "./pages/LogIn";
 import Home from "./pages/Home";
 import GamePage from "./pages/GamePage";
+import Profile from "./pages/Profile";
 import Header from "./components/Header";
 
 function App() {
-  const [page, setPage] = useState("gamePage");
+  const [page, setPage] = useState("profile");
   const loginref = useRef("camillzy");
-  const gameref = useRef(4);
+  const gameref = useRef(2);
 
   function handlePageChange(page) {
     setPage(page);
@@ -24,7 +25,7 @@ function App() {
     switch (page) {
       case "login":
         return (
-          <contextStuff.Provider value={{ loginref, handlePageChange }}>
+          <contextStuff.Provider value={{ loginref, gameref, handlePageChange }}>
             <LogIn />
           </contextStuff.Provider>
         );
@@ -48,7 +49,9 @@ function App() {
 
       case "myGames":
         return (
-          <MyGames loginref={loginref} handlePageChange={handlePageChange} />
+          <contextStuff.Provider value={{ loginref, handlePageChange }}>
+            <MyGames loginref={loginref} handlePageChange={handlePageChange} />
+          </contextStuff.Provider>
         );
 
       case "gamePage":
@@ -58,6 +61,14 @@ function App() {
           </contextStuff.Provider>
         );
         break;
+      
+        case "profile":
+          return (
+            <contextStuff.Provider value={{ loginref, handlePageChange }}>
+              <Profile/> 
+            </contextStuff.Provider>
+          );
+          break;
 
       default:
         return console.log("error changing page");
