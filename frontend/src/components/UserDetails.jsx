@@ -11,6 +11,15 @@ export default function UserDetails() {
     async function fetchDetails() {
       const result = await userDetails(loginref.current);
       setUserInfo(result);
+      if(!result.Bio) {
+        setUserInfo ((b) => ({ ...b, Bio: "No bio yet" }))
+      }
+      if(!result.Age) {
+        setUserInfo ((a) => ({ ...a, Age: "not specified" }))
+      }
+      if(!result.Country) {
+        setUserInfo ((c) => ({ ...c, Country: "not specified" }))
+      }
       console.log(userInfo);
     }
     fetchDetails();
