@@ -559,11 +559,25 @@ router.get("/userDetails", async (req, res) => {
   try {
     await dbCon();
 
-    const result = await sql.query` SELECT [Username] ,[ImgPath] ,[Bio] ,[FavoriteGameId], [Birthday], [Country]
-                              FROM [GameReviewExpressDb].[dbo].[Users]
-                              WHERE Username = ${username}
+    const result = await sql.query` SELECT Users.[Username], Users.[ImgPath] AS ProfilePic, Users.[Bio] , Users.[FavoriteGame_Id], 
+                                    Users.[Birthday], Users.[Country], Games.[Title], Games.[ImgPath] AS FaveGamePic
+                                    FROM [GameReviewExpressDb].[dbo].[Users]
+                                    JOIN Games ON Games.Id= [Users].FavoriteGame_Id
+                                    WHERE Username = ${username}
     `;
+
     const info = result.recordset[0];
+
+    // const responseObject = {
+    //   Username: info.Username,
+    //   ProfilePic: info.ProfilePic ?? "../default.png",
+    //   Bio: info.Bio ?? null,
+    //   FavoriteGame_Id: info.FavoriteGame_Id ?? null,
+    //   Birthday: info.Birthday ?? null,
+    //   Country: info.Country ?? null,
+    //   FaveGamePic: info.FaveGamePic ?? null,
+    // }
+    
     res.status(200).json(info);
   } catch (err) {
     console.error(err);
@@ -572,5 +586,7 @@ router.get("/userDetails", async (req, res) => {
     closeDbCon();
   }
 });
+
+
 
 module.exports = router;

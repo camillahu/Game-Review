@@ -1,29 +1,51 @@
 import { useContext, useState, useEffect } from "react";
 import { contextStuff } from "../App";
 import { userDetails } from "../api/userDetails.js";
+import { userGames } from "../api/userGames.js";
 
 export default function UserDetails() {
   const { loginref, gameref, handlePageChange } = useContext(contextStuff);
 
   const [userInfo, setUserInfo] = useState({});
+  const [allGames, setAllGames] = useState(new Map());
 
   useEffect(() => {
     async function fetchDetails() {
       const result = await userDetails(loginref.current);
       setUserInfo(result);
-      if(!result.Bio) {
-        setUserInfo ((b) => ({ ...b, Bio: "No bio yet" }))
-      }
-      if(!result.Age) {
-        setUserInfo ((a) => ({ ...a, Age: "not specified" }))
-      }
-      if(!result.Country) {
-        setUserInfo ((c) => ({ ...c, Country: "not specified" }))
-      }
-      console.log(userInfo);
+        if(!result.Bio) {
+          setUserInfo ((b) => ({ ...b, Bio: "No bio yet" }))
+        }
+        if(!result.Age) {
+          setUserInfo ((a) => ({ ...a, Age: "not specified" }))
+        }
+        if(!result.Country) {
+          setUserInfo ((c) => ({ ...c, Country: "not specified" }))
+        } //denne funker ikke helt
+
+      const categories = [
+        "ownedUserGames",
+        "wishlistUserGames",
+        "playedUserGames",
+        "currentlyPlayingUserGames",
+      ];
+
+      const dataForStats = categories.map((c) =>
+        userGames(loginref.current, c)
+      );
+      const results = await Promise.all(dataForStats);
+
+      const gameMap = new Map();
+          categories.forEach((category, index) => {
+            gameMap.set(category, results[index]);
+          });
+
+          setAllGames(gameMap);
+
     }
     fetchDetails();
   }, [loginref]);
+  console.log(allGames);
 
   return (
     <div className="container justify-content-center custom-game-page-container">
@@ -42,7 +64,7 @@ export default function UserDetails() {
               <div className="square-box-4 " style= {{border: "5px, solid, HSL(45, 70%, 50%)"}}>
                 <img
                   className="img-fluid img-cover"
-                  src={userInfo.ImgPath}
+                  src={userInfo.ProfilePic}
                   alt="profile img"
                 />
               </div>
@@ -78,7 +100,7 @@ export default function UserDetails() {
             <div className="square-box-4" style= {{border: "5px, solid, HSL(340, 20%, 50%)"}}>
               <img
                 className="img-fluid img-cover"
-                src="/img/HZD.png"
+                src={userInfo.FaveGamePic || "img/default.png"}
                 alt="game img"
               />
             </div>
