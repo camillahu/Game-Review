@@ -587,6 +587,43 @@ router.get("/userDetails", async (req, res) => {
   }
 });
 
+router.get("/genresForPieChart", async (req, res) => {
+  const {username} = req.query;
+
+  try {
+    await dbCon();
+    const result = await sql.query`SELECT g.Id, g.Title,
+                              STRING_AGG(gen.Name, ', ') AS Genres
+                        FROM Games g
+                        JOIN Game_Genres gg ON g.Id = gg.Game_Id
+                        JOIN Genres gen ON gg.Genre_Id = gen.Id
+                        WHERE g.Id IN (
+                            SELECT Game_Id FROM User_HasPlayed WHERE User_Id = ${username}
+                        )
+                        GROUP BY g.Id, g.Title
+                        UNION
+                        SELECT g.Id, g.Title, 
+                              STRING_AGG(gen.Name, ', ') AS Genres
+                        FROM Games g
+                        JOIN Game_Genres gg ON g.Id = gg.Game_Id
+                        JOIN Genres gen ON gg.Genre_Id = gen.Id
+                        WHERE g.Id IN (
+                            SELECT Game_Id FROM User_CurrentlyPlaying WHERE User_Id = ${username}
+                        )
+                        GROUP BY g.Id, g.Title
+                        ORDER BY g.Title;
+    `
+    const games = result.recordset;
+    res.json(games);
+  }
+  catch(err) {
+    console.error(err);
+    res.status(500).send("Database connection error");
+  }
+  finally {
+    closeDbCon();
+  }
+})
 
 
 module.exports = router;
