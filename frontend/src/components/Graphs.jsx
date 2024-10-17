@@ -1,41 +1,23 @@
 import { Pie } from "react-chartjs-2";
-import { genresForPieChart } from "../api/userGames.js";
+import { genresForPieChart, userRatings } from "../api/userGames.js";
 import { Chart, ArcElement, Tooltip, Legend } from "chart.js";
 import { useEffect, useState } from "react";
 Chart.register(ArcElement, Tooltip, Legend);
 Chart.defaults.color = "HSL(30, 20%, 70%)";
 
 function PieChart({ username }) {
-  const [chartData, setChartData] = useState(null);
-
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: false,
-      },
-      tooltip: {
-        enabled: false,
-      },
-      datalabels: {
-        anchor: "end",
-        align: "end",
-        color: "#fff",
-        formatter: (value, context) => {
-          return context.chart.data.labels[context.dataIndex];
-        },
-      },
-    },
-  };
+  const [pieData, setPieData] = useState(null);
+  const [ratingsData, setRatingsData] = useState({});
 
   useEffect(() => {
-    async function fetchGenres() {
-      const result = await genresForPieChart(username);
+    async function fetchData() {
+      const [genresResult, ratingsResult] = 
+      await Promise.all([genresForPieChart(username), userRatings(username)]) 
       const genreCount = {};
 
-      result.forEach((g) => {
-        const genresarray = g.Genres.split(", ");
-        genresarray.forEach((genre) => {
+      genresResult.forEach((g) => {
+        const genresArray = g.Genres.split(", ");
+        genresArray.forEach((genre) => {
           genreCount[genre] = (genreCount[genre] || 0) + 1;
         });
       });
@@ -47,7 +29,7 @@ function PieChart({ username }) {
       const labels = sortedGenres.map(([genre]) => genre);
       const data = sortedGenres.map(([, count]) => count);
 
-      setChartData({
+      setPieData({
         labels: labels,
         datasets: [
           {
@@ -79,9 +61,22 @@ function PieChart({ username }) {
           },
         ],
       });
+
+
+      const ratings = ratingsResult
+      .filter(row => row.Rating)
+      .reduce((acc, row) => {
+        acc[row.Rating] = (acc[row.Rating] || 0) + 1;
+        return acc
+      }, {})
+      setRatingsData(ratings) //key blir ratingen, value blir hvor mange ganger ratingen er gitt. 
     }
-    fetchGenres();
+    fetchData();
   }, []);
+
+
+  
+
 
   return (
     <div>
@@ -97,7 +92,7 @@ function PieChart({ username }) {
         >
           Most played genres
         </p>
-        {chartData ? <Pie data={chartData} /> : <p>Loading chart data...</p>}
+        {pieData ? <Pie data={pieData} /> : <p>Loading chart data...</p>}
       </div>
     </div>
   );

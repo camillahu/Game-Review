@@ -625,5 +625,27 @@ router.get("/genresForPieChart", async (req, res) => {
   }
 })
 
+router.get("/userRatings", async (req, res) => {
+  const {username } = req.query;
+
+  try {
+    await dbCon();
+
+    const result = await sql.query`
+      SELECT [User_Id], Game_Id, Rating 
+      FROM [GameReviewExpressDb].[dbo].[Game_Ratings_Comments]
+      WHERE [User_Id] = ${username};`;
+
+    const ratings = result.recordset;
+
+    res.json(ratings)
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Database connection error");
+  } finally {
+    closeDbCon();
+  }
+});
+
 
 module.exports = router;
