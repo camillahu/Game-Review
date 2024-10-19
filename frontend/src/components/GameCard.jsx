@@ -1,8 +1,7 @@
-import {useContext} from "react";
-import {contextStuff} from "../App"
+import { useContext } from "react";
+import { contextStuff } from "../App";
 
 function GameCard(props) {
-
   const { handlePageChange, gameref } = useContext(contextStuff);
 
   function gameStatus1() {
@@ -66,7 +65,9 @@ function GameCard(props) {
             {gameStatus2()}
           </div>
           <div>
-            <button className="btn btn-outline-light" onClick={viewGamePage}>View details</button>
+            <button className="btn btn-outline-light" onClick={viewGamePage}>
+              View details
+            </button>
           </div>
         </div>
       </div>

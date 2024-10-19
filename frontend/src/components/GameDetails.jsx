@@ -131,7 +131,7 @@ export default function GameDetails() {
       isPlayed: isInCategory(game.Id, "playedUserGames"),
       isCurrentlyPlaying: isInCategory(game.Id, "currentlyPlayingUserGames"),
     }),
-    [gamesByCategory, game.Id]
+    [gamesByCategory, game.Id, loginref]
   ); //useMemo gjør sånn at vi ikke trenger å fetche på nytt fra db
   //med mindre gamesByCategory eller game.Id endres når de skal sendes til buttons.
 
@@ -232,6 +232,17 @@ export default function GameDetails() {
       )
     }
 
+  function gameStatusVisability() {
+    if(!loginref.current) return null;
+    return <AddGameButtons
+    isOwned={gameCategories.isOwned}
+    isWishlist={gameCategories.isWishlist}
+    isPlayed={gameCategories.isPlayed}
+    isCurrentlyPlaying={gameCategories.isCurrentlyPlaying}
+    changeGameStatus={changeGameStatus}
+  />
+  }
+
   useEffect(() => {
     async function fetchGame() {
       try {
@@ -289,13 +300,7 @@ export default function GameDetails() {
         >
           {game.Title}
         </h2>
-        <AddGameButtons
-          isOwned={gameCategories.isOwned}
-          isWishlist={gameCategories.isWishlist}
-          isPlayed={gameCategories.isPlayed}
-          isCurrentlyPlaying={gameCategories.isCurrentlyPlaying}
-          changeGameStatus={changeGameStatus}
-        />
+        {gameStatusVisability()}
       </div>
 
       <div className="d-flex flex-column m-4">

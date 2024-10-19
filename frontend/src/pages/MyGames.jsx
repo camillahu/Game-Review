@@ -25,7 +25,6 @@ function MyGames({ loginref }) {
       for (let v of views) {
         myGames.set(v, await userGames(loginref.current, v));
       }
-      console.log(myGames);
       setGames(myGames);
     }
     fetchGames();

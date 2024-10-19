@@ -1,5 +1,5 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import 'bootstrap-icons/font/bootstrap-icons.css';
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 import React, { useState, useRef, createContext } from "react";
 
@@ -13,19 +13,20 @@ import Header from "./components/Header";
 
 function App() {
   const [page, setPage] = useState("profile");
-  const loginref = useRef('fjellgeit');
+  const loginref = useRef("fjellgeit");
   const gameref = useRef(1);
 
   function handlePageChange(page) {
     setPage(page);
-    console.log(page);
   }
 
   function updateView() {
     switch (page) {
       case "login":
         return (
-          <contextStuff.Provider value={{ loginref, gameref, handlePageChange }}>
+          <contextStuff.Provider
+            value={{ loginref, gameref, handlePageChange }}
+          >
             <LogIn />
           </contextStuff.Provider>
         );
@@ -49,26 +50,30 @@ function App() {
 
       case "myGames":
         return (
-          <contextStuff.Provider value={{ loginref, handlePageChange }}>
+          <contextStuff.Provider value={{ loginref, gameref, handlePageChange }}>
             <MyGames loginref={loginref} handlePageChange={handlePageChange} />
           </contextStuff.Provider>
         );
 
       case "gamePage":
         return (
-          <contextStuff.Provider value={{ loginref, gameref, handlePageChange }}>
-            <GamePage /> 
+          <contextStuff.Provider
+            value={{ loginref, gameref, handlePageChange }}
+          >
+            <GamePage />
           </contextStuff.Provider>
         );
         break;
-      
-        case "profile":
-          return (
-            <contextStuff.Provider value={{ loginref, gameref, handlePageChange }}>
-              <Profile/> 
-            </contextStuff.Provider>
-          );
-          break;
+
+      case "profile":
+        return (
+          <contextStuff.Provider
+            value={{ loginref, gameref, handlePageChange }}
+          >
+            <Profile />
+          </contextStuff.Provider>
+        );
+        break;
 
       default:
         return console.log("error changing page");
@@ -77,7 +82,11 @@ function App() {
 
   return (
     <>
-      <Header loginref={loginref} handlePageChange={handlePageChange} />
+      <Header
+        loginref={loginref}
+        handlePageChange={handlePageChange}
+        page={page}
+      />
       {updateView()}
     </>
   );

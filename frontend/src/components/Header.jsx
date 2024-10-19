@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 
-function Header({ loginref, handlePageChange }) {
+function Header({ loginref, handlePageChange, page }) {
   const [signinTxt, setSigninTxt] = useState("Sign in");
 
   function handleSignInStatus() {
@@ -22,6 +22,7 @@ function Header({ loginref, handlePageChange }) {
         <span
           role="button"
           className="navbar-brand display-3"
+          style = {{ fontWeight: page === "myGames" ? "bold" : "" }}
           onClick={() => handlePageChange("myGames")}
         >
           {loginref.current ? "My Games" : ""}
@@ -29,6 +30,7 @@ function Header({ loginref, handlePageChange }) {
         <span
           role="button"
           className="navbar-brand display-3"
+          style = {{ fontWeight: page === "profile" ? "bold" : "" }}
           onClick={() => handlePageChange("profile")}
         >
           {loginref.current ? "Profile" : ""}

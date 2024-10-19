@@ -10,7 +10,7 @@ export default function UserDetails() {
   const [userInfo, setUserInfo] = useState({});
   const [allGames, setAllGames] = useState(new Map());
 
-  const gamesOwnedNum = allGames.get("ownedUserGames")?.length || 0;
+  const gamesOwnedNum = allGames.get("ownedUserGames")?.length || 0; //setter variablene til 0 dersom den er null
   const gamesPlayedNum = allGames.get("playedUserGames")?.length || 0;
 
   function viewFavoriteGame() {
@@ -122,7 +122,7 @@ export default function UserDetails() {
             >
               <img
                 className="img-fluid img-cover"
-                src={userInfo.FaveGamePic || "img/default.png"}
+                src={userInfo.FaveGamePic || "img/noFaveGame.webp"}
                 alt="game img"
                 onClick={viewFavoriteGame}
               />
