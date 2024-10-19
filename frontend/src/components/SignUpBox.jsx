@@ -64,8 +64,6 @@ function SignUpBox() {
     setErrorMsg1("");
     setErrorMsg2("");
 
-    console.log("..." + loginref.current);
-
     if (!inputName || !inputPassword1) {
       setErrorMsg1("enter both username and password");
     }
@@ -74,8 +72,7 @@ function SignUpBox() {
     const passwordToSend = checkPassword();
     
     const response = await signup(userToSend, passwordToSend);
-    
-    console.log(response)
+
 
     if (response.status == 400) {
       setErrorMsg1("username already taken");
