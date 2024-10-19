@@ -172,9 +172,10 @@ router.get("/ownedUserGames", async (req, res) => {
                                         GROUP BY g.Id, g.Title, g.Developer, g.Publisher, g.ReleaseDate, g.ImgPath
                                         ORDER BY g.Title`;
     const games = result.recordset;
-
-    res.json(games);
-  } catch (err) {
+      res.json(games);
+    }
+  
+  catch (err) {
     console.error(err);
     res.status(500).send("Database connection error");
   } finally {
@@ -426,6 +427,30 @@ router.post("/postRatingComment", async (req, res) => {
   }
 });
 
+router.delete("/deleteUserRating", async (req, res) => {
+  const {username, gameId } = req.body;
+
+  try {
+    const pool = await dbCon();
+    const ps = new sql.PreparedStatement(pool);
+
+    ps.input("gameId", sql.Int);
+    ps.input("username", sql.VarChar);
+
+    const query = `DELETE FROM Game_Ratings_Comments WHERE Game_Id = @gameId AND [User_Id] = @username`;
+    await ps.prepare(query);
+    await ps.execute({ gameId, username });
+
+    await ps.unprepare();
+    res.status(200).send({ message: "Record deleted" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Database connection error");
+  } finally {
+    closeDbCon();
+  }
+});
+
 router.delete("/removeGameStatus", async (req, res) => {
   // console.log("Request body:", req.body);
   const { chosenStatus, gameId, username } = req.body;
@@ -562,23 +587,29 @@ router.get("/userDetails", async (req, res) => {
     const result = await sql.query` SELECT Users.[Username], Users.[ImgPath] AS ProfilePic, Users.[Bio] , Users.[FavoriteGame_Id], 
                                     Users.[Birthday], Users.[Country], Games.[Title], Games.[ImgPath] AS FaveGamePic
                                     FROM [GameReviewExpressDb].[dbo].[Users]
-                                    JOIN Games ON Games.Id= [Users].FavoriteGame_Id
+                                    LEFT JOIN Games ON Games.Id= [Users].FavoriteGame_Id
                                     WHERE Username = ${username}
     `;
 
     const info = result.recordset[0];
 
-    // const responseObject = {
-    //   Username: info.Username,
-    //   ProfilePic: info.ProfilePic ?? "../default.png",
-    //   Bio: info.Bio ?? null,
-    //   FavoriteGame_Id: info.FavoriteGame_Id ?? null,
-    //   Birthday: info.Birthday ?? null,
-    //   Country: info.Country ?? null,
-    //   FaveGamePic: info.FaveGamePic ?? null,
-    // }
+    if (!info) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const birthday = info.Birthday && !isNaN(new Date(info.birthday).getTime()) ? info.Birthday : null;
+
+    const responseObject = {
+      Username: username,
+      ProfilePic: info.ProfilePic ?? null,
+      Bio: info.Bio ?? null,
+      FavoriteGame_Id: info.FavoriteGame_Id ?? null,
+      Birthday: birthday ?? null,
+      Country: info.Country ?? null,
+      FaveGamePic: info.FaveGamePic ?? null,
+    }
     
-    res.status(200).json(info);
+    res.status(200).json(responseObject);
   } catch (err) {
     console.error(err);
     res.status(500).send("Database connection error");

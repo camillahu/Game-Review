@@ -15,9 +15,8 @@ function Home() {
   const { loginref } = useContext(contextStuff);
 
   const isInCategory = (gameId, category) => {
-    return gamesByCategory.has(category)
-      ? gamesByCategory.get(category).some((g) => g.Id === gameId)
-      : false;
+    const categoryGames = gamesByCategory.get(category) || []; //hvis gamesByCategory.get returnerer undefined, så setter vi inn et tomt array for å unngå error. 
+    return categoryGames.some((g) => g.Id === gameId); //some vil returnere false dersom kategorien er et tomt array. 
   };
 
   const categories = [

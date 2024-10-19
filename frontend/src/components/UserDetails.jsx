@@ -24,16 +24,6 @@ export default function UserDetails() {
     async function fetchDetails() {
       const result = await userDetails(loginref.current);
       setUserInfo(result);
-      if (!result.Bio) {
-        setUserInfo((b) => ({ ...b, Bio: "No bio yet" }));
-      }
-      if (!result.Age) {
-        setUserInfo((a) => ({ ...a, Age: "not specified" }));
-      }
-      if (!result.Country) {
-        setUserInfo((c) => ({ ...c, Country: "not specified" }));
-      } //denne funker ikke helt
-
       const categories = [
         "ownedUserGames",
         "wishlistUserGames",
@@ -56,6 +46,8 @@ export default function UserDetails() {
     fetchDetails();
   }, [loginref]);
 
+  
+
   return (
     <div className="container justify-content-center custom-game-page-container">
       <div className="d-flex justify-content-between align-items-center mb-3 ps-3 pe-3 p-1 border-bottom border-secondary">
@@ -76,7 +68,7 @@ export default function UserDetails() {
               >
                 <img
                   className="img-fluid img-cover"
-                  src={userInfo.ProfilePic}
+                  src={userInfo.ProfilePic ?? "/img/default.png"}
                   alt="profile img"
                 />
               </div>
@@ -90,25 +82,25 @@ export default function UserDetails() {
                     <br />
                   </strong>
                   &nbsp;&nbsp;&nbsp;
-                  {new Date(userInfo.Birthday).toLocaleDateString("en-GB", {
+                  {userInfo.Birthday ? new Date(userInfo.Birthday).toLocaleDateString("en-GB", {
                     day: "numeric",
                     month: "long",
                     year: "numeric",
-                  })}
+                  }) : 'Not specified'}
                 </p>
                 <p>
                   <strong>
                     Country:
                     <br />
                   </strong>
-                  &nbsp;&nbsp;&nbsp;{userInfo.Country}
+                  &nbsp;&nbsp;&nbsp;{userInfo.Country ?? 'Not specified'}
                 </p>
               </div>
             </div>
 
             <p className="lead custom-bio-box">
               <strong>Bio:</strong> <br />
-              {userInfo.Bio}
+              {userInfo.Bio ?? "No bio yet"}
             </p>
           </div>
           <div className="d-flex justify-content-start square-box-3 flex-column">

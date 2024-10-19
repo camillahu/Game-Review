@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext, useMemo } from "react";
 import { contextStuff } from "../App";
-import { userGames } from "../api/userGames";
+import { userGames, deleteUserRating } from "../api/userGames";
 import { removeGameStatus, addGameStatus } from "../api/gameStatus";
 import RatingBox from "./RatingBox";
 import AddGameButtons from "./AddGameButtons";
@@ -12,6 +12,7 @@ import {
   postRatingComment,
   ratingsByGame,
 } from "../api/gameDetails";
+import { login } from "../api/loginAuth";
 
 export default function GameDetails() {
   const { loginref, gameref, handlePageChange } = useContext(contextStuff);
@@ -41,7 +42,8 @@ export default function GameDetails() {
   function handleEditingStatus() {
     isEditing ? setIsEditing(false) : setIsEditing(true);
   }
-  function handleRatingChange(rating) {
+
+  async function handleRatingChange(rating) {
     const nullableRating = () => {
       return rating === "no rating" ? null : rating;
     };
@@ -55,13 +57,15 @@ export default function GameDetails() {
         return;
       }
 
-      setMyRatingComment((r) => ({
-        ...r,
-        Rating: nullableRating(),
-        Comment: "",
-        Finished: false,
-        dnf: false,
-      }));
+      try{
+        const response = await deleteUserRating(loginref.current, gameref.current)
+        handleEditingStatus();
+        return;
+      }
+      catch(error) {
+        console.log("error deleting row", error)
+      }
+      
     } else {
       setMyRatingComment((r) => ({ ...r, Rating: nullableRating() }));
     }
@@ -86,6 +90,25 @@ export default function GameDetails() {
   }
 
   async function updateMyRating() {
+    if(myRatingComment.rating === "no rating" || !myRatingComment.Rating) {
+      const userConfirmed = window.confirm(
+        "If you remove your rating, your comment and finished status will also be removed. Do you want to proceed?"
+      );
+
+      if (!userConfirmed) {
+        return;
+      }
+      else {
+        try{
+          const response = await deleteUserRating(loginref.current, gameref.current)
+          handleEditingStatus();
+          return;
+        }
+        catch(error) {
+          console.log("error deleting row", error)
+        }
+      }
+    }
     try {
       const response = await postRatingComment(
         myRatingComment.Game_Id,
@@ -228,7 +251,7 @@ export default function GameDetails() {
       fetchGame();
       setStatusChangeSuccess(false);
     }
-  }, [loginref, gameref, statusChangeSuccess]);
+  }, [loginref, gameref, statusChangeSuccess, isEditing]);
 
   return (
     <div className="container justify-content-center custom-game-page-container">

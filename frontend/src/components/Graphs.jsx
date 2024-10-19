@@ -80,7 +80,7 @@ function PieChart({ username }) {
           },
           { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
         );
-      console.log(ratings);
+
 
       const ratingsData = Object.values(ratings);
       const labels = Object.keys(ratings);

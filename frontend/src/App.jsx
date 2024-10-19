@@ -13,7 +13,7 @@ import Header from "./components/Header";
 
 function App() {
   const [page, setPage] = useState("profile");
-  const loginref = useRef("camillzy");
+  const loginref = useRef('fjellgeit');
   const gameref = useRef(1);
 
   function handlePageChange(page) {
