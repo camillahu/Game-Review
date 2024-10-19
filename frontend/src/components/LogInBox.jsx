@@ -33,7 +33,7 @@ function LogInBox() {
       const response = await login(inputName, inputPassword); //sender parametre til logInAuth sin login-funksjon
       console.log(response);
       loginref.current = inputName;
-      handlePageChange("myGames");
+      handlePageChange("profile");
     } catch (err) {
       setErrorMsg("Invalid password or username");
     }

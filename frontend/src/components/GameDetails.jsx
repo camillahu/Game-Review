@@ -65,7 +65,7 @@ export default function GameDetails() {
       catch(error) {
         console.log("error deleting row", error)
       }
-      
+
     } else {
       setMyRatingComment((r) => ({ ...r, Rating: nullableRating() }));
     }
@@ -205,6 +205,33 @@ export default function GameDetails() {
     !isNaN(average) ? setAverageRating(average) : setAverageRating(null);
   }
 
+  function userCommentBox() {
+    if (!loginref.current) return null
+      return isEditing ? (
+        <EditRatingBox
+          updateMyRating={updateMyRating}
+          rating={myRatingComment.Rating}
+          comment={myRatingComment.Comment}
+          isFinished={myRatingComment.Finished}
+          isDNF={myRatingComment.dnf}
+          setRating={handleRatingChange}
+          setComment={handleCommentChange}
+          setFinishedStatus={handleFinishedChange}
+          setDnfStatus={handleDnfChange}
+        />
+      ) : (
+        <RatingBox
+          loggedInUser={loginref.current}
+          username={myRatingComment.User_Id}
+          rating={myRatingComment.Rating}
+          comment={myRatingComment.Comment}
+          isFinished={myRatingComment.Finished}
+          isDNF={myRatingComment.dnf}
+          handleEditingStatus={handleEditingStatus}
+        />
+      )
+    }
+
   useEffect(() => {
     async function fetchGame() {
       try {
@@ -311,31 +338,8 @@ export default function GameDetails() {
           <h3 className="display-6 mt-2" style={{ color: "HSL(30, 20%, 85%)" }}>
             Ratings and comments
           </h3>
-          <div className="d-flex flex-column ">
-            {isEditing ? (
-              <EditRatingBox
-                updateMyRating={updateMyRating}
-                rating={myRatingComment.Rating}
-                comment={myRatingComment.Comment}
-                isFinished={myRatingComment.Finished}
-                isDNF={myRatingComment.dnf}
-                setRating={handleRatingChange}
-                setComment={handleCommentChange}
-                setFinishedStatus={handleFinishedChange}
-                setDnfStatus={handleDnfChange}
-              />
-            ) : (
-              <RatingBox
-                loggedInUser={loginref.current}
-                username={myRatingComment.User_Id}
-                rating={myRatingComment.Rating}
-                comment={myRatingComment.Comment}
-                isFinished={myRatingComment.Finished}
-                isDNF={myRatingComment.dnf}
-                handleEditingStatus={handleEditingStatus}
-              />
-            )}
-
+            <div className="d-flex flex-column ">
+            {userCommentBox()}
             {allRatingsComments
               .filter((user) => user.User_Id !== loginref.current)
               .map((user, index) => (

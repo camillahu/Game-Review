@@ -19,7 +19,7 @@ function Home() {
     return categoryGames.some((g) => g.Id === gameId); //some vil returnere false dersom kategorien er et tomt array. 
   };
 
-  const categories = [
+  const categories = [ //dette er kategoriene som blir satt inn i gamesbyCategory Map. De samme kategoriene blir brukt til å sende riktig "view" til backenden i usergames. 
     "allUserGames",
     "ownedUserGames",
     "wishlistUserGames",

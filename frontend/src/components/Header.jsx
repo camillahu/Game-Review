@@ -6,11 +6,9 @@ function Header({ loginref, handlePageChange }) {
   const [profileTxt, setProfileTxt] = useState("");
  
 
-
-
-  function handleSignInStatus() {
+  function handleSignInStatus() { //hvis man er logget in, vil teksten endres, loginref settes til null og man blir sendt til home. Hvis ikke, blir man sendt til login-siden.
     if (signinTxt == "Sign out") {
-      loginref.current = "";
+      loginref.current = null; 
       handlePageChange("home");
     } else {
       handlePageChange("login");

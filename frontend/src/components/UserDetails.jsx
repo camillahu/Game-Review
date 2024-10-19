@@ -24,7 +24,8 @@ export default function UserDetails() {
     async function fetchDetails() {
       const result = await userDetails(loginref.current);
       setUserInfo(result);
-      const categories = [
+
+      const categories = [ //dette er kategoriene som blir satt inn i allgames Map. De samme kategoriene blir brukt til å sende riktig "view" til backenden i usergames. 
         "ownedUserGames",
         "wishlistUserGames",
         "playedUserGames",
