@@ -597,10 +597,7 @@ router.get("/userDetails", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const birthday =
-      info.Birthday && !isNaN(new Date(info.birthday).getTime())
-        ? info.Birthday
-        : null;
+    const birthday = info.Birthday ? info.Birthday : null;
 
     const responseObject = {
       Username: username,

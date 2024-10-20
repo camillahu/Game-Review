@@ -13,16 +13,35 @@ function EditProfile({ loginref, gameref, handlePageChange }) {
   const [originalImg, setOriginalImg] = useState("/img/default.png");
   const [imgPreview, setImgPreview] = useState();
 
-  const [bioText, setBioText] = useState(null);
-  const [originalBioText, setOriginalBioText] = useState("no bio yet");
+  const [bio, setBio] = useState(null);
+  const [originalBio, setOriginalBio] = useState("no bio yet");
   const [errorMsg, setErrorMsg] = useState("");
 
+  const [birthday, setBirthday] = useState(null);
+  const [originalBirthday, setOriginalBirthday] = useState({
+    Day: null,
+    Month: null,
+    Year: null,
+  });
 
   useEffect(() => {
     async function fetchUser() {
       const result = await userDetails(loginref.current);
       console.log(result);
+      
       setOriginalImg(result.ProfilePic ?? "/img/default.png");
+      setOriginalBio(result.Bio ?? "no bio yet");
+
+      if (result.Birthday) {
+        const date = new Date(result.Birthday);
+        setOriginalBirthday({
+          day: date.getDate(), // Get the day
+          month: date.getMonth() + 1, // Get the month (0-based index)
+          year: date.getFullYear(), // Get the full year
+        });
+      } else {
+        setOriginalBirthday({ day: null, month: null, year: null });
+      }
     }
     fetchUser();
   }, []);
@@ -53,6 +72,8 @@ function EditProfile({ loginref, gameref, handlePageChange }) {
 
     setImgPreview(null);
     setImgFile(null);
+    setBio(null);
+    setOriginalBio(null);
   };
 
   function handleSave() {
@@ -77,9 +98,18 @@ function EditProfile({ loginref, gameref, handlePageChange }) {
           imgPreview={imgPreview}
           cancelImageChange={cancelProfileChange}
         />
-        <EditBio bioText={bioText} setBioText={setBioText}
-        originalBioText={originalBioText} setOriginalBioText={setOriginalBioText} />
-        <EditBirthday />
+        <EditBio
+          bioText={bio}
+          setBioText={setBio}
+          originalBioText={originalBio}
+          setOriginalBioText={setOriginalBio}
+        />
+        <EditBirthday
+          birthday={birthday}
+          setBirthday={setBirthday}
+          originalBirthday={originalBirthday}
+          setOriginalBirthday={setOriginalBirthday}
+        />
         <EditCountry />
         <EditFaveGame />
       </div>
