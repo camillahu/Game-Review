@@ -32,22 +32,6 @@ function SignUpBox() {
     setPasswordVisability(!passwordVisable);
   }
 
-  // function checkPassword() {
-  //   const passwordRegEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
-
-  //   if (inputPassword1 !== inputPassword2) {
-  //     setErrorMsg2("Password doesn't match");
-  //   } else if (!passwordRegEx.test(inputPassword1)) {
-  //     setErrorMsg2(
-  //       "Not a valid password. Password must contain at least one number, uppercase letter and lowercase letter, and at least 8 characters. "
-  //     );
-  //   } else {
-  //     return inputPassword1;
-  //     setErrorMsg1("");
-  //     setErrorMsg2("");
-  //   }
-  // 
-
   async function submitForm() { //refaktorert funksjon for bedre error-handling. 
     setErrorMsg1("");
     setErrorMsg2("");

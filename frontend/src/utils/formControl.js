@@ -31,3 +31,7 @@ export function checkUsername(inputName) {
     };
   }
 }
+
+export function checkBirthday() {
+  
+}

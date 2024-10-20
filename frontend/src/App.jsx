@@ -9,11 +9,12 @@ import LogIn from "./pages/LogIn";
 import Home from "./pages/Home";
 import GamePage from "./pages/GamePage";
 import Profile from "./pages/Profile";
+import EditProfile from "./pages/EditProfile";
 import Header from "./components/Header";
 
 function App() {
-  const [page, setPage] = useState("signup");
-  const loginref = useRef(null);
+  const [page, setPage] = useState("editProfile");
+  const loginref = useRef("camillzy");
   const gameref = useRef(1);
 
   function handlePageChange(page) {
@@ -50,7 +51,9 @@ function App() {
 
       case "myGames":
         return (
-          <contextStuff.Provider value={{ loginref, gameref, handlePageChange }}>
+          <contextStuff.Provider
+            value={{ loginref, gameref, handlePageChange }}
+          >
             <MyGames loginref={loginref} handlePageChange={handlePageChange} />
           </contextStuff.Provider>
         );
@@ -72,6 +75,16 @@ function App() {
           >
             <Profile />
           </contextStuff.Provider>
+        );
+        break;
+
+      case "editProfile":
+        return (
+          <EditProfile
+            loginref={loginref}
+            gameref={gameref}
+            handlePageChange={handlePageChange}
+          />
         );
         break;
 
