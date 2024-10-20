@@ -1,12 +1,22 @@
 import { useState } from "react";
 
+
 // https://www.geeksforgeeks.org/how-to-upload-image-and-preview-it-using-reactjs/
 
-function UploadPic() {
+function UploadPic({ originalImg, setImgFile, setImgPreview, imgPreview}) {
+    const [errorMsg, setErrorMsg] = useState("");
+  
+  
 
-  const [imgFile, setImgFile] = useState();
   const handleImgChange = (e) => {
-    setImgFile(URL.createObjectURL(e.target.files[0]));
+    const file = e.target.files[0];
+    if(file) {
+        setImgFile(file); //denne setter filen i parent.
+        setImgPreview(URL.createObjectURL(file)); //denne lager en preview
+    }
+    else {
+        setErrorMsg("Failed to load image.");
+      }
   };
 
   return (
@@ -26,9 +36,10 @@ function UploadPic() {
       <div className="square-box-4">
         <img
           className="img-fluid img-cover"
-          src={imgFile ?? "/img/default.png"}
+          src={imgPreview ?? originalImg}
         />
       </div>
+      <span>{errorMsg}</span>
     </div>
   );
 }

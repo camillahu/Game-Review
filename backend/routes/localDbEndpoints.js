@@ -2,9 +2,7 @@ const express = require("express");
 const sql = require("mssql");
 const { dbCon, closeDbCon } = require("../dbcon.js");
 const router = express.Router();
-const cors = require("cors");
 
-router.use(cors());
 router.use(express.json());
 
 router.get("/allGames", async (_, res) => {
