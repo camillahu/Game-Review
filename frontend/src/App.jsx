@@ -12,8 +12,8 @@ import Profile from "./pages/Profile";
 import Header from "./components/Header";
 
 function App() {
-  const [page, setPage] = useState("profile");
-  const loginref = useRef("fjellgeit");
+  const [page, setPage] = useState("signup");
+  const loginref = useRef(null);
   const gameref = useRef(1);
 
   function handlePageChange(page) {

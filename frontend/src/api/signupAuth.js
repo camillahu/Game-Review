@@ -8,7 +8,19 @@ export async function signup(username, password) {
             },
             body: JSON.stringify({username, password})
         });
-        return response; 
+
+        if (!response.ok) {
+            if (response.status >= 400 && response.status < 500) { //lager en kort og konsis error- msg for 400-statuser
+                const errorData = await response.json();
+                return { error: errorData.message }; 
+            }
+
+            if (response.status >= 500) {
+                throw new Error(`Server error! status: ${response.status}`);
+            }
+        }
+
+        return await response.json(); 
     } catch(error) {
         console.error('signup request failed ', error);
         throw error;

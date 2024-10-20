@@ -9,7 +9,14 @@ export async function login(username, password) {
             body: JSON.stringify({username, password})
         });
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            if (response.status >= 400 && response.status < 500) { //lager en kort og konsis error- msg for 400-statuser
+                const errorData = await response.json();
+                return { error: errorData.message }; 
+            }
+
+            if (response.status >= 500) {
+                throw new Error(`Server error! status: ${response.status}`);
+            }
         }
 
         return await response.json(); 

@@ -3,6 +3,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { login } from "../api/loginAuth.js";
 import { useContext } from "react";
 import { contextStuff } from "../App.jsx";
+import {checkWhiteSpace} from "../utils/formControl.js" 
+
+
+
 
 function LogInBox() {
   const [inputName, setInputName] = useState();
@@ -24,18 +28,28 @@ function LogInBox() {
   }
 
   async function submitForm() {
-    if (!inputName.trim() || !inputPassword.trim()) {
+
+    if( inputName === undefined || inputPassword === undefined) {
       setErrorMsg("enter both username and password");
+      return;
+    }
+    else if (checkWhiteSpace(inputName) || checkWhiteSpace(inputPassword)) {
+      setErrorMsg("enter both username and password without whitespace");
       return;
     }
 
     try {
       const response = await login(inputName, inputPassword); //sender parametre til logInAuth sin login-funksjon
-      console.log(response);
-      loginref.current = inputName;
-      handlePageChange("profile");
+      if (response.error) {
+        setErrorMsg("Invalid password or username");
+      }
+      else {
+        loginref.current = inputName;
+        handlePageChange("profile");
+      }
     } catch (err) {
-      setErrorMsg("Invalid password or username");
+      console.error(err);
+      setErrorMsg("A server error occurred. Please try again later.");
     }
   }
 

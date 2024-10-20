@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { signup } from "../api/signupAuth.js";
 import { useContext } from "react";
 import { contextStuff } from "../App.jsx";
+import { checkPassword, checkUsername } from "../utils/formControl.js";
 
 function SignUpBox() {
   const [inputName, setInputName] = useState();
@@ -31,56 +32,54 @@ function SignUpBox() {
     setPasswordVisability(!passwordVisable);
   }
 
-  function checkPassword() {
-    const passwordRegEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+  // function checkPassword() {
+  //   const passwordRegEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
-    if (inputPassword1 !== inputPassword2) {
-      setErrorMsg2("Password doesn't match");
-    } else if (!passwordRegEx.test(inputPassword1)) {
-      setErrorMsg2(
-        "Not a valid password. Password must contain at least one number, uppercase letter and lowercase letter, and at least 8 characters. "
-      );
-    } else {
-      return inputPassword1;
-      setErrorMsg1("");
-      setErrorMsg2("");
-    }
-  }
+  //   if (inputPassword1 !== inputPassword2) {
+  //     setErrorMsg2("Password doesn't match");
+  //   } else if (!passwordRegEx.test(inputPassword1)) {
+  //     setErrorMsg2(
+  //       "Not a valid password. Password must contain at least one number, uppercase letter and lowercase letter, and at least 8 characters. "
+  //     );
+  //   } else {
+  //     return inputPassword1;
+  //     setErrorMsg1("");
+  //     setErrorMsg2("");
+  //   }
+  // 
 
-  function checkUsername() {
-    const usernameRegEx = /^[a-z0-9_\.]+$/;
-
-    if (usernameRegEx.test(inputName)) {
-      return inputName;
-      setErrorMsg1("");
-    } else {
-      setErrorMsg1(
-        "Not a valid username. Username can only contain lowercase letters, numbers, _ or ."
-      );
-    }
-  }
-
-  async function submitForm() {
+  async function submitForm() { //refaktorert funksjon for bedre error-handling. 
     setErrorMsg1("");
     setErrorMsg2("");
 
     if (!inputName || !inputPassword1) {
-      setErrorMsg1("enter both username and password");
+      setErrorMsg1("Please enter both username and password");
+      return; //returnerer tidlig om dette skjer. 
     }
 
-    const userToSend = checkUsername();
-    const passwordToSend = checkPassword();
-    
-    const response = await signup(userToSend, passwordToSend);
-
-
-    if (response.status == 400) {
-      setErrorMsg1("username already taken");
-    } else {
-      handlePageChange("login");
+    const usernameResult = checkUsername(inputName);
+    if(usernameResult.error) {
+      setErrorMsg1(usernameResult.error); //setter staten på en mer dynamisk måte. 
+      return;
     }
 
+    const passwordResult = checkPassword(inputPassword1, inputPassword2);
+    if(passwordResult.error) {
+      setErrorMsg2(passwordResult.error);
+      return;
+    }
 
+    try {
+      const response = await signup(usernameResult.value, passwordResult.value);
+      if (response.error) {
+        setErrorMsg1(response.error);
+      } else {
+        setErrorMsg1("User created successfully. Please proceed to log in");
+      }
+    } catch (error) {
+      setErrorMsg1("A server error occurred. Please try again later.");
+      console.error(error);
+    }
   }
 
   return (

@@ -29,17 +29,14 @@ router.post("/login", async (req, res) => {
     await dbCon();
 
     const result =
-      await sql.query`SELECT * FROM Users WHERE Username = ${username}`; //mssql sin query gjør det trygt å bruke parameteret slikt i følge chatgpt.
-    const user = result.recordset[0]; //her brukes recordset til å hente ut kun en verdi som er det vi forventer.
+      await sql.query`SELECT Username, UserPassword FROM Users WHERE Username = ${username}`; //mssql sin query gjør det trygt å bruke parameteret slikt i følge chatgpt.
 
-    if (user) {
-      if (password === user.UserPassword) {
-        res.status(200).json({ message: "login successful" });
-      } else {
-        res.status(401).json({ message: "invalid credentials" });
-      }
+    let user = result.recordset[0];
+    if (!user) return res.status(404).json({ message: "user not found" });
+    if (password === user.UserPassword) {
+      return res.status(200).json({ message: "login successful" });
     } else {
-      res.status(404).json({ message: "user not found" });
+      return res.status(401).json({ message: "invalid credentials" });
     }
   } catch (err) {
     console.error(err);
@@ -51,27 +48,33 @@ router.post("/login", async (req, res) => {
 
 router.post("/signup", async (req, res) => {
   try {
+    console.log("Received data:", req.body);
     const { username, password } = req.body;
-    console.log(username);
-    console.log(password);
     await dbCon();
 
     const userNameExists = async (username) => {
       const usernameExistsResult =
-        await sql.query`SELECT * FROM Users WHERE Username = ${username}`;
+        await sql.query`SELECT Username FROM Users WHERE Username = ${username}`;
       return usernameExistsResult.recordset.length > 0;
     };
+
     if (await userNameExists(username)) {
-      res.status(400).json({ message: "Username already exists" });
-    } else {
-      const result =
-        await sql.query`INSERT INTO USERS (Username, UserPassword) VALUES (${username}, ${password})`;
-      res.status(200).send(result);
+      return res.status(400).json({ message: "Username already exists" });
     }
+
+    if (!password || password.length < 8) {
+      // putte passord regex her?
+      return res.status(400).json({ message: "Invalid password" });
+    }
+
+    const result =
+      await sql.query`INSERT INTO USERS (Username, UserPassword) VALUES (${username}, ${password})`;
+      return res.status(201).json({ message: "User created successfully" });
+
   } catch (err) {
     console.error(err);
     res.status(500).send("database connection error");
-    // return res.status(500).send('Internal Server Error');
+
   } finally {
     closeDbCon();
   }
@@ -172,10 +175,8 @@ router.get("/ownedUserGames", async (req, res) => {
                                         GROUP BY g.Id, g.Title, g.Developer, g.Publisher, g.ReleaseDate, g.ImgPath
                                         ORDER BY g.Title`;
     const games = result.recordset;
-      res.json(games);
-    }
-  
-  catch (err) {
+    res.json(games);
+  } catch (err) {
     console.error(err);
     res.status(500).send("Database connection error");
   } finally {
@@ -428,7 +429,7 @@ router.post("/postRatingComment", async (req, res) => {
 });
 
 router.delete("/deleteUserRating", async (req, res) => {
-  const {username, gameId } = req.body;
+  const { username, gameId } = req.body;
 
   try {
     const pool = await dbCon();
@@ -584,7 +585,8 @@ router.get("/userDetails", async (req, res) => {
   try {
     await dbCon();
 
-    const result = await sql.query` SELECT Users.[Username], Users.[ImgPath] AS ProfilePic, Users.[Bio] , Users.[FavoriteGame_Id], 
+    const result =
+      await sql.query` SELECT Users.[Username], Users.[ImgPath] AS ProfilePic, Users.[Bio] , Users.[FavoriteGame_Id], 
                                     Users.[Birthday], Users.[Country], Games.[Title], Games.[ImgPath] AS FaveGamePic
                                     FROM [GameReviewExpressDb].[dbo].[Users]
                                     LEFT JOIN Games ON Games.Id= [Users].FavoriteGame_Id
@@ -597,7 +599,10 @@ router.get("/userDetails", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const birthday = info.Birthday && !isNaN(new Date(info.birthday).getTime()) ? info.Birthday : null;
+    const birthday =
+      info.Birthday && !isNaN(new Date(info.birthday).getTime())
+        ? info.Birthday
+        : null;
 
     const responseObject = {
       Username: username,
@@ -607,8 +612,8 @@ router.get("/userDetails", async (req, res) => {
       Birthday: birthday ?? null,
       Country: info.Country ?? null,
       FaveGamePic: info.FaveGamePic ?? null,
-    }
-    
+    };
+
     res.status(200).json(responseObject);
   } catch (err) {
     console.error(err);
@@ -619,7 +624,7 @@ router.get("/userDetails", async (req, res) => {
 });
 
 router.get("/genresForPieChart", async (req, res) => {
-  const {username} = req.query;
+  const { username } = req.query;
 
   try {
     await dbCon();
@@ -643,21 +648,19 @@ router.get("/genresForPieChart", async (req, res) => {
                         )
                         GROUP BY g.Id, g.Title
                         ORDER BY g.Title;
-    `
+    `;
     const games = result.recordset;
     res.json(games);
-  }
-  catch(err) {
+  } catch (err) {
     console.error(err);
     res.status(500).send("Database connection error");
-  }
-  finally {
+  } finally {
     closeDbCon();
   }
-})
+});
 
 router.get("/userRatings", async (req, res) => {
-  const {username } = req.query;
+  const { username } = req.query;
 
   try {
     await dbCon();
@@ -669,7 +672,7 @@ router.get("/userRatings", async (req, res) => {
 
     const ratings = result.recordset;
 
-    res.json(ratings)
+    res.json(ratings);
   } catch (err) {
     console.error(err);
     res.status(500).send("Database connection error");
@@ -677,6 +680,5 @@ router.get("/userRatings", async (req, res) => {
     closeDbCon();
   }
 });
-
 
 module.exports = router;
