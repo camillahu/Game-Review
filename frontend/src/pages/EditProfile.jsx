@@ -4,6 +4,7 @@ import UploadPic from "../components/EditProfile/UploadPic";
 import EditBio from "../components/EditProfile/EditBio";
 import EditBirthday from "../components/EditProfile/EditBirthday";
 import EditCountry from "../components/EditProfile/EditCountry";
+import EditFaveGame from "../components/EditProfile/EditFaveGame";
 
 
 function EditProfile({ loginref, gameref, handlePageChange }) {
@@ -28,6 +29,7 @@ function EditProfile({ loginref, gameref, handlePageChange }) {
         <EditBio />
         <EditBirthday />
         <EditCountry />
+        <EditFaveGame />
 
       </div>
     </div>
