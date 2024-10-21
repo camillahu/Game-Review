@@ -7,6 +7,7 @@ import EditBirthday from "../components/EditProfile/EditBirthday";
 import EditCountry from "../components/EditProfile/EditCountry";
 import EditFaveGame from "../components/EditProfile/EditFaveGame";
 import { userDetails } from "../api/userDetails";
+import { gamesAndGenres } from "../api/gamesAndGenres";
 
 function EditProfile({ loginref, gameref, handlePageChange }) {
   const [imgFile, setImgFile] = useState(null);
@@ -14,7 +15,7 @@ function EditProfile({ loginref, gameref, handlePageChange }) {
   const [imgPreview, setImgPreview] = useState();
 
   const [bio, setBio] = useState(null);
-  const [originalBio, setOriginalBio] = useState("no bio yet");
+  const [originalBio, setOriginalBio] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
 
   const [birthday, setBirthday] = useState(null);
@@ -24,13 +25,30 @@ function EditProfile({ loginref, gameref, handlePageChange }) {
     Year: null,
   });
 
+  const [country, setCountry] = useState(null)
+  const [originalCountry, setOriginalCountry] = useState(null)
+
+  const [faveGame, setFaveGame] = useState(null);
+  const [originalFaveGame, setOriginalFaveGame] = useState(null)
+  const [allGames, setAllGames] = useState([]);
+
   useEffect(() => {
     async function fetchUser() {
       const result = await userDetails(loginref.current);
-      console.log(result);
+      const games = await gamesAndGenres();
+      
       
       setOriginalImg(result.ProfilePic ?? "/img/default.png");
-      setOriginalBio(result.Bio ?? "no bio yet");
+      setOriginalBio(result.Bio ?? null);
+      setOriginalCountry(result.Country ?? '')
+      setOriginalFaveGame(result.FaveGameTitle ?? '')
+
+      const gamesOptions = games.map(game => ({
+        value: game.Id,
+        label: game.Title
+      }));
+  
+      setAllGames(gamesOptions);
 
       if (result.Birthday) {
         const date = new Date(result.Birthday);
@@ -61,6 +79,34 @@ function EditProfile({ loginref, gameref, handlePageChange }) {
     }
   };
 
+ function handleBirthdayChange() {
+    if (
+      birthday.day !== originalBirthday.day ||
+      birthday.month !== originalBirthday.month ||
+      birthday.year !== originalBirthday.year
+    ) {
+      setOriginalBirthday(birthday);
+  }
+}
+
+  function handleCountryChange() {
+    if (country !== originalCountry) {
+      setOriginalCountry(country) 
+    }
+  }
+
+  function handleBioChange() {
+    if (bio !== originalBio) {
+      setOriginalBio(bio) 
+    }
+  }
+
+  function handleFaveGameChange() {
+    if (faveGame !== originalFaveGame) {
+      setOriginalFaveGame(faveGame) 
+    }
+  }
+
   const cancelProfileChange = () => {
     const userConfirmed = window.confirm(
       "All changes will be deleted. Do you want to proceed?"
@@ -73,11 +119,16 @@ function EditProfile({ loginref, gameref, handlePageChange }) {
     setImgPreview(null);
     setImgFile(null);
     setBio(null);
-    setOriginalBio(null);
+    setCountry(originalCountry);
+    setBirthday(originalBirthday);
   };
 
   function handleSave() {
     handleImageUpload;
+    handleBirthdayChange();
+    handleCountryChange();
+    handleBioChange();
+    handleFaveGameChange()
   }
 
   return (
@@ -99,19 +150,15 @@ function EditProfile({ loginref, gameref, handlePageChange }) {
           cancelImageChange={cancelProfileChange}
         />
         <EditBio
-          bioText={bio}
           setBioText={setBio}
           originalBioText={originalBio}
-          setOriginalBioText={setOriginalBio}
         />
         <EditBirthday
-          birthday={birthday}
           setBirthday={setBirthday}
           originalBirthday={originalBirthday}
-          setOriginalBirthday={setOriginalBirthday}
         />
-        <EditCountry />
-        <EditFaveGame />
+        <EditCountry setCountry = {setCountry} originalCountry= {originalCountry}/>
+        <EditFaveGame setFaveGame = {setFaveGame} originalFaveGame= {originalFaveGame} allGames = {allGames}/>
       </div>
       <button onClick={handleSave} className="btn btn-primary mt-3">
         Save Changes

@@ -606,6 +606,7 @@ router.get("/userDetails", async (req, res) => {
       FavoriteGame_Id: info.FavoriteGame_Id ?? null,
       Birthday: birthday ?? null,
       Country: info.Country ?? null,
+      FaveGameTitle: info.Title ?? null,
       FaveGamePic: info.FaveGamePic ?? null,
     };
 

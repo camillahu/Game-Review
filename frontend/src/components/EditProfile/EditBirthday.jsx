@@ -1,23 +1,19 @@
 import { useState, useEffect } from "react";
 
-function EditBirthday({
-  birthday,
-  setBirthday,
-  originalBirthday
-}) {
-  const [day, setDay] = useState(originalBirthday?.day || "");
-  const [month, setMonth] = useState(originalBirthday?.month || "");
-  const [year, setYear] = useState(originalBirthday?.year || "");
+function EditBirthday({ setBirthday, originalBirthday }) {
+  const [localDay, setLocalDay] = useState(originalBirthday?.day || "");
+  const [localMonth, setLocalMonth] = useState(originalBirthday?.month || "");
+  const [localYear, setLocalYear] = useState(originalBirthday?.year || "");
 
   useEffect(() => {
-    setDay(originalBirthday?.day || "");
-    setMonth(originalBirthday?.month || "");
-    setYear(originalBirthday?.year || "");
+    setLocalDay(originalBirthday?.day || "");
+    setLocalMonth(originalBirthday?.month || "");
+    setLocalYear(originalBirthday?.year || "");
   }, [originalBirthday]);
 
   useEffect(() => {
-    setBirthday({ day, month, year });
-  }, [day, month, year, setBirthday]);
+    setBirthday({ day: localDay, month: localMonth, year: localYear });
+  }, [localDay, localMonth, localYear]);
 
   return (
     <div
@@ -32,8 +28,8 @@ function EditBirthday({
           type="text"
           name="day"
           placeholder="DD"
-          value={day}
-          onChange={(e) => setDay(e.target.value)}
+          value={localDay}
+          onChange={(e) => setLocalDay(e.target.value)}
           onFocus={(e) => e.target.select()}
         />
       </div>
@@ -44,8 +40,8 @@ function EditBirthday({
           type="text"
           name="month"
           placeholder="MM"
-          value={month}
-          onChange={(e) => setMonth(e.target.value)}
+          value={localMonth}
+          onChange={(e) => setLocalMonth(e.target.value)}
           onFocus={(e) => e.target.select()}
         />
       </div>
@@ -56,8 +52,8 @@ function EditBirthday({
           type="text"
           name="year"
           placeholder="YYYY"
-          value={year}
-          onChange={(e) => setYear(e.target.value)}
+          value={localYear}
+          onChange={(e) => setLocalYear(e.target.value)}
           onFocus={(e) => e.target.select()}
         />
       </div>
