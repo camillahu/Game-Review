@@ -13,7 +13,7 @@ import EditProfile from "./pages/EditProfile";
 import Header from "./components/Header";
 
 function App() {
-  const [page, setPage] = useState("editProfile");
+  const [page, setPage] = useState("gamePage");
   const loginref = useRef("camillzy");
   const gameref = useRef(1);
 
@@ -107,3 +107,7 @@ function App() {
 
 export const contextStuff = createContext();
 export default App;
+
+// endre sql- en db for alle spillstatuser, en db som matcher de med username og gameID
+// lagre all info i app- spillinfo og eventuelt userinfo sånn at man ikke trenger mange spørringer. 
+// legge til proxy i viteconfig

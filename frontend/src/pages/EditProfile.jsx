@@ -12,7 +12,6 @@ import { gamesAndGenres } from "../api/gamesAndGenres";
 function EditProfile({ loginref, gameref, handlePageChange }) {
   const [imgFile, setImgFile] = useState(null);
   const [originalImg, setOriginalImg] = useState("/img/default.png");
-  const [imgPreview, setImgPreview] = useState();
 
   const [bio, setBio] = useState(null);
   const [originalBio, setOriginalBio] = useState(null);
@@ -69,7 +68,7 @@ function EditProfile({ loginref, gameref, handlePageChange }) {
     if (imgFile) {
       const result = await imgUpload(imgFile); //denne etter imgPath til pathen som returneres fra bakcenden.
       if (result?.value) {
-        setOriginalImg(result.value);
+        setOriginalImg(result.value); //må endre denne sånn at den bare endres hvis originalImg ikke er der
         setErrorMsg("");
       } else if (result?.error) {
         setErrorMsg(result.error);
@@ -115,10 +114,8 @@ function EditProfile({ loginref, gameref, handlePageChange }) {
     if (!userConfirmed) {
       return;
     }
-
-    setImgPreview(null);
     setImgFile(null);
-    setBio(null);
+    setBio(originalBio);
     setCountry(originalCountry);
     setBirthday(originalBirthday);
   };
@@ -145,9 +142,6 @@ function EditProfile({ loginref, gameref, handlePageChange }) {
         <UploadPic
           originalImg={originalImg}
           setImgFile={setImgFile}
-          setImgPreview={setImgPreview}
-          imgPreview={imgPreview}
-          cancelImageChange={cancelProfileChange}
         />
         <EditBio
           setBioText={setBio}

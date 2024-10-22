@@ -1,4 +1,4 @@
-import { memo, useEffect } from "react";
+import { memo} from "react";
 
 const AddGameButtons = memo(function AddGameButtons({
   isOwned,

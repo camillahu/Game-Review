@@ -3,9 +3,9 @@ import { useState } from "react";
 
 // https://www.geeksforgeeks.org/how-to-upload-image-and-preview-it-using-reactjs/
 
-function UploadPic({ originalImg, setImgFile, setImgPreview, imgPreview}) {
+function UploadPic({ originalImg, setImgFile}) {
     const [errorMsg, setErrorMsg] = useState("");
-  
+    const [imgPreview, setImgPreview] = useState();
   
 
   const handleImgChange = (e) => {
