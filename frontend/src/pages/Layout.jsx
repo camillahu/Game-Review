@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { useRef, useState } from "react";
-import NavbarItem from "./components.NavbarItem";
+import NavbarItem from "../components/NavbarItem";
 
 const Layout = () => {
   const loginref = useRef(null);
@@ -10,66 +10,54 @@ const Layout = () => {
     //hvis man er logget inn, får man to ekstra navpoints i header.
     if (!loginref.current) {
       return (
-        <nav>
-          <ul>
-            <li>
-            <NavbarItem
-                name="/"
-                text="GameReview!"
-                selectedItem={selectedItem}
-                setSelectedItem={setSelectedItem}
-              />
-            </li>
-            <li>
-            <NavbarItem
-                name="/login"
-                text="Sign in"
-                selectedItem={selectedItem}
-                setSelectedItem={setSelectedItem}
-              />
-            </li>
-          </ul>
+        <nav className="navbar navbar-custom p-3">
+          <div className="container justify-content-between">
+          <NavbarItem
+            name="/"
+            text="GameReview!"
+            selectedItem={selectedItem}
+            setSelectedItem={setSelectedItem}
+          />
+
+          <NavbarItem
+            name="/login"
+            text="Sign in"
+            selectedItem={selectedItem}
+            setSelectedItem={setSelectedItem}
+          />
+          </div>
         </nav>
       );
     }
     return (
       <>
         <nav>
-          <ul>
-            <li>
-            <NavbarItem
-                name="/"
-                text="GameReview!"
-                selectedItem={selectedItem}
-                setSelectedItem={setSelectedItem}
-              />
-            </li>
-            <li>
-            <NavbarItem
-                name="/my-games"
-                text="My Games"
-                selectedItem={selectedItem}
-                setSelectedItem={setSelectedItem}
-              />
-            </li>
-            <li>
-            <NavbarItem
-                name="/profile"
-                text="Profile"
-                selectedItem={selectedItem}
-                setSelectedItem={setSelectedItem}
-              />
-            </li>
-            <li>
+          <NavbarItem
+            name="/"
+            text="GameReview!"
+            selectedItem={selectedItem}
+            setSelectedItem={setSelectedItem}
+          />
+          <NavbarItem
+            name="/my-games"
+            text="My Games"
+            selectedItem={selectedItem}
+            setSelectedItem={setSelectedItem}
+          />
 
-            <NavbarItem
-                name="/"
-                text="Sign out"
-                selectedItem={selectedItem}
-                setSelectedItem={setSelectedItem}
-              />
-            </li>
-          </ul>
+          <NavbarItem
+            name="/profile"
+            text="Profile"
+            selectedItem={selectedItem}
+            setSelectedItem={setSelectedItem}
+          />
+
+          <NavbarItem
+            name="/"
+            text="Sign out"
+            selectedItem={selectedItem}
+            setSelectedItem={setSelectedItem}
+          />
         </nav>
       </>
     );
@@ -77,6 +65,7 @@ const Layout = () => {
 
   return (
     <>
+      {options()}
       <Outlet />
     </>
   );
