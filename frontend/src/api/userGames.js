@@ -1,7 +1,7 @@
 export const userGames = async (username, view) => {
   try {
     const response = await fetch(`http://localhost:3000/localdb/${view}?username=${username}`, {
-      method: "GET",
+      method: "GET", 
       headers: {
         "Content-Type": "application/json",
       },
@@ -16,7 +16,6 @@ export const userGames = async (username, view) => {
     console.error("Game request failed:", error);
     throw error;
   }
-  
 };
 
 export const genresForPieChart = async(username) => {

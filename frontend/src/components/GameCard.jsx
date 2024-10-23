@@ -1,8 +1,8 @@
 import { useContext } from "react";
-import { contextStuff } from "../App";
+import { contextStuff } from "../utils/pageChanger";
 
 function GameCard(props) {
-  const { handlePageChange, gameref } = useContext(contextStuff);
+  // const { handlePageChange, gameref } = useContext(contextStuff);
 
   function gameStatus1() {
     if (props.ownedGame) {
@@ -22,10 +22,10 @@ function GameCard(props) {
     }
   }
 
-  function viewGamePage() {
-    gameref.current = props.id;
-    handlePageChange("gamePage");
-  }
+  // function viewGamePage() {
+  //   gameref.current = props.id;
+  //   handlePageChange("gamePage");
+  // }
 
   return (
     <>
@@ -65,7 +65,7 @@ function GameCard(props) {
             {gameStatus2()}
           </div>
           <div>
-            <button className="btn btn-outline-light" onClick={viewGamePage}>
+            <button className="btn btn-outline-light">
               View details
             </button>
           </div>

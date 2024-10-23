@@ -1,9 +1,10 @@
-import React, { useState, useEffect,useContext } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import GameCard from "../components/GameCard";
 import { gamesAndGenres, genres } from "../api/gamesAndGenres";
 import { userGames } from "../api/userGames";
-import { contextStuff } from "../App";
+
+
 
 function Home() {
   const [games, setGames] = useState([]);
@@ -11,8 +12,9 @@ function Home() {
   const [allGenres, setAllGenres] = useState([]);
   const [gamesByCategory, setGamesByCategory] = useState(new Map());
   const [selectedView, setSelectedView] = useState("allGames");
+  const loginref = useRef(null);
 
-  const { loginref } = useContext(contextStuff);
+  // const { loginref } = useContext(contextStuff);
 
   const isInCategory = (gameId, category) => {
     const categoryGames = gamesByCategory.get(category) || []; //hvis gamesByCategory.get returnerer undefined, så setter vi inn et tomt array for å unngå error. 
@@ -33,15 +35,15 @@ function Home() {
         const allGamesResponse = await gamesAndGenres();
         setGames(allGamesResponse);
 
-        if (loginref) {
-          const gameMap = new Map();
+        // if (loginref) {
+        //   const gameMap = new Map();
 
-          for (let c of categories) {
-            const userGamesResponse = await userGames(loginref.current, c);
-            gameMap.set(c, userGamesResponse);
-          }
-          setGamesByCategory(gameMap);
-        }
+        //   for (let c of categories) {
+        //     const userGamesResponse = await userGames(loginref.current, c);
+        //     gameMap.set(c, userGamesResponse);
+        //   }
+        //   setGamesByCategory(gameMap);
+        // }
       } catch (error) {
         console.error("Error fetching games:", error);
       }

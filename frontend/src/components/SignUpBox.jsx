@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { signup } from "../api/signupAuth.js";
 import { useContext } from "react";
-import { contextStuff } from "../App.jsx";
+import { contextStuff } from "../utils/pageChanger";
 import { checkPassword, checkUsername } from "../utils/formControl.js";
 
 function SignUpBox() {

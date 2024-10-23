@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { login } from "../api/loginAuth.js";
 import { useContext } from "react";
-import { contextStuff } from "../App.jsx";
+import { contextStuff } from "../utils/pageChanger";
 import {checkWhiteSpace} from "../utils/formControl.js" 
 
 

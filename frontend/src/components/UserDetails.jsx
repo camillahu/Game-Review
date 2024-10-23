@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect } from "react";
-import { contextStuff } from "../App";
+import { contextStuff } from "../utils/pageChanger";
 import { userDetails } from "../api/userDetails.js";
 import { userGames } from "../api/userGames.js";
 import PieChart from "./Graphs.jsx";
