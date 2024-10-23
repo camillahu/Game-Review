@@ -1,5 +1,4 @@
 import { useState, useEffect, useContext, useMemo } from "react";
-import { contextStuff } from "../utils/pageChanger";
 import { userGames, deleteUserRating } from "../api/userGames";
 import { removeGameStatus, addGameStatus } from "../api/gameStatus";
 import RatingBox from "./RatingBox";

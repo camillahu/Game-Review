@@ -2,8 +2,7 @@ import { Outlet } from "react-router-dom";
 import { useRef, useState } from "react";
 import NavbarItem from "../components/NavbarItem";
 
-const Layout = () => {
-  const loginref = useRef(null);
+const Layout = ({ loginref }) => {
   const [selectedItem, setSelectedItem] = useState("/");
 
   function options() {
@@ -12,16 +11,49 @@ const Layout = () => {
       return (
         <nav className="navbar navbar-custom p-3">
           <div className="container justify-content-between">
+            <NavbarItem
+              toPath="/"
+              text="GameReview!"
+              selectedItem={selectedItem}
+              setSelectedItem={setSelectedItem}
+            />
+
+            <NavbarItem
+              toPath="/login"
+              text="Sign in"
+              selectedItem={selectedItem}
+              setSelectedItem={setSelectedItem}
+            />
+          </div>
+        </nav>
+      )
+    } else {
+      return (
+        <nav className="navbar navbar-custom p-3">
+          <div className="container justify-content-between">
           <NavbarItem
-            name="/"
+            toPath="/"
             text="GameReview!"
+            selectedItem={selectedItem}
+            setSelectedItem={setSelectedItem}
+          />
+          <NavbarItem
+            toPath="/my-games"
+            text="My Games"
             selectedItem={selectedItem}
             setSelectedItem={setSelectedItem}
           />
 
           <NavbarItem
-            name="/login"
-            text="Sign in"
+            toPath="/profile"
+            text="Profile"
+            selectedItem={selectedItem}
+            setSelectedItem={setSelectedItem}
+          />
+
+          <NavbarItem
+            toPath="/"
+            text="Sign out"
             selectedItem={selectedItem}
             setSelectedItem={setSelectedItem}
           />
@@ -29,38 +61,6 @@ const Layout = () => {
         </nav>
       );
     }
-    return (
-      <>
-        <nav>
-          <NavbarItem
-            name="/"
-            text="GameReview!"
-            selectedItem={selectedItem}
-            setSelectedItem={setSelectedItem}
-          />
-          <NavbarItem
-            name="/my-games"
-            text="My Games"
-            selectedItem={selectedItem}
-            setSelectedItem={setSelectedItem}
-          />
-
-          <NavbarItem
-            name="/profile"
-            text="Profile"
-            selectedItem={selectedItem}
-            setSelectedItem={setSelectedItem}
-          />
-
-          <NavbarItem
-            name="/"
-            text="Sign out"
-            selectedItem={selectedItem}
-            setSelectedItem={setSelectedItem}
-          />
-        </nav>
-      </>
-    );
   }
 
   return (

@@ -12,22 +12,37 @@ import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
 import NoPage from "./pages/NoPage";
 import React, { useState, useRef, createContext, useEffect } from "react";
-import Header from "./components/Header";
-import updateView from "./utils/pageChanger";
-import { gamesAndGenres } from "./api/gamesAndGenres";
+import { gamesAndGenres, genres } from "./api/gamesAndGenres";
 
 function App() {
-  const [page, setPage] = useState("home");
-  const loginref = useRef(null);
+  const loginref = useRef("camillzy");
   const gameref = useRef(1);
   const [allGames, setAllGames] = useState([]);
+  const [allGenres, setAllGenres] = useState([]);
 
   useEffect(() => {
     async function fetchGames() {
-      const response = await gamesAndGenres();
+      try {
+        const response = await gamesAndGenres();
       setAllGames(response);
+      } catch(error) {
+        console.error("Error fetching all games", error);
+      }
+      
     }
     fetchGames();
+  }, []);
+
+  useEffect(() => {
+    async function fetchGenres() {
+    try {
+      const response = await genres();
+      setAllGenres(response);
+    } catch (error) {
+      console.error("Error fetching genres", error);
+    }
+    }
+    fetchGenres();
   }, []);
 
   // function handlePageChange(page) {
@@ -38,15 +53,14 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Home />} />
+          <Route path="/" element={<Layout loginref = {loginref}/>}>
+            <Route index element={<Home loginref= {loginref} allGamesResult= {allGames} allGenresResult = {allGenres}/>} />
             <Route path="signup" element={<SignUp />} />
-            <Route path="my-games" element={<MyGames />} />
-            <Route path="login" element={<LogIn />} />
-            <Route path="" element={<MyGames />} />
-            <Route path="game-page" element={<GamePage />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="edit-profile" element={<EditProfile />} />
+            <Route path="my-games" element={<MyGames loginref= {loginref} />} />
+            <Route path="login" element={<LogIn loginref= {loginref} />} />
+            <Route path="game-page" element={<GamePage loginref= {loginref} gameref= {gameref}/>} />
+            <Route path="profile" element={<Profile loginref= {loginref}/>} />
+            <Route path="edit-profile" element={<EditProfile loginref= {loginref}/>} />
             <Route path="*" element={<NoPage />} />
           </Route>
         </Routes>

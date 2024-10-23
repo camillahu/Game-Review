@@ -2,15 +2,15 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 export default function NavbarItem({
-  name,
+  toPath,
   text,
   setSelectedItem,
   selectedItem,
 }) {
   const select = () => {
-    setSelectedItem(name);
+    setSelectedItem(toPath);
   };
-  if (name === selectedItem) {
+  if (toPath === selectedItem) {
     return (
       <span className="lead pe-none fw-bold link-dark">
         {text}
@@ -22,7 +22,7 @@ export default function NavbarItem({
       <Link
         onClick={select}
         className="lead text-decoration-none link-dark"
-        to={name}
+        to={toPath}
 
       >
         {text}

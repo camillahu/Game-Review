@@ -1,20 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import GameCard from "../components/GameCard";
-import { gamesAndGenres, genres } from "../api/gamesAndGenres";
-import { userGames } from "../api/userGames";
 
 
 
-function Home() {
-  const [games, setGames] = useState([]);
+function Home({loginref, allGamesResult, allGenresResult}) {
+  const [localGames, setLocalGames] = useState([]);
+  const [localGenres, setLocalGenres] = useState([]);
   const [filteredGames, setFilteredGames] = useState([]);
   const [allGenres, setAllGenres] = useState([]);
   const [gamesByCategory, setGamesByCategory] = useState(new Map());
   const [selectedView, setSelectedView] = useState("allGames");
-  const loginref = useRef(null);
-
-  // const { loginref } = useContext(contextStuff);
+ 
 
   const isInCategory = (gameId, category) => {
     const categoryGames = gamesByCategory.get(category) || []; //hvis gamesByCategory.get returnerer undefined, så setter vi inn et tomt array for å unngå error. 
@@ -30,56 +27,54 @@ function Home() {
   ];
 
   useEffect(() => {
-    async function fetchGames() {
-      try {
-        const allGamesResponse = await gamesAndGenres();
-        setGames(allGamesResponse);
+    setLocalGames(allGamesResult);
+    // async function fetchGames() {
+    //   try {
+    //     const allGamesResponse = await gamesAndGenres();
+    //     setGames(allGamesResponse);
 
-        // if (loginref) {
-        //   const gameMap = new Map();
+    //     if (loginref) {
+    //       const gameMap = new Map();
 
-        //   for (let c of categories) {
-        //     const userGamesResponse = await userGames(loginref.current, c);
-        //     gameMap.set(c, userGamesResponse);
-        //   }
-        //   setGamesByCategory(gameMap);
-        // }
-      } catch (error) {
-        console.error("Error fetching games:", error);
-      }
-    }
-    fetchGames();
-  }, [loginref]);
+    //       for (let c of categories) {
+    //         const userGamesResponse = await userGames(loginref.current, c);
+    //         gameMap.set(c, userGamesResponse);
+    //       }
+    //       setGamesByCategory(gameMap);
+    //     }
+    //   } catch (error) {
+    //     console.error("Error fetching games:", error);
+    //   }
+    // }
+    // fetchGames();
+  }, [allGamesResult]);
 
   useEffect(() => {
-    async function fetchGenres() {
-      try {
-        const response = await genres();
-        setAllGenres(response);
-      } catch (error) {
-        console.error("Error fetching genres", error);
-      }
-    }
-    fetchGenres();
-  }, []);
+    setLocalGenres(allGenresResult);
+  }, [allGenresResult]);
+
+  useEffect(() => {
+    setAllGenres()
+  }, [allGenresResult]);
+
 
   useEffect(() => {
     if (selectedView === "allGames") {
-      setFilteredGames(games);
+      setFilteredGames(localGames);
     } else {
-      const filtered = games.filter((game) => {
+      const filtered = localGames.filter((game) => {
         const genresAsArray = game.Genres.split(",").map((g) => g.trim());
         return genresAsArray.includes(selectedView);
       });
       setFilteredGames(filtered);
     }
-  }, [selectedView, games]);
+  }, [selectedView, localGames, localGenres]);
 
   function genresLoop() {
-    return allGenres.map((g) => (
-      <option key={g.Id} value={g.Name}>
+    return localGenres.map((lg) => (
+      <option key={lg.Id} value={lg.Name}>
         {" "}
-        {g.Name}
+        {lg.Name}
       </option>
     ));
   }

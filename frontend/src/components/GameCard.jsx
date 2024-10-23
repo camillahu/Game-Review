@@ -1,8 +1,7 @@
 import { useContext } from "react";
-import { contextStuff } from "../utils/pageChanger";
 
 function GameCard(props) {
-  // const { handlePageChange, gameref } = useContext(contextStuff);
+
 
   function gameStatus1() {
     if (props.ownedGame) {

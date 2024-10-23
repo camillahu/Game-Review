@@ -1,5 +1,4 @@
 import { useContext, useState, useEffect } from "react";
-import { contextStuff } from "../utils/pageChanger";
 import { userDetails } from "../api/userDetails.js";
 import { userGames } from "../api/userGames.js";
 import PieChart from "./Graphs.jsx";
@@ -16,7 +15,7 @@ export default function UserDetails() {
   function viewFavoriteGame() {
     if (userInfo.FavoriteGame_Id) {
       gameref.current = userInfo.FavoriteGame_Id;
-      handlePageChange("gamePage");
+      // handlePageChange("gamePage");
     }
   }
 
