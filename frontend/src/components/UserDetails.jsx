@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect } from "react";
 import { userDetails } from "../api/userDetails.js";
-import { userGames } from "../api/userGames.js";
+import { userGamesByStatus } from "../api/userGames.js";
 import PieChart from "./Graphs.jsx";
 
 export default function UserDetails() {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import GameCard from "../components/GameCard";
-import { userGames } from "../api/userGames";
+import { userGamesByStatus } from "../api/userGames";
 
 function MyGames({ loginref }) {
   const [games, setGames] = useState(new Map());

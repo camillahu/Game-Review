@@ -11,11 +11,7 @@ export default function NavbarItem({
     setSelectedItem(toPath);
   };
   if (toPath === selectedItem) {
-    return (
-      <span className="lead pe-none fw-bold link-dark">
-        {text}
-      </span>
-    );
+    return <span className="lead pe-none fw-bold link-dark">{text}</span>;
   }
   return (
     <span>
@@ -23,7 +19,6 @@ export default function NavbarItem({
         onClick={select}
         className="lead text-decoration-none link-dark"
         to={toPath}
-
       >
         {text}
       </Link>

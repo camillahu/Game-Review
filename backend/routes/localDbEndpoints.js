@@ -5,21 +5,6 @@ const router = express.Router();
 
 router.use(express.json());
 
-router.get("/allGames", async (_, res) => {
-  // res er et objekt sender respons tilbake til klienten
-  try {
-    await dbCon();
-    const result = await sql.query("SELECT * FROM dbo.Games"); // result er resultatet av sql-spørringen
-    res.json(result.recordset);
-    // sender responsen som json til klienten. recordset er et
-    // property av result som inneholder radene som blir returnert av spørringen. Det er en array av objekter hvor hvert objekt representerer en rad med data.
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Database connection error");
-  } finally {
-    closeDbCon();
-  }
-});
 
 router.post("/login", async (req, res) => {
   try {
@@ -115,7 +100,7 @@ router.get("/genres", async (_, res) => {
   }
 });
 
-router.get("/allUserGames", async (req, res) => {
+router.get("/userGamesByStatus", async (req, res) => {
   const { username } = req.query; //henter brukernavnet som blir sendt fra loginref i frontend
 
   if (!username) {
@@ -125,22 +110,11 @@ router.get("/allUserGames", async (req, res) => {
   try {
     await dbCon();
     const result =
-      await sql.query`Select g.Id, g.Title, g.Developer, g.Publisher, g.ReleaseDate, g.ImgPath, 
-                                        STRING_AGG(gen.Name, ', ') AS Genres
-                                        FROM Games g
-                                        JOIN Game_Genres gg ON g.Id = gg.Game_Id
-                                        JOIN Genres gen ON gg.Genre_Id = gen.Id
-										WHERE g.Id IN (
-										SELECT Game_Id FROM User_HasPlayed WHERE User_Id = ${username}
-										UNION
-										SELECT Game_Id FROM User_OwnedGames WHERE User_Id = ${username}
-										UNION
-										SELECT Game_Id FROM User_CurrentlyPlaying WHERE User_Id = ${username}
-										UNION
-										SELECT Game_Id FROM User_Wishlist WHERE User_Id = ${username}
-									)
-                                        GROUP BY g.Id, g.Title, g.Developer, g.Publisher, g.ReleaseDate, g.ImgPath
-                                        ORDER BY g.Title`;
+      await sql.query`SELECT User_GameStatus.GameId, GameStatus.[Name]
+                      FROM User_GameStatus
+                      JOIN GameStatus ON User_GameStatus.StatusId = GameStatus.Id 
+                      JOIN Users ON User_GameStatus.Username = Users.Username
+                      WHERE User_GameStatus.Username = ${username}`;
     const games = result.recordset;
 
     res.json(games);
@@ -152,128 +126,6 @@ router.get("/allUserGames", async (req, res) => {
   }
 });
 
-router.get("/ownedUserGames", async (req, res) => {
-  const { username } = req.query; //henter brukernavnet som blir sendt fra loginref i frontend
-
-  if (!username) {
-    return res.status(400).send("Must be logged in to view games");
-  }
-
-  try {
-    await dbCon();
-    const result =
-      await sql.query`Select g.Id, g.Title, g.Developer, g.Publisher, g.ReleaseDate, g.ImgPath, 
-                                        STRING_AGG(gen.Name, ', ') AS Genres
-                                        FROM Games g
-                                        JOIN Game_Genres gg ON g.Id = gg.Game_Id
-                                        JOIN Genres gen ON gg.Genre_Id = gen.Id
-										WHERE g.Id IN (
-										SELECT Game_Id FROM User_OwnedGames WHERE User_Id = ${username}
-									)
-                                        GROUP BY g.Id, g.Title, g.Developer, g.Publisher, g.ReleaseDate, g.ImgPath
-                                        ORDER BY g.Title`;
-    const games = result.recordset;
-    res.json(games);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Database connection error");
-  } finally {
-    closeDbCon();
-  }
-});
-
-router.get("/wishlistUserGames", async (req, res) => {
-  const { username } = req.query; //henter brukernavnet som blir sendt fra loginref i frontend
-
-  if (!username) {
-    return res.status(400).send("Must be logged in to view games");
-  }
-
-  try {
-    await dbCon();
-    const result =
-      await sql.query`Select g.Id, g.Title, g.Developer, g.Publisher, g.ReleaseDate, g.ImgPath, 
-                                        STRING_AGG(gen.Name, ', ') AS Genres
-                                        FROM Games g
-                                        JOIN Game_Genres gg ON g.Id = gg.Game_Id
-                                        JOIN Genres gen ON gg.Genre_Id = gen.Id
-										WHERE g.Id IN (
-										SELECT Game_Id FROM User_Wishlist WHERE User_Id = ${username}
-									)
-                                        GROUP BY g.Id, g.Title, g.Developer, g.Publisher, g.ReleaseDate, g.ImgPath
-                                        ORDER BY g.Title`;
-    const games = result.recordset;
-
-    res.json(games);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Database connection error");
-  } finally {
-    closeDbCon();
-  }
-});
-
-router.get("/playedUserGames", async (req, res) => {
-  const { username } = req.query; //henter brukernavnet som blir sendt fra loginref i frontend
-
-  if (!username) {
-    return res.status(400).send("Must be logged in to view games");
-  }
-
-  try {
-    await dbCon();
-    const result =
-      await sql.query`Select g.Id, g.Title, g.Developer, g.Publisher, g.ReleaseDate, g.ImgPath, 
-                                          STRING_AGG(gen.Name, ', ') AS Genres
-                                          FROM Games g
-                                          JOIN Game_Genres gg ON g.Id = gg.Game_Id
-                                          JOIN Genres gen ON gg.Genre_Id = gen.Id
-                                          WHERE g.Id IN (
-                                          SELECT Game_Id FROM User_HasPlayed WHERE User_Id = ${username}
-                                      )
-                                          GROUP BY g.Id, g.Title, g.Developer, g.Publisher, g.ReleaseDate, g.ImgPath
-                                          ORDER BY g.Title`;
-    const games = result.recordset;
-
-    res.json(games);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Database connection error");
-  } finally {
-    closeDbCon();
-  }
-});
-
-router.get("/currentlyPlayingUserGames", async (req, res) => {
-  const { username } = req.query; //henter brukernavnet som blir sendt fra loginref i frontend
-
-  if (!username) {
-    return res.status(400).send("Must be logged in to view games");
-  }
-
-  try {
-    await dbCon();
-    const result =
-      await sql.query`Select g.Id, g.Title, g.Developer, g.Publisher, g.ReleaseDate, g.ImgPath, 
-                                          STRING_AGG(gen.Name, ', ') AS Genres
-                                          FROM Games g
-                                          JOIN Game_Genres gg ON g.Id = gg.Game_Id
-                                          JOIN Genres gen ON gg.Genre_Id = gen.Id
-                                          WHERE g.Id IN (
-                                          SELECT Game_Id FROM User_CurrentlyPlaying WHERE User_Id = ${username}
-                                      )
-                                          GROUP BY g.Id, g.Title, g.Developer, g.Publisher, g.ReleaseDate, g.ImgPath
-                                          ORDER BY g.Title`;
-    const games = result.recordset;
-
-    res.json(games);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Database connection error");
-  } finally {
-    closeDbCon();
-  }
-});
 
 router.get("/gameDetails", async (req, res) => {
   const { gameId } = req.query;

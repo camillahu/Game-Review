@@ -2,51 +2,15 @@ import React, { useState, useEffect, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import GameCard from "../components/GameCard";
 
-
-
-function Home({loginref, allGamesResult, allGenresResult}) {
+function Home({allGamesResult, allGenresResult, gamesByStatus}) {
   const [localGames, setLocalGames] = useState([]);
   const [localGenres, setLocalGenres] = useState([]);
   const [filteredGames, setFilteredGames] = useState([]);
-  const [allGenres, setAllGenres] = useState([]);
-  const [gamesByCategory, setGamesByCategory] = useState(new Map());
+  const [localGamesByStatus, setLocalGamesByStatus] = useState([]);
   const [selectedView, setSelectedView] = useState("allGames");
- 
-
-  const isInCategory = (gameId, category) => {
-    const categoryGames = gamesByCategory.get(category) || []; //hvis gamesByCategory.get returnerer undefined, så setter vi inn et tomt array for å unngå error. 
-    return categoryGames.some((g) => g.Id === gameId); //some vil returnere false dersom kategorien er et tomt array. 
-  };
-
-  const categories = [ //dette er kategoriene som blir satt inn i gamesbyCategory Map. De samme kategoriene blir brukt til å sende riktig "view" til backenden i usergames. 
-    "allUserGames",
-    "ownedUserGames",
-    "wishlistUserGames",
-    "playedUserGames",
-    "currentlyPlayingUserGames",
-  ];
 
   useEffect(() => {
     setLocalGames(allGamesResult);
-    // async function fetchGames() {
-    //   try {
-    //     const allGamesResponse = await gamesAndGenres();
-    //     setGames(allGamesResponse);
-
-    //     if (loginref) {
-    //       const gameMap = new Map();
-
-    //       for (let c of categories) {
-    //         const userGamesResponse = await userGames(loginref.current, c);
-    //         gameMap.set(c, userGamesResponse);
-    //       }
-    //       setGamesByCategory(gameMap);
-    //     }
-    //   } catch (error) {
-    //     console.error("Error fetching games:", error);
-    //   }
-    // }
-    // fetchGames();
   }, [allGamesResult]);
 
   useEffect(() => {
@@ -54,8 +18,8 @@ function Home({loginref, allGamesResult, allGenresResult}) {
   }, [allGenresResult]);
 
   useEffect(() => {
-    setAllGenres()
-  }, [allGenresResult]);
+    setLocalGamesByStatus(gamesByStatus);
+  }, [gamesByStatus]);
 
 
   useEffect(() => {
@@ -70,14 +34,15 @@ function Home({loginref, allGamesResult, allGenresResult}) {
     }
   }, [selectedView, localGames, localGenres]);
 
-  function genresLoop() {
-    return localGenres.map((lg) => (
-      <option key={lg.Id} value={lg.Name}>
-        {" "}
-        {lg.Name}
-      </option>
-    ));
+  function getStatus(id) {
+    if(localGamesByStatus) {
+       const status = localGamesByStatus.filter(status => status.GameId === id);
+       console.log(status)
+    }
   }
+
+  getStatus(1); //start her
+
 
   return (
     <div className="p-2 container">
@@ -94,27 +59,25 @@ function Home({loginref, allGamesResult, allGenresResult}) {
           onChange={(e) => setSelectedView(e.target.value)}
         >
           <option value="allGames">All Games</option>
-          {genresLoop()}
+          {localGenres.map((lg) => (
+            <option key={lg.Id} value={lg.Name}>
+              {" "}
+              {lg.Name}
+            </option>
+          ))}
         </select>
       </div>
       <div className="row justify-content-center">
         {filteredGames.map((game) => (
           <GameCard
             key={game.Id}
-            id= {game.Id}
+            id={game.Id}
             title={game.Title}
             developer={game.Developer}
             publisher={game.Publisher}
             releaseDate={game.ReleaseDate}
             genres={game.Genres}
             imgPath={game.ImgPath}
-            ownedGame={isInCategory(game.Id, "ownedUserGames")}
-            wishlistGame={isInCategory(game.Id, "wishlistUserGames")}
-            playedGame={isInCategory(game.Id, "playedUserGames")}
-            currentlyPlayingGame={isInCategory(
-              game.Id,
-              "currentlyPlayingUserGames"
-            )}
           />
         ))}
       </div>

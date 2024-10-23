@@ -1,6 +1,5 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom"; //npm i -D react-router-dom@latest
 import Layout from "./pages/Layout";
 import SignUp from "./pages/SignUp";
@@ -13,54 +12,80 @@ import EditProfile from "./pages/EditProfile";
 import NoPage from "./pages/NoPage";
 import React, { useState, useRef, createContext, useEffect } from "react";
 import { gamesAndGenres, genres } from "./api/gamesAndGenres";
+import { userGamesByStatus } from "./api/userGames";
 
 function App() {
   const loginref = useRef("camillzy");
   const gameref = useRef(1);
   const [allGames, setAllGames] = useState([]);
   const [allGenres, setAllGenres] = useState([]);
+  const [userGameStatus, setUserGameStatus] = useState([]);
 
   useEffect(() => {
     async function fetchGames() {
       try {
         const response = await gamesAndGenres();
-      setAllGames(response);
-      } catch(error) {
+        setAllGames(response);
+      } catch (error) {
         console.error("Error fetching all games", error);
       }
-      
     }
     fetchGames();
   }, []);
 
   useEffect(() => {
     async function fetchGenres() {
-    try {
-      const response = await genres();
-      setAllGenres(response);
-    } catch (error) {
-      console.error("Error fetching genres", error);
-    }
+      try {
+        const response = await genres();
+        setAllGenres(response);
+      } catch (error) {
+        console.error("Error fetching genres", error);
+      }
     }
     fetchGenres();
   }, []);
 
-  // function handlePageChange(page) {
-  //   setPage(page);
-  // }
+  useEffect(() => {
+    if (loginref.current) {
+      async function fetchGameStatus() {
+        try {
+          const response = await userGamesByStatus(loginref.current);
+          setUserGameStatus(response);
+        } catch (error) {
+          console.error("Error fetching game statuses", error);
+        }
+      }
+      fetchGameStatus();
+    }
+  }, [loginref]);
 
   return (
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Layout loginref = {loginref}/>}>
-            <Route index element={<Home loginref= {loginref} allGamesResult= {allGames} allGenresResult = {allGenres}/>} />
+          <Route path="/" element={<Layout loginref={loginref} />}>
+            <Route
+              index
+              element={
+                <Home
+                  allGamesResult={allGames}
+                  allGenresResult={allGenres}
+                  gamesByStatus={userGameStatus}
+                />
+              }
+            />
             <Route path="signup" element={<SignUp />} />
-            <Route path="my-games" element={<MyGames loginref= {loginref} />} />
-            <Route path="login" element={<LogIn loginref= {loginref} />} />
-            <Route path="game-page" element={<GamePage loginref= {loginref} gameref= {gameref}/>} />
-            <Route path="profile" element={<Profile loginref= {loginref}/>} />
-            <Route path="edit-profile" element={<EditProfile loginref= {loginref}/>} />
+            <Route path="my-games" element={<MyGames loginref={loginref} />} />
+            <Route path="login" element={<LogIn loginref={loginref} />} />
+            <Route
+              path="game-page"
+              element={<GamePage loginref={loginref} gameref={gameref} />}
+            />
+            <Route path="profile" element={<Profile loginref={loginref} />} />
+            <Route
+              path="edit-profile"
+              element={<EditProfile loginref={loginref} />}
+            />
             <Route path="*" element={<NoPage />} />
           </Route>
         </Routes>
@@ -69,11 +94,7 @@ function App() {
   );
 }
 
-
-
 export default App;
-export const Data = createContext();
-
 // endre sql- en db for alle spillstatuser, en db som matcher de med username og gameID
 // react router
 // lagre all info i app- spillinfo og eventuelt userinfo sånn at man ikke trenger mange spørringer.
