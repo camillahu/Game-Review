@@ -22,6 +22,7 @@ function App() {
   const [userGameStatus, setUserGameStatus] = useState([]);
 
   useEffect(() => {
+    //fetching all games from the db with their respective genres as a string. 
     async function fetchGames() {
       try {
         const response = await gamesAndGenres();
@@ -34,6 +35,7 @@ function App() {
   }, []);
 
   useEffect(() => {
+    //fetching all genres from the db to view in the select in Home.
     async function fetchGenres() {
       try {
         const response = await genres();
@@ -46,12 +48,13 @@ function App() {
   }, []);
 
   useEffect(() => {
+    //if a user is logged in, this fetches all rows with their username linked to any game+status combo.
+    //this sends an array of objects with the gameId and status name e.g. "owned", "played", "wishlist" or "currently playing"
     if (loginref.current) {
       async function fetchGameStatus() {
         try {
           const response = await userGamesByStatus(loginref.current);
           setUserGameStatus(response);
-          console.log(response);
         } catch (error) {
           console.error("Error fetching game statuses", error);
         }

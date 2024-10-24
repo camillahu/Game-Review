@@ -9,16 +9,24 @@ function Home({allGamesResult, allGenresResult, gamesByStatus}) {
   const [localGamesByStatus, setLocalGamesByStatus] = useState([]);
   const [selectedView, setSelectedView] = useState("allGames");
 
-  useEffect(() => {
+  useEffect(() => { 
+    //getting the result of fetchGames in App, and setting the local state.
+    //this prevents having to fetch every time a component changes.
     setLocalGames(allGamesResult);
   }, [allGamesResult]);
 
   useEffect(() => {
+    //getting the result of fetchGenres in App, and setting the local state.
+    //this prevents having to fetch every time a component changes.
     setLocalGenres(allGenresResult);
   }, [allGenresResult]);
 
   useEffect(() => {
-    setLocalGamesByStatus(gamesByStatus);
+    //getting the result of fetchGameStatus in App, and setting the local state.
+    //this prevents having to fetch every time a component changes.
+    //this will only set if gamesByStatus has a value, if not, it will set an empty array. 
+    //if the user is not logged in, the state in app wont be set.
+    setLocalGamesByStatus(gamesByStatus ?? []);
   }, [gamesByStatus]);
 
 
@@ -37,9 +45,13 @@ function Home({allGamesResult, allGenresResult, gamesByStatus}) {
   function getStatus(id) {
     if(localGamesByStatus) {
        const filtered = localGamesByStatus.filter(status => status.GameId === id);
-       const resultArray = filtered.map(r => r.Name);
-       return resultArray;
-    }
+       if(filtered) {
+        return filtered.map(r => r.Name);
+       }
+       else {
+        return [];
+       }
+    } 
   }
 
   return (
