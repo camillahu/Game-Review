@@ -36,13 +36,11 @@ function Home({allGamesResult, allGenresResult, gamesByStatus}) {
 
   function getStatus(id) {
     if(localGamesByStatus) {
-       const status = localGamesByStatus.filter(status => status.GameId === id);
-       console.log(status)
+       const filtered = localGamesByStatus.filter(status => status.GameId === id);
+       const resultArray = filtered.map(r => r.Name);
+       return resultArray;
     }
   }
-
-  getStatus(1); //start her
-
 
   return (
     <div className="p-2 container">
@@ -78,6 +76,7 @@ function Home({allGamesResult, allGenresResult, gamesByStatus}) {
             releaseDate={game.ReleaseDate}
             genres={game.Genres}
             imgPath={game.ImgPath}
+            statusArray= {getStatus(game.Id)}
           />
         ))}
       </div>

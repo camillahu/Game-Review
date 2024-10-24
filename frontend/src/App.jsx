@@ -51,6 +51,7 @@ function App() {
         try {
           const response = await userGamesByStatus(loginref.current);
           setUserGameStatus(response);
+          console.log(response);
         } catch (error) {
           console.error("Error fetching game statuses", error);
         }
