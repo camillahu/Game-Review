@@ -31,6 +31,10 @@ function Home({allGamesResult, allGenresResult, gamesByStatus}) {
 
 
   useEffect(() => {
+    //this one is used to filter the games for the select menu accoriding to their genres. 
+    //if All Games is selected, home will show all games in the db. 
+    //if something other than that is selected, the function will filter all the locally saved games,
+    //by genre. The games genres is initially a string, but gets put in a temporary array to check with includes.
     if (selectedView === "allGames") {
       setFilteredGames(localGames);
     } else {
@@ -43,6 +47,8 @@ function Home({allGamesResult, allGenresResult, gamesByStatus}) {
   }, [selectedView, localGames, localGenres]);
 
   function getStatus(id) {
+    //this function is used to return a filtered array to each game in the map of gameCards.
+    //the array contains the respective game's status, if any ("owned", "wishlist", "played" or "currently playing")
     if(localGamesByStatus) {
        const filtered = localGamesByStatus.filter(status => status.GameId === id);
        if(filtered) {
