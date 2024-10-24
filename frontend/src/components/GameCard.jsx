@@ -1,30 +1,33 @@
-import { useContext } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 function GameCard(props) {
+  const localGameStatus = useMemo(() => props.statusArray? props.statusArray : [], [props.statusArray]);
+  const [gameStatus1, setGameStatus1] = useState();
+  const [gameStatus2, setGameStatus2] = useState();
 
-
-  function gameStatus1() {
-    if (props.ownedGame) {
-      return <div style={{ color: "HSL(120, 50%, 70%)" }}>Owned</div>;
-    } else if (props.wishlistGame) {
-      return <div style={{ color: "HSL(30, 70%, 70%)" }}>Wishlist</div>;
+  useEffect(()=> {
+  
+    function handleStatus() {
+      if (localGameStatus.includes("Owned")) {
+        setGameStatus1({text : "owned", color: "HSL(120, 50%, 70%)"});
+      }
+      else if (localGameStatus.includes("Wishlist")) {
+        setGameStatus1({text : "wishlist", color: "HSL(30, 70%, 70%)"});
+      }
+      if (localGameStatus.includes("Played")) {
+        setGameStatus2({text : "played", color: "HSL(200, 60%, 65%)"});
+      }
+      else if (localGameStatus.includes("CurrentlyPlaying")) {
+        setGameStatus2({text : "currently playing", color: "HSL(280, 50%, 70%)"});
+      }
+      else {
+        setGameStatus1("");
+        setGameStatus2("");
+      }
     }
-  }
+    handleStatus();
+  }, [localGameStatus])
 
-  function gameStatus2() {
-    if (props.playedGame) {
-      return <div style={{ color: "HSL(200, 60%, 65%)" }}>Played</div>;
-    } else if (props.currentlyPlayingGame) {
-      return (
-        <div style={{ color: "HSL(280, 50%, 70%)" }}>Currently Playing</div>
-      );
-    }
-  }
-
-  // function viewGamePage() {
-  //   gameref.current = props.id;
-  //   handlePageChange("gamePage");
-  // }
 
   return (
     <>
@@ -59,9 +62,9 @@ function GameCard(props) {
           </p>
         </div>
         <div className="d-flex justify-content-between align-items-center mb-2 mt-auto">
-          <div style={{ color: "HSL(0, 0%, 80%)", fontSize: "0.70rem" }}>
-            {gameStatus1()}
-            {gameStatus2()}
+          <div style={{ color: "HSL(0, 0%, 80%)", fontSize: "0.80rem" }}>
+            <div style= {{color: gameStatus1?.color}}>{gameStatus1?.text}</div>
+            <div style= {{color: gameStatus2?.color}}>{gameStatus2?.text}</div>
           </div>
           <div>
             <button className="btn btn-outline-light">

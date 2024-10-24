@@ -54,9 +54,6 @@ function Home({allGamesResult, allGenresResult, gamesByStatus}) {
        if(filtered) {
         return filtered.map(r => r.Name);
        }
-       else {
-        return [];
-       }
     } 
   }
 
@@ -94,7 +91,7 @@ function Home({allGamesResult, allGenresResult, gamesByStatus}) {
             releaseDate={game.ReleaseDate}
             genres={game.Genres}
             imgPath={game.ImgPath}
-            statusArray= {getStatus(game.Id) ?? []}
+            statusArray= {getStatus(game.Id)}
           />
         ))}
       </div>
