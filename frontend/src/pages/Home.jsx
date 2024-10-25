@@ -52,9 +52,9 @@ function Home({allGamesResult, allGenresResult, gamesByStatus}) {
     if(localGamesByStatus) {
        const filtered = localGamesByStatus.filter(status => status.GameId === id);
        if(filtered) {
-        return filtered.map(r => r.Name);
+        return filtered.map(result => result.Name);
        }
-    } 
+    }
   }
 
   return (
@@ -84,13 +84,7 @@ function Home({allGamesResult, allGenresResult, gamesByStatus}) {
         {filteredGames.map((game) => (
           <GameCard
             key={game.Id}
-            id={game.Id}
-            title={game.Title}
-            developer={game.Developer}
-            publisher={game.Publisher}
-            releaseDate={game.ReleaseDate}
-            genres={game.Genres}
-            imgPath={game.ImgPath}
+            game={game}
             statusArray= {getStatus(game.Id)}
           />
         ))}

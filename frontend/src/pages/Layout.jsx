@@ -52,7 +52,7 @@ const Layout = ({ loginref }) => {
           />
 
           <NavbarItem
-            toPath="/"
+            toPath="/login"
             text="Sign out"
             selectedItem={selectedItem}
             setSelectedItem={setSelectedItem}

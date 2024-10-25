@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 
-function GameCard(props) {
-  const localGameStatus = useMemo(() => props.statusArray? props.statusArray : [], [props.statusArray]);
+function GameCard({game:{Title, Genres, ImgPath}, statusArray}) {
+  const localGameStatus = useMemo(() => statusArray? statusArray : [], [statusArray]);
   const [gameStatus1, setGameStatus1] = useState();
   const [gameStatus2, setGameStatus2] = useState();
 
@@ -17,7 +17,7 @@ function GameCard(props) {
       if (localGameStatus.includes("Played")) {
         setGameStatus2({text : "played", color: "HSL(200, 60%, 65%)"});
       }
-      else if (localGameStatus.includes("CurrentlyPlaying")) {
+      else if (localGameStatus.includes("Currently Playing")) {
         setGameStatus2({text : "currently playing", color: "HSL(280, 50%, 70%)"});
       }
       else {
@@ -42,7 +42,7 @@ function GameCard(props) {
         <div className="square-box mb-3">
           <img
             className="img-fluid img-cover"
-            src={props.imgPath}
+            src={ImgPath}
             alt="game img"
           />
         </div>
@@ -52,13 +52,13 @@ function GameCard(props) {
             className="h5 d-inline-block text-truncate"
             style={{ color: "HSL(0, 0%, 80%)" }}
           >
-            {props.title}
+            {Title}
           </p>
           <p
             className="format-genre-text"
             style={{ color: "HSL(0, 0%, 80%)", fontSize: "0.85rem" }}
           >
-            {props.genres}
+            {Genres}
           </p>
         </div>
         <div className="d-flex justify-content-between align-items-center mb-2 mt-auto">
