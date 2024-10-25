@@ -1,34 +1,62 @@
 import React, { useState, useEffect, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import GameCard from "../components/GameCard";
-import { userGamesByStatus } from "../api/userGames";
 
-function MyGames({ loginref }) {
-  const [games, setGames] = useState(new Map());
-  const [selectedView, setSelectedView] = useState("allUserGames");
 
-  const isInCategory = (gameId, category) =>
-    games.get(category).some((g) => g.Id === gameId);
+function MyGames({gamesByStatus, statusNames, userGames }) {
+  const [localGames, setLocalGames] = useState([]);
+  const [localStatusNames, setLocalStatusNames] = useState([]);
+  const [filteredGames, setFilteredGames] = useState([]);
+  const [localGamesByStatus, setLocalGamesByStatus] = useState([]);
+  const [selectedView, setSelectedView] = useState("All Games");
 
-  const views = [
-    "allUserGames",
-    "ownedUserGames",
-    "wishlistUserGames",
-    "playedUserGames",
-    "currentlyPlayingUserGames",
-  ];
+
+  useEffect(() => { 
+    //getting the result of fetchGames + fetchGameStatus in App, and setting the local state.
+    //this only gets the games that the user has put a status on.
+    setLocalGames(userGames);
+  }, [userGames]);
 
   useEffect(() => {
-    async function fetchGames() {
-      let myGames = new Map();
+    //getting the result of fetchGameStatus in App, and setting the local state.
+    //this prevents having to fetch every time a component changes.
+    //this will only set if gamesByStatus has a value, if not, it will set an empty array. 
+    //if the user is not logged in, the state in app wont be set.
+    setLocalGamesByStatus(gamesByStatus ?? []);
+  }, [gamesByStatus]);
+  
+  useEffect(() => {
+    //this gets the status names ("owned", "played", "wishlist" or "currently playing") and Id from the db
+    //and sets the local state. 
+    setLocalStatusNames(statusNames ?? []);
+  }, [statusNames]);
 
-      for (let v of views) {
-        myGames.set(v, await userGames(loginref.current, v));
-      }
-      setGames(myGames);
+  useEffect(() => {
+    
+    if (selectedView === "All Games") {
+      setFilteredGames(localGames);
+    // } else {
+    //   // const filtered = localGames.filter((game) => {
+        
+    //   //   return genresAsArray.includes(selectedView);
+    //   });
+      // setFilteredGames(filtered);
     }
-    fetchGames();
-  }, []);
+  }, [selectedView, localGames]);
+
+
+  function getStatus(id) {
+    //this function is used to return a filtered array to each game in the map of gameCards.
+    //the array contains the respective game's status, if any ("owned", "wishlist", "played" or "currently playing")
+    if(localGamesByStatus) {
+       const filtered = localGamesByStatus.filter(status => status.GameId === id);
+       if(filtered) {
+        return filtered.map(result => result.Name);
+       }
+    }
+  }
+  console.log(localGamesByStatus)
+  
 
   return (
     <div className="p-2 container">
@@ -39,50 +67,29 @@ function MyGames({ loginref }) {
         My games
       </h2>
       <div className="d-flex justify-content-end">
-        <select
+      <select
           className="form-select form-select-sm customDropDown"
           value={selectedView}
           onChange={(e) => setSelectedView(e.target.value)}
         >
-          <option value="allUserGames">All My Games</option>
-          <option value="ownedUserGames">Owned Games</option>
-          <option value="wishlistUserGames">Wishlist</option>
-          <option value="playedUserGames">Played Games</option>
-          <option value="currentlyPlayingUserGames">Currently Playing</option>
+          <option value="All Games">All My Games</option>
+          {localStatusNames.map((sn) => (
+            <option key={sn.Id} value={sn.Name}>
+              {" "}
+              {sn.Name}
+            </option>
+          ))}
         </select>
       </div>
 
       <div className="row justify-content-center">
-        {Array.isArray(games.get(selectedView)) ? (
-          games
-            .get(selectedView)
-            .map((game) => (
-              <GameCard
-                key={game.Id}
-                id= {game.Id}
-                title={game.Title}
-                developer={game.Developer}
-                publisher={game.Publisher}
-                releaseDate={game.ReleaseDate}
-                genres={game.Genres}
-                imgPath={game.ImgPath}
-                ownedGame={isInCategory(game.Id, "ownedUserGames")}
-                wishlistGame={isInCategory(game.Id, "wishlistUserGames")}
-                playedGame={isInCategory(game.Id, "playedUserGames")}
-                currentlyPlayingGame={isInCategory(
-                  game.Id,
-                  "currentlyPlayingUserGames"
-                )}
-              />
-            ))
-        ) : (
-          <div
-            className="d-flex justify-content-center m-3"
-            style={{ color: "white" }}
-          >
-            {games.get(selectedView)}
-          </div>
-        )}
+      {filteredGames.map((game) => (
+          <GameCard
+            key={game.Id}
+            game={game}
+            statusArray= {getStatus(game.Id)}
+          />
+        ))}
       </div>
     </div>
   );

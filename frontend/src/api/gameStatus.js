@@ -33,3 +33,20 @@ export async function addGameStatus(chosenStatus, gameId, username) {
         throw error;
     }
 }
+
+
+export async function statusNames() {
+    try {
+        const response = await fetch(
+            `http://localhost:3000/localdb/statusNames`, {
+            method: 'GET',
+            headers: {  
+                'Content-Type': 'application/json'
+            },
+        });
+        return response.json(); 
+    } catch(error) {
+        console.error('add request failed ', error);
+        throw error;
+    }
+}

@@ -13,16 +13,19 @@ import NoPage from "./pages/NoPage";
 import React, { useState, useRef, createContext, useEffect } from "react";
 import { gamesAndGenres, genres } from "./api/gamesAndGenres";
 import { userGamesByStatus } from "./api/userGames";
+import  {statusNames}  from "./api/gameStatus";
 
 function App() {
   const loginref = useRef("camillzy");
   const gameref = useRef(1);
   const [allGames, setAllGames] = useState([]);
   const [allGenres, setAllGenres] = useState([]);
+  const [allStatusNames, setAllStatusNames] = useState([]);
   const [userGameStatus, setUserGameStatus] = useState([]);
+  const [userGames, setUserGames] = useState([]);
 
   useEffect(() => {
-    //fetching all games from the db with their respective genres as a string. 
+    //fetching all games from the db with their respective genres as a string.
     async function fetchGames() {
       try {
         const response = await gamesAndGenres();
@@ -63,6 +66,35 @@ function App() {
     }
   }, [loginref]);
 
+  useEffect(() => {
+    if(loginref.current) {
+
+    const userGameIds = new Set(userGameStatus.map((status) => status.GameId));
+    const userGames = allGames.filter((game) => userGameIds.has(game.Id));
+    // const userGamesWithStatus = userGames.map((g) => ({...g, status: []}) )
+    setUserGames(userGameIds);
+    console.log(userGameStatus)
+    }
+    
+  }, [loginref, allGames, userGameStatus]);
+  console.log(userGameStatus)
+
+  useEffect(() => {
+    //fetching all statuses from the db to view in the select in MyGames.
+    async function fetchStatusNames() {
+      try {
+        const response = await statusNames();
+        // let responseArray = response.map(status => status.Name)
+        setAllStatusNames(response);
+      } catch (error) {
+        console.error("Error fetching genres", error);
+      }
+    }
+    fetchStatusNames();
+  }, []);
+
+  
+
   return (
     <>
       <BrowserRouter>
@@ -79,7 +111,16 @@ function App() {
               }
             />
             <Route path="signup" element={<SignUp />} />
-            <Route path="my-games" element={<MyGames loginref={loginref} />} />
+            <Route
+              path="my-games"
+              element={
+                <MyGames
+                  gamesByStatus={userGameStatus}
+                  statusNames = {allStatusNames}
+                  userGames = {userGames}
+                />
+              }
+            />
             <Route path="login" element={<LogIn loginref={loginref} />} />
             <Route
               path="game-page"

@@ -126,6 +126,24 @@ router.get("/userGamesByStatus", async (req, res) => {
   }
 });
 
+router.get("/statusNames", async (req, res) => {
+  try {
+    await dbCon();
+    const result =
+      await sql.query`SELECT GameStatus.[Name], GameStatus.[Id]
+                      FROM GameStatus`;
+
+    const statuses = result.recordset;
+
+    res.json(statuses);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Database connection error");
+  } finally {
+    closeDbCon();
+  }
+});
+
 
 router.get("/gameDetails", async (req, res) => {
   const { gameId } = req.query;

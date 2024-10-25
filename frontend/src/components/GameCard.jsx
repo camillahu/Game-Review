@@ -14,6 +14,9 @@ function GameCard({game:{Title, Genres, ImgPath}, statusArray}) {
       else if (localGameStatus.includes("Wishlist")) {
         setGameStatus1({text : "wishlist", color: "HSL(30, 70%, 70%)"});
       }
+      else {
+        setGameStatus1("");
+      }
       if (localGameStatus.includes("Played")) {
         setGameStatus2({text : "played", color: "HSL(200, 60%, 65%)"});
       }
@@ -21,7 +24,6 @@ function GameCard({game:{Title, Genres, ImgPath}, statusArray}) {
         setGameStatus2({text : "currently playing", color: "HSL(280, 50%, 70%)"});
       }
       else {
-        setGameStatus1("");
         setGameStatus2("");
       }
     }
