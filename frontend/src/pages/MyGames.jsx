@@ -30,11 +30,9 @@ function MyGames({statusNames, userGames}) {
     if (selectedView === "All Games") {
       setFilteredGames(localGames);
     } else {
-      const filtered = localGames.filter((game) => {
-        game.Statuses.inclu
-        
-        return genresAsArray.includes(selectedView);
-      });
+      const filtered = localGames.filter((game) => 
+        game.Statuses.includes(selectedView)   
+      );
       setFilteredGames(filtered);
     }
   }, [selectedView, localGames]);
