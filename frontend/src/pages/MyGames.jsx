@@ -3,27 +3,21 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import GameCard from "../components/GameCard";
 
 
-function MyGames({gamesByStatus, statusNames, userGames }) {
+function MyGames({statusNames, userGames}) {
   const [localGames, setLocalGames] = useState([]);
   const [localStatusNames, setLocalStatusNames] = useState([]);
   const [filteredGames, setFilteredGames] = useState([]);
-  const [localGamesByStatus, setLocalGamesByStatus] = useState([]);
+
   const [selectedView, setSelectedView] = useState("All Games");
 
 
-  useEffect(() => { 
+    useEffect(() => { 
     //getting the result of fetchGames + fetchGameStatus in App, and setting the local state.
     //this only gets the games that the user has put a status on.
     setLocalGames(userGames);
   }, [userGames]);
 
-  useEffect(() => {
-    //getting the result of fetchGameStatus in App, and setting the local state.
-    //this prevents having to fetch every time a component changes.
-    //this will only set if gamesByStatus has a value, if not, it will set an empty array. 
-    //if the user is not logged in, the state in app wont be set.
-    setLocalGamesByStatus(gamesByStatus ?? []);
-  }, [gamesByStatus]);
+  
   
   useEffect(() => {
     //this gets the status names ("owned", "played", "wishlist" or "currently playing") and Id from the db
@@ -35,27 +29,16 @@ function MyGames({gamesByStatus, statusNames, userGames }) {
     
     if (selectedView === "All Games") {
       setFilteredGames(localGames);
-    // } else {
-    //   // const filtered = localGames.filter((game) => {
+    } else {
+      const filtered = localGames.filter((game) => {
+        game.Statuses.inclu
         
-    //   //   return genresAsArray.includes(selectedView);
-    //   });
-      // setFilteredGames(filtered);
+        return genresAsArray.includes(selectedView);
+      });
+      setFilteredGames(filtered);
     }
   }, [selectedView, localGames]);
-
-
-  function getStatus(id) {
-    //this function is used to return a filtered array to each game in the map of gameCards.
-    //the array contains the respective game's status, if any ("owned", "wishlist", "played" or "currently playing")
-    if(localGamesByStatus) {
-       const filtered = localGamesByStatus.filter(status => status.GameId === id);
-       if(filtered) {
-        return filtered.map(result => result.Name);
-       }
-    }
-  }
-  console.log(localGamesByStatus)
+  
   
 
   return (
@@ -87,7 +70,7 @@ function MyGames({gamesByStatus, statusNames, userGames }) {
           <GameCard
             key={game.Id}
             game={game}
-            statusArray= {getStatus(game.Id)}
+            statusArray= {game.Statuses}
           />
         ))}
       </div>

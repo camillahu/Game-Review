@@ -13,7 +13,7 @@ import NoPage from "./pages/NoPage";
 import React, { useState, useRef, createContext, useEffect } from "react";
 import { gamesAndGenres, genres } from "./api/gamesAndGenres";
 import { userGamesByStatus } from "./api/userGames";
-import  {statusNames}  from "./api/gameStatus";
+import { statusNames } from "./api/gameStatus";
 
 function App() {
   const loginref = useRef("camillzy");
@@ -67,24 +67,10 @@ function App() {
   }, [loginref]);
 
   useEffect(() => {
-    if(loginref.current) {
-
-    const userGameIds = new Set(userGameStatus.map((status) => status.GameId));
-    const userGames = allGames.filter((game) => userGameIds.has(game.Id));
-    // const userGamesWithStatus = userGames.map((g) => ({...g, status: []}) )
-    setUserGames(userGameIds);
-    console.log(userGameStatus)
-    }
-    
-  }, [loginref, allGames, userGameStatus]);
-  console.log(userGameStatus)
-
-  useEffect(() => {
     //fetching all statuses from the db to view in the select in MyGames.
     async function fetchStatusNames() {
       try {
         const response = await statusNames();
-        // let responseArray = response.map(status => status.Name)
         setAllStatusNames(response);
       } catch (error) {
         console.error("Error fetching genres", error);
@@ -93,7 +79,30 @@ function App() {
     fetchStatusNames();
   }, []);
 
-  
+  useEffect(() => {
+    //merging the allGames state and the userGameStatus state.
+    //it filters all games based on the game Id's in status.
+    //This ensures that only games the user has marked will be sent to MyGames.
+    //Then it adds the status names in an array as the property "Statuses" in each game object.
+    if (allGames.length && userGameStatus.length) {
+      const userGameIds = new Set(
+        userGameStatus.map((status) => status.GameId)
+      );
+
+      const filteredGames = allGames.filter((game) => userGameIds.has(game.Id));
+
+      const gamesWithStatuses = filteredGames.map((game) => {
+        const statusesForGame = userGameStatus
+          .filter((status) => status.GameId === game.Id)
+          .map((status) => status.Name);
+
+        return { ...game, Statuses: statusesForGame };
+      });
+
+      setUserGames(gamesWithStatuses);
+    }
+  }, [allGames, userGameStatus]);
+  console.log(userGames);
 
   return (
     <>
@@ -115,9 +124,8 @@ function App() {
               path="my-games"
               element={
                 <MyGames
-                  gamesByStatus={userGameStatus}
-                  statusNames = {allStatusNames}
-                  userGames = {userGames}
+                  statusNames={allStatusNames}
+                  userGames={userGames}
                 />
               }
             />
