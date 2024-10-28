@@ -6,7 +6,7 @@ import SignUp from "./pages/SignUp";
 import MyGames from "./pages/MyGames";
 import LogIn from "./pages/LogIn";
 import Home from "./pages/Home";
-import GamePage from "./pages/GamePage";
+// import GamePage from "./pages/GamePage";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
 import NoPage from "./pages/NoPage";
@@ -17,8 +17,8 @@ import { statusNames } from "./api/gameStatus";
 
 function App() {
   const loginref = useRef("camillzy");
-  const gameref = useRef(1);
   const [allGames, setAllGames] = useState([]);
+  const [allGamesWithStatus, setAllGamesWithStatus] = useState([]);
   const [allGenres, setAllGenres] = useState([]);
   const [allStatusNames, setAllStatusNames] = useState([]);
   const [userGameStatus, setUserGameStatus] = useState([]);
@@ -80,29 +80,37 @@ function App() {
   }, []);
 
   useEffect(() => {
-    //merging the allGames state and the userGameStatus state.
-    //it filters all games based on the game Id's in status.
-    //This ensures that only games the user has marked will be sent to MyGames.
-    //Then it adds the status names in an array as the property "Statuses" in each game object.
-    if (allGames.length && userGameStatus.length) {
+    //populates the Statuses array with "owned", "wishlist", "playing" or "currently playing"
+    //if the user is logged in(checked by seeing if userGameStatus has length)
+    //and the user has put a status on the game. If not, Statuses is set to an empty array. 
+
+    const gamesWithStatuses = allGames.map((game) => {
+  
+      const statusesForGame = userGameStatus?.length
+        ? userGameStatus
+            .filter((status) => status.GameId === game.Id)
+            .map((status) => status.Name)
+        : []; 
+  
+      return { ...game, Statuses: statusesForGame };
+    });
+  
+    setAllGamesWithStatus(gamesWithStatuses);
+  }, [allGames, userGameStatus]);
+
+
+  useEffect(() => {
+    
+    if (userGameStatus.length) {
       const userGameIds = new Set(
         userGameStatus.map((status) => status.GameId)
       );
 
-      const filteredGames = allGames.filter((game) => userGameIds.has(game.Id));
+      const filteredGames = allGamesWithStatus.filter((game) => userGameIds.has(game.Id));
 
-      const gamesWithStatuses = filteredGames.map((game) => {
-        const statusesForGame = userGameStatus
-          .filter((status) => status.GameId === game.Id)
-          .map((status) => status.Name);
-
-        return { ...game, Statuses: statusesForGame };
-      });
-
-      setUserGames(gamesWithStatuses);
+      setUserGames(filteredGames);
     }
-  }, [allGames, userGameStatus]);
-  console.log(userGames);
+  }, [allGamesWithStatus, userGameStatus]);
 
   return (
     <>
@@ -113,9 +121,8 @@ function App() {
               index
               element={
                 <Home
-                  allGamesResult={allGames}
+                  allGamesResult={allGamesWithStatus}
                   allGenresResult={allGenres}
-                  gamesByStatus={userGameStatus}
                 />
               }
             />
@@ -123,17 +130,16 @@ function App() {
             <Route
               path="my-games"
               element={
-                <MyGames
-                  statusNames={allStatusNames}
-                  userGames={userGames}
-                />
+                <MyGames statusNames={allStatusNames} userGames={userGames} />
               }
             />
             <Route path="login" element={<LogIn loginref={loginref} />} />
-            <Route
-              path="game-page"
-              element={<GamePage loginref={loginref} gameref={gameref} />}
-            />
+            {/* <Route
+              path="game-page/:gameId"
+              element={
+                <GamePage loginref={loginref} allGames={allGamesWithStatus} />
+              }
+            /> */}
             <Route path="profile" element={<Profile loginref={loginref} />} />
             <Route
               path="edit-profile"

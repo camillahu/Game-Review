@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import GameCard from "../components/GameCard";
 
-function Home({allGamesResult, allGenresResult, gamesByStatus}) {
+function Home({allGamesResult, allGenresResult}) {
   const [localGames, setLocalGames] = useState([]);
   const [localGenres, setLocalGenres] = useState([]);
   const [filteredGames, setFilteredGames] = useState([]);
@@ -21,14 +21,6 @@ function Home({allGamesResult, allGenresResult, gamesByStatus}) {
     setLocalGenres(allGenresResult);
   }, [allGenresResult]);
 
-  useEffect(() => {
-    //getting the result of fetchGameStatus in App, and setting the local state.
-    //this prevents having to fetch every time a component changes.
-    //this will only set if gamesByStatus has a value, if not, it will set an empty array. 
-    //if the user is not logged in, the state in app wont be set.
-    setLocalGamesByStatus(gamesByStatus ?? []);
-  }, [gamesByStatus]);
-
 
   useEffect(() => {
     //this one is used to filter the games for the select menu accoriding to their genres. 
@@ -46,16 +38,6 @@ function Home({allGamesResult, allGenresResult, gamesByStatus}) {
     }
   }, [selectedView, localGames, localGenres]);
 
-  function getStatus(id) {
-    //this function is used to return a filtered array to each game in the map of gameCards.
-    //the array contains the respective game's status, if any ("owned", "wishlist", "played" or "currently playing")
-    if(localGamesByStatus) {
-       const filtered = localGamesByStatus.filter(status => status.GameId === id);
-       if(filtered) {
-        return filtered.map(result => result.Name);
-       }
-    }
-  }
 
   return (
     <div className="p-2 container">
@@ -85,7 +67,7 @@ function Home({allGamesResult, allGenresResult, gamesByStatus}) {
           <GameCard
             key={game.Id}
             game={game}
-            statusArray= {getStatus(game.Id)}
+            statusArray= {game.Statuses}
           />
         ))}
       </div>

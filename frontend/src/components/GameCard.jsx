@@ -1,35 +1,36 @@
 import { useEffect, useState, useMemo } from "react";
+import { Link } from "react-router-dom";
 
-function GameCard({game:{Title, Genres, ImgPath}, statusArray}) {
-  const localGameStatus = useMemo(() => statusArray? statusArray : [], [statusArray]);
+function GameCard({ game: { Id, Title, Genres, ImgPath }, statusArray }) {
+  const localGameStatus = useMemo(
+    () => (statusArray ? statusArray : []),
+    [statusArray]
+  );
   const [gameStatus1, setGameStatus1] = useState();
   const [gameStatus2, setGameStatus2] = useState();
 
-  useEffect(()=> {
-  
+  useEffect(() => {
     function handleStatus() {
       if (localGameStatus.includes("Owned")) {
-        setGameStatus1({text : "owned", color: "HSL(120, 50%, 70%)"});
-      }
-      else if (localGameStatus.includes("Wishlist")) {
-        setGameStatus1({text : "wishlist", color: "HSL(30, 70%, 70%)"});
-      }
-      else {
+        setGameStatus1({ text: "owned", color: "HSL(120, 50%, 70%)" });
+      } else if (localGameStatus.includes("Wishlist")) {
+        setGameStatus1({ text: "wishlist", color: "HSL(30, 70%, 70%)" });
+      } else {
         setGameStatus1("");
       }
       if (localGameStatus.includes("Played")) {
-        setGameStatus2({text : "played", color: "HSL(200, 60%, 65%)"});
-      }
-      else if (localGameStatus.includes("Currently Playing")) {
-        setGameStatus2({text : "currently playing", color: "HSL(280, 50%, 70%)"});
-      }
-      else {
+        setGameStatus2({ text: "played", color: "HSL(200, 60%, 65%)" });
+      } else if (localGameStatus.includes("Currently Playing")) {
+        setGameStatus2({
+          text: "currently playing",
+          color: "HSL(280, 50%, 70%)",
+        });
+      } else {
         setGameStatus2("");
       }
     }
     handleStatus();
-  }, [localGameStatus])
-
+  }, [localGameStatus]);
 
   return (
     <>
@@ -42,11 +43,7 @@ function GameCard({game:{Title, Genres, ImgPath}, statusArray}) {
         }}
       >
         <div className="square-box mb-3">
-          <img
-            className="img-fluid img-cover"
-            src={ImgPath}
-            alt="game img"
-          />
+          <img className="img-fluid img-cover" src={ImgPath} alt="game img" />
         </div>
 
         <div>
@@ -65,13 +62,16 @@ function GameCard({game:{Title, Genres, ImgPath}, statusArray}) {
         </div>
         <div className="d-flex justify-content-between align-items-center mb-2 mt-auto">
           <div style={{ color: "HSL(0, 0%, 80%)", fontSize: "0.80rem" }}>
-            <div style= {{color: gameStatus1?.color}}>{gameStatus1?.text}</div>
-            <div style= {{color: gameStatus2?.color}}>{gameStatus2?.text}</div>
+            <div style={{ color: gameStatus1?.color }}>{gameStatus1?.text}</div>
+            <div style={{ color: gameStatus2?.color }}>{gameStatus2?.text}</div>
           </div>
           <div>
-            <button className="btn btn-outline-light">
+            <Link
+              className="lead text-decoration-none btn btn-outline-light"
+              to={`/game-page/${Id}`}
+            >
               View details
-            </button>
+            </Link>
           </div>
         </div>
       </div>
