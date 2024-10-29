@@ -6,7 +6,7 @@ import SignUp from "./pages/SignUp";
 import MyGames from "./pages/MyGames";
 import LogIn from "./pages/LogIn";
 import Home from "./pages/Home";
-// import GamePage from "./pages/GamePage";
+import GamePage from "./pages/GamePage";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
 import NoPage from "./pages/NoPage";
@@ -134,12 +134,12 @@ function App() {
               }
             />
             <Route path="login" element={<LogIn loginref={loginref} />} />
-            {/* <Route
+            <Route
               path="game-page/:gameId"
               element={
-                <GamePage loginref={loginref} allGames={allGamesWithStatus} />
+                <GamePage loginref={loginref} allGamesWithStatus={allGamesWithStatus} />
               }
-            /> */}
+            />
             <Route path="profile" element={<Profile loginref={loginref} />} />
             <Route
               path="edit-profile"
@@ -152,6 +152,7 @@ function App() {
     </>
   );
 }
+
 
 export default App;
 // endre sql- en db for alle spillstatuser, en db som matcher de med username og gameID

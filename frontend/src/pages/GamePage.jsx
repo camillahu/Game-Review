@@ -1,203 +1,185 @@
 import { useState, useEffect } from "react";
-import RatingBox from "../RatingBox";
-import AddGameButtons from "../AddGameButtons";
-import EditRatingBox from "../EditRatingBox";
+import RatingBox from "../components/RatingBox";
+import AddGameButtons from "../components/AddGameButtons";
+import EditRatingBox from "../components/EditRatingBox";
 import { useParams } from "react-router-dom";
 
 
 
-export default function GamePage({loginref, allGames}) {
+export default function GamePage({loginref, allGamesWithStatus}) {
 const [gameData, setGameData] = useState(null);
 const {gameId} = useParams();
+const [isEditing, setIsEditing] = useState(false)
 
-useEffect(() => {
-    const game = allGames.find((g) => g.Id === parseInt(gameId));
-    setGameData(game);
-  }, [gameId]);
-
-if (!gameData) return <div>Loading game details...</div>;
-
-  const [myRatingComment, setMyRatingComment] = useState({});
+const [myRatingComment, setMyRatingComment] = useState({});
   const [allRatingsComments, setAllRatingsComments] = useState([]);
   const [averageRating, setAverageRating] = useState(null);
-
-  const [isEditing, setIsEditing] = useState(false);
   const [gamesByCategory, setGamesByCategory] = useState(new Map());
   const [isChangingStatus, setIsChangingStatus] = useState(false);
   const [statusChangeSuccess, setStatusChangeSuccess] = useState(false);
 
-  const isInCategory = (gameId, category) => {
-    return gamesByCategory.has(category)
-      ? gamesByCategory.get(category).some((g) => g.Id === gameId)
-      : false;
-  };
 
-  const categories = [
-    "ownedUserGames",
-    "wishlistUserGames",
-    "playedUserGames",
-    "currentlyPlayingUserGames",
-  ];
+useEffect(() => {
+  if(allGamesWithStatus) {
+    const game = allGamesWithStatus.find((g) => g.Id === Number(gameId));
+    setGameData(game);
+  }
+    
+  }, [gameId, allGamesWithStatus]);
+  
+
+if (!gameData) return <div>Loading game details...</div>;
+
+  
 
   function handleEditingStatus() {
     isEditing ? setIsEditing(false) : setIsEditing(true);
   }
 
-  async function handleRatingChange(rating) {
-    const nullableRating = () => {
-      return rating === "no rating" ? null : rating;
-    };
+  // async function handleRatingChange(rating) {
+  //   const nullableRating = () => {
+  //     return rating === "no rating" ? null : rating;
+  //   };
 
-    if (nullableRating() === null) {
-      const userConfirmed = window.confirm(
-        "If you remove your rating, your comment and finished status will also be removed. Do you want to proceed?"
-      );
+  //   if (nullableRating() === null) {
+  //     const userConfirmed = window.confirm(
+  //       "If you remove your rating, your comment and finished status will also be removed. Do you want to proceed?"
+  //     );
 
-      if (!userConfirmed) {
-        return;
-      }
+  //     if (!userConfirmed) {
+  //       return;
+  //     }
 
-      try{
-        const response = await deleteUserRating(loginref.current, gameref.current)
-        handleEditingStatus();
-        return;
-      }
-      catch(error) {
-        console.log("error deleting row", error)
-      }
+  //     try{
+  //       const response = await deleteUserRating(loginref.current, gameref.current)
+  //       handleEditingStatus();
+  //       return;
+  //     }
+  //     catch(error) {
+  //       console.log("error deleting row", error)
+  //     }
 
-    } else {
-      setMyRatingComment((r) => ({ ...r, Rating: nullableRating() }));
-    }
-  }
+  //   } else {
+  //     setMyRatingComment((r) => ({ ...r, Rating: nullableRating() }));
+  //   }
+  // }
 
-  function handleCommentChange(comment) {
-    setMyRatingComment((r) => ({ ...r, Comment: comment }));
-  }
+  // function handleCommentChange(comment) {
+  //   setMyRatingComment((r) => ({ ...r, Comment: comment }));
+  // }
 
-  function handleFinishedChange(finished) {
-    setMyRatingComment((r) => ({ ...r, Finished: finished }));
-    if (myRatingComment.dnf) {
-      setMyRatingComment((r) => ({ ...r, dnf: false }));
-    }
-  }
+  // function handleFinishedChange(finished) {
+  //   setMyRatingComment((r) => ({ ...r, Finished: finished }));
+  //   if (myRatingComment.dnf) {
+  //     setMyRatingComment((r) => ({ ...r, dnf: false }));
+  //   }
+  // }
 
-  function handleDnfChange(dnf) {
-    setMyRatingComment((r) => ({ ...r, dnf: dnf }));
-    if (myRatingComment.Finished) {
-      setMyRatingComment((r) => ({ ...r, Finished: false }));
-    }
-  }
+  // function handleDnfChange(dnf) {
+  //   setMyRatingComment((r) => ({ ...r, dnf: dnf }));
+  //   if (myRatingComment.Finished) {
+  //     setMyRatingComment((r) => ({ ...r, Finished: false }));
+  //   }
+  // }
 
-  async function updateMyRating() {
-    if(myRatingComment.rating === "no rating" || !myRatingComment.Rating) {
-      const userConfirmed = window.confirm(
-        "If you remove your rating, your comment and finished status will also be removed. Do you want to proceed?"
-      );
+  // async function updateMyRating() {
+  //   if(myRatingComment.rating === "no rating" || !myRatingComment.Rating) {
+  //     const userConfirmed = window.confirm(
+  //       "If you remove your rating, your comment and finished status will also be removed. Do you want to proceed?"
+  //     );
 
-      if (!userConfirmed) {
-        return;
-      }
-      else {
-        try{
-          const response = await deleteUserRating(loginref.current, gameref.current)
-          handleEditingStatus();
-          return;
-        }
-        catch(error) {
-          console.log("error deleting row", error)
-        }
-      }
-    }
-    try {
-      const response = await postRatingComment(
-        myRatingComment.Game_Id,
-        myRatingComment.User_Id,
-        myRatingComment.Rating,
-        myRatingComment.Comment,
-        myRatingComment.Finished,
-        myRatingComment.dnf
-      );
-      handleEditingStatus();
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  //     if (!userConfirmed) {
+  //       return;
+  //     }
+  //     else {
+  //       try{
+  //         const response = await deleteUserRating(loginref.current, gameref.current)
+  //         handleEditingStatus();
+  //         return;
+  //       }
+  //       catch(error) {
+  //         console.log("error deleting row", error)
+  //       }
+  //     }
+  //   }
+  //   try {
+  //     const response = await postRatingComment(
+  //       myRatingComment.Game_Id,
+  //       myRatingComment.User_Id,
+  //       myRatingComment.Rating,
+  //       myRatingComment.Comment,
+  //       myRatingComment.Finished,
+  //       myRatingComment.dnf
+  //     );
+  //     handleEditingStatus();
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
 
-  const gameCategories = useMemo(
-    () => ({
-      isOwned: isInCategory(game.Id, "ownedUserGames"),
-      isWishlist: isInCategory(game.Id, "wishlistUserGames"),
-      isPlayed: isInCategory(game.Id, "playedUserGames"),
-      isCurrentlyPlaying: isInCategory(game.Id, "currentlyPlayingUserGames"),
-    }),
-    [gamesByCategory, game.Id, loginref]
-  ); //useMemo gjør sånn at vi ikke trenger å fetche på nytt fra db
-  //med mindre gamesByCategory eller game.Id endres når de skal sendes til buttons.
+  // async function changeGameStatus(clickedStatus) {
+  //   if (isChangingStatus) return;
 
-  async function changeGameStatus(clickedStatus) {
-    if (isChangingStatus) return;
+  //   try {
+  //     setIsChangingStatus(true);
+  //     let statusChanged = false;
 
-    try {
-      setIsChangingStatus(true);
-      let statusChanged = false;
+  //     switch (clickedStatus) {
+  //       case "owned":
+  //         gameCategories.isOwned
+  //           ? await removeStatus("owned")
+  //           : await addStatus("owned");
+  //         if (gameCategories.isWishlist) await removeStatus("wishlist");
+  //         statusChanged = true;
+  //         break;
+  //       case "wishlist":
+  //         gameCategories.isWishlist
+  //           ? await removeStatus("wishlist")
+  //           : await addStatus("wishlist");
+  //         if (gameCategories.isOwned) await removeStatus("owned");
+  //         statusChanged = true;
+  //         break;
+  //       case "played":
+  //         gameCategories.isPlayed
+  //           ? await removeStatus("played")
+  //           : await addStatus("played");
+  //         if (gameCategories.isCurrentlyPlaying)
+  //           await removeStatus("currentlyPlaying");
+  //         statusChanged = true;
+  //         break;
+  //       case "currentlyPlaying":
+  //         gameCategories.isCurrentlyPlaying
+  //           ? await removeStatus("currentlyPlaying")
+  //           : await addStatus("currentlyPlaying");
+  //         if (gameCategories.isPlayed) await removeStatus("played");
+  //         statusChanged = true;
+  //         break;
+  //       default:
+  //         console.error("Invalid status");
+  //     }
+  //     if (statusChanged) setStatusChangeSuccess(true);
+  //   } catch (error) {
+  //     console.error("Error changing game status", error);
+  //   } finally {
+  //     setIsChangingStatus(false);
+  //   }
+  // }
 
-      switch (clickedStatus) {
-        case "owned":
-          gameCategories.isOwned
-            ? await removeStatus("owned")
-            : await addStatus("owned");
-          if (gameCategories.isWishlist) await removeStatus("wishlist");
-          statusChanged = true;
-          break;
-        case "wishlist":
-          gameCategories.isWishlist
-            ? await removeStatus("wishlist")
-            : await addStatus("wishlist");
-          if (gameCategories.isOwned) await removeStatus("owned");
-          statusChanged = true;
-          break;
-        case "played":
-          gameCategories.isPlayed
-            ? await removeStatus("played")
-            : await addStatus("played");
-          if (gameCategories.isCurrentlyPlaying)
-            await removeStatus("currentlyPlaying");
-          statusChanged = true;
-          break;
-        case "currentlyPlaying":
-          gameCategories.isCurrentlyPlaying
-            ? await removeStatus("currentlyPlaying")
-            : await addStatus("currentlyPlaying");
-          if (gameCategories.isPlayed) await removeStatus("played");
-          statusChanged = true;
-          break;
-        default:
-          console.error("Invalid status");
-      }
-      if (statusChanged) setStatusChangeSuccess(true);
-    } catch (error) {
-      console.error("Error changing game status", error);
-    } finally {
-      setIsChangingStatus(false);
-    }
-  }
+  // async function removeStatus(chosenTable) {
+  //   try {
+  //     await removeGameStatus(chosenTable, game.Id, loginref.current);
+  //   } catch (error) {
+  //     console.error("Error removing status", error);
+  //   }
+  // }
 
-  async function removeStatus(chosenTable) {
-    try {
-      await removeGameStatus(chosenTable, game.Id, loginref.current);
-    } catch (error) {
-      console.error("Error removing status", error);
-    }
-  }
-
-  async function addStatus(chosenTable) {
-    try {
-      await addGameStatus(chosenTable, game.Id, loginref.current);
-    } catch (error) {
-      console.error("Error adding status", error);
-    }
-  }
+  // async function addStatus(chosenTable) {
+  //   try {
+  //     await addGameStatus(chosenTable, game.Id, loginref.current);
+  //   } catch (error) {
+  //     console.error("Error adding status", error);
+  //   }
+  // }
 
   function calculateAvgRating(gameRatings) {
     const sum = gameRatings.reduce((a, c) => a + c, 0);
@@ -235,70 +217,69 @@ if (!gameData) return <div>Loading game details...</div>;
   function gameStatusVisability() {
     if(!loginref.current) return null;
     return <AddGameButtons
-    isOwned={gameCategories.isOwned}
-    isWishlist={gameCategories.isWishlist}
-    isPlayed={gameCategories.isPlayed}
-    isCurrentlyPlaying={gameCategories.isCurrentlyPlaying}
-    changeGameStatus={changeGameStatus}
+    isOwned={gameData.Statuses?.includes("Owned") ? true: false }
+    isWishlist={gameData.Statuses?.includes("Wishlist")  ? true: false }
+    isPlayed={gameData.Statuses?.includes("Played")  ? true: false }
+    isCurrentlyPlaying={gameData.Statuses?.includes("Currently Playing")  ? true: false }
   />
   }
 
-  useEffect(() => {
-    async function fetchGame() {
-      try {
-        const [gameResponse, communityResponse] = await Promise.all([
-          gameDetails(gameref.current),
-          gameDetailsCommunity(gameref.current),
-        ]);
+  // useEffect(() => {
+  //   async function fetchGame() {
+  //     try {
+  //       const [gameResponse, communityResponse] = await Promise.all([
+  //         gameDetails(gameref.current),
+  //         gameDetailsCommunity(gameref.current),
+  //       ]);
 
-        setGame(gameResponse);
-        setAllRatingsComments(communityResponse);
+  //       setGame(gameResponse);
+  //       setAllRatingsComments(communityResponse);
 
-        const gameRatings = await ratingsByGame(gameref.current); //ikke rør  rekkefølgen her, endelig funka det!
-        calculateAvgRating(gameRatings);
+  //       const gameRatings = await ratingsByGame(gameref.current); //ikke rør  rekkefølgen her, endelig funka det!
+  //       calculateAvgRating(gameRatings);
 
-        if (loginref) {
-          const userResponse = await gameDetailsUser(
-            gameref.current,
-            loginref.current
-          );
-          setMyRatingComment(userResponse);
+  //       if (loginref) {
+  //         const userResponse = await gameDetailsUser(
+  //           gameref.current,
+  //           loginref.current
+  //         );
+  //         setMyRatingComment(userResponse);
 
-          const categoryPromises = categories.map((c) =>
-            userGames(loginref.current, c)
-          );
-          const results = await Promise.all(categoryPromises);
-          //optimalisert for å ikke bruke så mye ressurser med Promise.all.
-          //Promise.all kjører alle requestene parallelt.
+  //         const categoryPromises = categories.map((c) =>
+  //           userGames(loginref.current, c)
+  //         );
+  //         const results = await Promise.all(categoryPromises);
+  //         //optimalisert for å ikke bruke så mye ressurser med Promise.all.
+  //         //Promise.all kjører alle requestene parallelt.
 
-          const gameMap = new Map();
-          categories.forEach((category, index) => {
-            gameMap.set(category, results[index]);
-          });
+  //         const gameMap = new Map();
+  //         categories.forEach((category, index) => {
+  //           gameMap.set(category, results[index]);
+  //         });
 
-          setGamesByCategory(gameMap);
-        }
-      } catch (error) {
-        console.error("Error fetching games:", error);
-      }
-    }
+  //         setGamesByCategory(gameMap);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching games:", error);
+  //     }
+  //   }
 
-    fetchGame();
+  //   fetchGame();
 
-    if (statusChangeSuccess) {
-      fetchGame();
-      setStatusChangeSuccess(false);
-    }
-  }, [loginref, gameref, statusChangeSuccess, isEditing]);
+  //   if (statusChangeSuccess) {
+  //     fetchGame();
+  //     setStatusChangeSuccess(false);
+  //   }
+  // }, [loginref, gameref, statusChangeSuccess, isEditing]);
 
   return (
     <div className="container justify-content-center custom-game-page-container">
-      {/* <div className="d-flex justify-content-between align-items-center mb-3 ps-3 pe-3 p-1 border-bottom border-secondary">
+      <div className="d-flex justify-content-between align-items-center mb-3 ps-3 pe-3 p-1 border-bottom border-secondary">
         <h2
           className="display-5"
           style={{ color: "HSL(30, 20%, 85%)", fontWeight: 500 }}
         >
-          {game.Title}
+          {gameData.Title}
         </h2>
         {gameStatusVisability()}
       </div>
@@ -308,22 +289,22 @@ if (!gameData) return <div>Loading game details...</div>;
           <div className="square-box-2">
             <img
               className="img-fluid img-cover"
-              src={game.ImgPath}
+              src={gameData.ImgPath}
               alt="game img"
             />
           </div>
           <div className="d-flex justify-content-start square-box-3 flex-column">
             <p className="lead">
               <strong>Developer: </strong>
-              {game.Developer}
+              {gameData.Developer}
             </p>
             <p className="lead">
               <strong>Publisher: </strong>
-              {game.Publisher}
+              {gameData.Publisher}
             </p>
             <p className="lead">
               <strong>Release date: </strong>
-              {new Date(game.ReleaseDate).toLocaleDateString("en-GB", {
+              {new Date(gameData.ReleaseDate).toLocaleDateString("en-GB", {
                 day: "numeric",
                 month: "long",
                 year: "numeric",
@@ -331,7 +312,7 @@ if (!gameData) return <div>Loading game details...</div>;
             </p>
             <p className="lead">
               <strong>Genres: </strong>
-              {game.Genres}
+              {gameData.Genres}
             </p>
             <p className="lead" style={{ marginTop: "auto" }}>
               <strong>Community Rating: </strong>
@@ -360,7 +341,7 @@ if (!gameData) return <div>Loading game details...</div>;
               ))}
           </div>
         </div>
-      </div> */}
+      </div> 
     </div>
   );
 }
