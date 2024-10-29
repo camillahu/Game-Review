@@ -177,9 +177,9 @@ router.get("/gameDetailsCommunity", async (req, res) => {
       await sql.query`SELECT [User_Id] ,Game_Id, Rating ,Comment, Finished, dnf
                                     FROM [GameReviewExpressDb].[dbo].[Game_Ratings_Comments]
                                     WHERE Game_Id = ${gameId};`;
-    const games = result.recordset;
+    const ratings = result.recordset;
 
-    res.json(games);
+    res.json(ratings);
   } catch (err) {
     console.error(err);
     res.status(500).send("Database connection error");
@@ -188,38 +188,38 @@ router.get("/gameDetailsCommunity", async (req, res) => {
   }
 });
 
-router.get("/gameDetailsUser", async (req, res) => {
-  const { gameId, username } = req.query;
+// router.get("/gameDetailsUser", async (req, res) => {
+//   const { gameId, username } = req.query;
 
-  try {
-    await dbCon();
+//   try {
+//     await dbCon();
 
-    const result = await sql.query`
-      SELECT [User_Id], Game_Id, Rating, Comment, Finished, dnf
-      FROM [GameReviewExpressDb].[dbo].[Game_Ratings_Comments]
-      WHERE Game_Id = ${gameId} AND [User_Id] = ${username};`;
+//     const result = await sql.query`
+//       SELECT [User_Id], Game_Id, Rating, Comment, Finished, dnf
+//       FROM [GameReviewExpressDb].[dbo].[Game_Ratings_Comments]
+//       WHERE Game_Id = ${gameId} AND [User_Id] = ${username};`;
 
-    const games = result.recordset;
+//     const games = result.recordset;
 
-    if (games.length > 0) {
-      res.json(games[0]);
-    } else {
-      res.json({
-        User_Id: username,
-        Game_Id: gameId,
-        Rating: null,
-        Comment: null,
-        Finished: null,
-        dnf: null,
-      });
-    }
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Database connection error");
-  } finally {
-    closeDbCon();
-  }
-});
+//     if (games.length > 0) {
+//       res.json(games[0]);
+//     } else {
+//       res.json({
+//         User_Id: username,
+//         Game_Id: gameId,
+//         Rating: null,
+//         Comment: null,
+//         Finished: null,
+//         dnf: null,
+//       });
+//     }
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send("Database connection error");
+//   } finally {
+//     closeDbCon();
+//   }
+// });
 
 router.post("/postRatingComment", async (req, res) => {
   const { gameId, username, newRating, newComment, isFinished, isDNF } =

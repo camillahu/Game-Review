@@ -1,40 +1,42 @@
 import { useState, useEffect } from "react";
-import RatingBox from "../components/RatingBox";
-import AddGameButtons from "../components/AddGameButtons";
-import EditRatingBox from "../components/EditRatingBox";
+import RatingBox from "../components/GamePage/RatingBox";
+import AddGameButtons from "../components/GamePage/AddGameButtons";
+import EditRatingBox from "../components/GamePage/EditRatingBox";
+import { calculateAvgRating } from "../utils/gamePageFunctions";
 import { useParams } from "react-router-dom";
 
+export default function GamePage({
+  loginref,
+  allGamesWithStatus,
+  allRatingsForGameId,
+}) {
+  const [gameData, setGameData] = useState(null);
+  const { gameId } = useParams();
+  const [isEditing, setIsEditing] = useState(false);
 
-
-export default function GamePage({loginref, allGamesWithStatus}) {
-const [gameData, setGameData] = useState(null);
-const {gameId} = useParams();
-const [isEditing, setIsEditing] = useState(false)
-
-const [myRatingComment, setMyRatingComment] = useState({});
-  const [allRatingsComments, setAllRatingsComments] = useState([]);
+  const [localCommunityRatings, setLocalCommunityRatings] = useState([]);
   const [averageRating, setAverageRating] = useState(null);
   const [gamesByCategory, setGamesByCategory] = useState(new Map());
   const [isChangingStatus, setIsChangingStatus] = useState(false);
   const [statusChangeSuccess, setStatusChangeSuccess] = useState(false);
 
+  console.log(localCommunityRatings);
 
-useEffect(() => {
-  if(allGamesWithStatus) {
-    const game = allGamesWithStatus.find((g) => g.Id === Number(gameId));
-    setGameData(game);
-  }
-    
+  useEffect(() => {
+    if (allGamesWithStatus) {
+      const game = allGamesWithStatus.find((g) => g.Id === Number(gameId));
+      setGameData(game);
+    }
   }, [gameId, allGamesWithStatus]);
-  
 
-if (!gameData) return <div>Loading game details...</div>;
+  useEffect(() => {
+    if (allRatingsForGameId) {
+      const game = allGamesWithStatus.find((g) => g.Id === Number(gameId));
+      setLocalCommunityRatings(game);
+    }
+  }, [gameId, allRatingsForGameId]);
 
-  
-
-  function handleEditingStatus() {
-    isEditing ? setIsEditing(false) : setIsEditing(true);
-  }
+  if (!gameData) return <div>Loading game details...</div>;
 
   // async function handleRatingChange(rating) {
   //   const nullableRating = () => {
@@ -181,96 +183,46 @@ if (!gameData) return <div>Loading game details...</div>;
   //   }
   // }
 
-  function calculateAvgRating(gameRatings) {
-    const sum = gameRatings.reduce((a, c) => a + c, 0);
-    const average = (sum / gameRatings.length).toFixed(2);
-    !isNaN(average) ? setAverageRating(average) : setAverageRating(null);
-  }
-
-  function userCommentBox() {
-    if (!loginref.current) return null
-      return isEditing ? (
-        <EditRatingBox
-          updateMyRating={updateMyRating}
-          rating={myRatingComment.Rating}
-          comment={myRatingComment.Comment}
-          isFinished={myRatingComment.Finished}
-          isDNF={myRatingComment.dnf}
-          setRating={handleRatingChange}
-          setComment={handleCommentChange}
-          setFinishedStatus={handleFinishedChange}
-          setDnfStatus={handleDnfChange}
-        />
-      ) : (
-        <RatingBox
-          loggedInUser={loginref.current}
-          username={myRatingComment.User_Id}
-          rating={myRatingComment.Rating}
-          comment={myRatingComment.Comment}
-          isFinished={myRatingComment.Finished}
-          isDNF={myRatingComment.dnf}
-          handleEditingStatus={handleEditingStatus}
-        />
-      )
-    }
+  // function userCommentBox() {
+  //   if (!loginref.current) return null
+  //     return isEditing ? (
+  //       <EditRatingBox
+  //         // updateMyRating={updateMyRating}
+  //         rating={myLocalRating.Rating}
+  //         comment={myLocalRating.Comment}
+  //         isFinished={myLocalRating.Finished}
+  //         isDNF={myLocalRating.dnf}
+  //         // setRating={handleRatingChange}
+  //         // setComment={handleCommentChange}
+  //         // setFinishedStatus={handleFinishedChange}
+  //         // setDnfStatus={handleDnfChange}
+  //       />
+  //     ) : (
+  //       <RatingBox
+  //         loggedInUser={loginref.current}
+  //         username={myRatingComment.User_Id}
+  //         rating={myRatingComment.Rating}
+  //         comment={myRatingComment.Comment}
+  //         isFinished={myRatingComment.Finished}
+  //         isDNF={myRatingComment.dnf}
+  //         handleEditingStatus={handleEditingStatus}
+  //       />
+  //     )
+  //   }
 
   function gameStatusVisability() {
-    if(!loginref.current) return null;
-    return <AddGameButtons
-    isOwned={gameData.Statuses?.includes("Owned") ? true: false }
-    isWishlist={gameData.Statuses?.includes("Wishlist")  ? true: false }
-    isPlayed={gameData.Statuses?.includes("Played")  ? true: false }
-    isCurrentlyPlaying={gameData.Statuses?.includes("Currently Playing")  ? true: false }
-  />
+    if (!loginref.current) return null;
+    return (
+      <AddGameButtons
+        isOwned={gameData.Statuses?.includes("Owned") ? true : false}
+        isWishlist={gameData.Statuses?.includes("Wishlist") ? true : false}
+        isPlayed={gameData.Statuses?.includes("Played") ? true : false}
+        isCurrentlyPlaying={
+          gameData.Statuses?.includes("Currently Playing") ? true : false
+        }
+      />
+    );
   }
-
-  // useEffect(() => {
-  //   async function fetchGame() {
-  //     try {
-  //       const [gameResponse, communityResponse] = await Promise.all([
-  //         gameDetails(gameref.current),
-  //         gameDetailsCommunity(gameref.current),
-  //       ]);
-
-  //       setGame(gameResponse);
-  //       setAllRatingsComments(communityResponse);
-
-  //       const gameRatings = await ratingsByGame(gameref.current); //ikke rør  rekkefølgen her, endelig funka det!
-  //       calculateAvgRating(gameRatings);
-
-  //       if (loginref) {
-  //         const userResponse = await gameDetailsUser(
-  //           gameref.current,
-  //           loginref.current
-  //         );
-  //         setMyRatingComment(userResponse);
-
-  //         const categoryPromises = categories.map((c) =>
-  //           userGames(loginref.current, c)
-  //         );
-  //         const results = await Promise.all(categoryPromises);
-  //         //optimalisert for å ikke bruke så mye ressurser med Promise.all.
-  //         //Promise.all kjører alle requestene parallelt.
-
-  //         const gameMap = new Map();
-  //         categories.forEach((category, index) => {
-  //           gameMap.set(category, results[index]);
-  //         });
-
-  //         setGamesByCategory(gameMap);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching games:", error);
-  //     }
-  //   }
-
-  //   fetchGame();
-
-  //   if (statusChangeSuccess) {
-  //     fetchGame();
-  //     setStatusChangeSuccess(false);
-  //   }
-  // }, [loginref, gameref, statusChangeSuccess, isEditing]);
 
   return (
     <div className="container justify-content-center custom-game-page-container">
@@ -316,7 +268,7 @@ if (!gameData) return <div>Loading game details...</div>;
             </p>
             <p className="lead" style={{ marginTop: "auto" }}>
               <strong>Community Rating: </strong>
-              {averageRating ? averageRating : "No ratings yet"}
+              {calculateAvgRating([]) || "No ratings yet"}
             </p>
           </div>
         </div>
@@ -324,24 +276,39 @@ if (!gameData) return <div>Loading game details...</div>;
           <h3 className="display-6 mt-2" style={{ color: "HSL(30, 20%, 85%)" }}>
             Ratings and comments
           </h3>
-            <div className="d-flex flex-column ">
-            {userCommentBox()}
-            {allRatingsComments
-              .filter((user) => user.User_Id !== loginref.current)
-              .map((user, index) => (
-                <RatingBox
-                  key={index}
-                  loggedInUser={loginref.current}
-                  username={user.User_Id}
-                  rating={user.Rating}
-                  comment={user.Comment}
-                  isFinished={user.Finished}
-                  isDNF={user.dnf}
+          <div className="d-flex flex-column ">
+            {loginref.current ? (
+              isEditing ? (
+                <EditRatingBox
+                  rating={localCommunityRatings.find(
+                    (r) => r.User_Id === loginref.current
+                  )}
+                  setIsEditing={setIsEditing}
+                  username={loginref.current}
                 />
-              ))}
+              ) : (
+                <RatingBox
+                  rating={localCommunityRatings.find(
+                    (r) => r.User_Id === loginref.current
+                  )}
+                  setIsEditing={setIsEditing}
+                  username={loginref.current}
+                />
+              )
+            ) : null}
+            {/* noe jeg kan forbedre her? */}
+
+            {localCommunityRatings.map((rating, index) => (
+              <RatingBox
+                key={index}
+                rating={rating}
+                setIsEditing={setIsEditing}
+                username={loginref.current}
+              />
+            ))}
           </div>
         </div>
-      </div> 
+      </div>
     </div>
   );
 }

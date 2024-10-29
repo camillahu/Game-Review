@@ -14,6 +14,7 @@ import React, { useState, useRef, createContext, useEffect } from "react";
 import { gamesAndGenres, genres } from "./api/gamesAndGenres";
 import { userGamesByStatus } from "./api/userGames";
 import { statusNames } from "./api/gameStatus";
+import { gameDetailsCommunity } from "./api/gameDetails";
 
 function App() {
   const loginref = useRef("camillzy");
@@ -23,6 +24,8 @@ function App() {
   const [allStatusNames, setAllStatusNames] = useState([]);
   const [userGameStatus, setUserGameStatus] = useState([]);
   const [userGames, setUserGames] = useState([]);
+  const [allRatingsForGameId, setAllRatingsForGameID] = useState([]);
+  
 
   useEffect(() => {
     //fetching all games from the db with their respective genres as a string.
@@ -82,35 +85,42 @@ function App() {
   useEffect(() => {
     //populates the Statuses array with "owned", "wishlist", "playing" or "currently playing"
     //if the user is logged in(checked by seeing if userGameStatus has length)
-    //and the user has put a status on the game. If not, Statuses is set to an empty array. 
+    //and the user has put a status on the game. If not, Statuses is set to an empty array.
 
     const gamesWithStatuses = allGames.map((game) => {
-  
       const statusesForGame = userGameStatus?.length
         ? userGameStatus
             .filter((status) => status.GameId === game.Id)
             .map((status) => status.Name)
-        : []; 
-  
+        : [];
+
       return { ...game, Statuses: statusesForGame };
     });
-  
+
     setAllGamesWithStatus(gamesWithStatuses);
   }, [allGames, userGameStatus]);
 
-
   useEffect(() => {
-    
     if (userGameStatus.length) {
       const userGameIds = new Set(
         userGameStatus.map((status) => status.GameId)
       );
 
-      const filteredGames = allGamesWithStatus.filter((game) => userGameIds.has(game.Id));
+      const filteredGames = allGamesWithStatus.filter((game) =>
+        userGameIds.has(game.Id)
+      );
 
       setUserGames(filteredGames);
     }
   }, [allGamesWithStatus, userGameStatus]);
+
+  useEffect(() => {
+    async function fetchRatings() {
+      const response = await gameDetailsCommunity(1);
+    setAllRatingsForGameID(response);
+    }
+    fetchRatings();
+  }, []); //legge til dependency her
 
   return (
     <>
@@ -137,7 +147,11 @@ function App() {
             <Route
               path="game-page/:gameId"
               element={
-                <GamePage loginref={loginref} allGamesWithStatus={allGamesWithStatus} />
+                <GamePage
+                  loginref={loginref}
+                  allGamesWithStatus={allGamesWithStatus}
+                  allRatingsForGameId = {allRatingsForGameId}
+                />
               }
             />
             <Route path="profile" element={<Profile loginref={loginref} />} />
@@ -152,7 +166,6 @@ function App() {
     </>
   );
 }
-
 
 export default App;
 // endre sql- en db for alle spillstatuser, en db som matcher de med username og gameID
