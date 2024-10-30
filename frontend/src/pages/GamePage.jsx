@@ -4,11 +4,11 @@ import AddGameButtons from "../components/GamePage/AddGameButtons";
 import EditRatingBox from "../components/GamePage/EditRatingBox";
 import { calculateAvgRating } from "../utils/gamePageFunctions";
 import { useParams } from "react-router-dom";
+import { gameDetailsCommunity } from "../api/gameDetails";
 
 export default function GamePage({
   loginref,
   allGamesWithStatus,
-  allRatingsForGameId,
 }) {
   const [gameData, setGameData] = useState(null);
   const { gameId } = useParams();
@@ -16,11 +16,19 @@ export default function GamePage({
 
   const [localCommunityRatings, setLocalCommunityRatings] = useState([]);
   const [averageRating, setAverageRating] = useState(null);
-  const [gamesByCategory, setGamesByCategory] = useState(new Map());
   const [isChangingStatus, setIsChangingStatus] = useState(false);
   const [statusChangeSuccess, setStatusChangeSuccess] = useState(false);
 
-  console.log(localCommunityRatings);
+  useEffect(() => {
+    async function fetchRatings() {
+      const response = await gameDetailsCommunity(Number(gameId));
+      setLocalCommunityRatings(response);
+    console.log(response);
+    }
+    fetchRatings();
+    
+  }, [gameId]); 
+
 
   useEffect(() => {
     if (allGamesWithStatus) {
@@ -29,12 +37,7 @@ export default function GamePage({
     }
   }, [gameId, allGamesWithStatus]);
 
-  useEffect(() => {
-    if (allRatingsForGameId) {
-      const game = allGamesWithStatus.find((g) => g.Id === Number(gameId));
-      setLocalCommunityRatings(game);
-    }
-  }, [gameId, allRatingsForGameId]);
+ console.log(localCommunityRatings)
 
   if (!gameData) return <div>Loading game details...</div>;
 
@@ -223,6 +226,8 @@ export default function GamePage({
       />
     );
   }
+  console.log(localCommunityRatings);
+
 
   return (
     <div className="container justify-content-center custom-game-page-container">
@@ -277,12 +282,14 @@ export default function GamePage({
             Ratings and comments
           </h3>
           <div className="d-flex flex-column ">
+            {/* disse viser kun brukeren sin rating om den er logget inn, og bytter mellom edit og ikke edit
+            ut i fra boolen isEditing som blir styrt fra de to komponentene under.  */}
             {loginref.current ? (
               isEditing ? (
                 <EditRatingBox
                   rating={localCommunityRatings.find(
                     (r) => r.User_Id === loginref.current
-                  )}
+                  ) || null}
                   setIsEditing={setIsEditing}
                   username={loginref.current}
                 />
@@ -290,18 +297,20 @@ export default function GamePage({
                 <RatingBox
                   rating={localCommunityRatings.find(
                     (r) => r.User_Id === loginref.current
-                  )}
+                  ) || null}
                   setIsEditing={setIsEditing}
                   username={loginref.current}
                 />
               )
             ) : null}
             {/* noe jeg kan forbedre her? */}
-
-            {localCommunityRatings.map((rating, index) => (
+            {/* denne viser alle ratings for spillet utenom brukeren sin rating(for å ikke få to ratings fra bruker) */}
+            {localCommunityRatings
+            .filter((r)=> (r?.User_Id !== loginref.current))
+            .map((rating, index) => (
               <RatingBox
                 key={index}
-                rating={rating}
+                rating={rating || {}}
                 setIsEditing={setIsEditing}
                 username={loginref.current}
               />

@@ -14,7 +14,7 @@ import React, { useState, useRef, createContext, useEffect } from "react";
 import { gamesAndGenres, genres } from "./api/gamesAndGenres";
 import { userGamesByStatus } from "./api/userGames";
 import { statusNames } from "./api/gameStatus";
-import { gameDetailsCommunity } from "./api/gameDetails";
+
 
 function App() {
   const loginref = useRef("camillzy");
@@ -24,7 +24,6 @@ function App() {
   const [allStatusNames, setAllStatusNames] = useState([]);
   const [userGameStatus, setUserGameStatus] = useState([]);
   const [userGames, setUserGames] = useState([]);
-  const [allRatingsForGameId, setAllRatingsForGameID] = useState([]);
   
 
   useEffect(() => {
@@ -113,14 +112,7 @@ function App() {
       setUserGames(filteredGames);
     }
   }, [allGamesWithStatus, userGameStatus]);
-
-  useEffect(() => {
-    async function fetchRatings() {
-      const response = await gameDetailsCommunity(1);
-    setAllRatingsForGameID(response);
-    }
-    fetchRatings();
-  }, []); //legge til dependency her
+  
 
   return (
     <>
@@ -150,7 +142,7 @@ function App() {
                 <GamePage
                   loginref={loginref}
                   allGamesWithStatus={allGamesWithStatus}
-                  allRatingsForGameId = {allRatingsForGameId}
+            
                 />
               }
             />
