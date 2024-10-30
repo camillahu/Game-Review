@@ -282,8 +282,8 @@ export default function GamePage({
             Ratings and comments
           </h3>
           <div className="d-flex flex-column ">
-            {/* disse viser kun brukeren sin rating om den er logget inn, og bytter mellom edit og ikke edit
-            ut i fra boolen isEditing som blir styrt fra de to komponentene under.  */}
+            {/* This only shows the user's rating if they are logged in, and it toggles between 
+            edit and non-edit based on the boolean isEditing, which is controlled by the two components below.   */}
             {loginref.current ? (
               isEditing ? (
                 <EditRatingBox
@@ -292,6 +292,7 @@ export default function GamePage({
                   ) || null}
                   setIsEditing={setIsEditing}
                   username={loginref.current}
+                  isMyRating={true}
                 />
               ) : (
                 <RatingBox
@@ -300,11 +301,13 @@ export default function GamePage({
                   ) || null}
                   setIsEditing={setIsEditing}
                   username={loginref.current}
+                  isMyRating={true}
                 />
               )
-            ) : null}
+            ) : 
+            null}
             {/* noe jeg kan forbedre her? */}
-            {/* denne viser alle ratings for spillet utenom brukeren sin rating(for å ikke få to ratings fra bruker) */}
+            {/* This displays all ratings for the game except for the user's rating (to avoid getting two ratings from the user) */}
             {localCommunityRatings
             .filter((r)=> (r?.User_Id !== loginref.current))
             .map((rating, index) => (

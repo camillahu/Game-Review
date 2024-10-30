@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 
-function RatingBox({ rating, setIsEditing, username }) {
+function RatingBox({ rating, setIsEditing, username, isMyRating }) {
   const [localRating, setLocalRating] = useState({});
-  const isMyRating = rating && username === rating.User_Id;
 
   useEffect(() => {
     if (rating) {
@@ -21,7 +20,7 @@ function RatingBox({ rating, setIsEditing, username }) {
     <div className="d-flex flex-column mb-2 custom-comment-box-1">
       <div className="d-flex flex-row justify-content-between me-2">
         <p className="lead" style={{ fontWeight: "bold" }}>
-          {isMyRating ? "my rating" : localRating?.User_Id}
+        {isMyRating ? "my rating" : localRating?.User_Id}
         </p>
         {isMyRating ? (
           <span onClick={() => setIsEditing(true)} role="button">
