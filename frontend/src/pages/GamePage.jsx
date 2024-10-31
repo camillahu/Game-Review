@@ -37,7 +37,6 @@ export default function GamePage({
     }
   }, [gameId, allGamesWithStatus]);
 
- console.log(localCommunityRatings)
 
   if (!gameData) return <div>Loading game details...</div>;
 
@@ -273,7 +272,7 @@ export default function GamePage({
             </p>
             <p className="lead" style={{ marginTop: "auto" }}>
               <strong>Community Rating: </strong>
-              {calculateAvgRating([]) || "No ratings yet"}
+              {calculateAvgRating(localCommunityRatings) || "No ratings yet"}
             </p>
           </div>
         </div>

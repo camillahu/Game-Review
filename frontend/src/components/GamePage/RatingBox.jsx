@@ -14,7 +14,7 @@ function RatingBox({ rating, setIsEditing, username, isMyRating }) {
     else if (localRating.dnf) "DNF";
     else null;
   };
-  console.log(rating);
+ 
 
   return (
     <div className="d-flex flex-column mb-2 custom-comment-box-1">
