@@ -2,25 +2,23 @@ import { useEffect, useState } from "react";
 
 function RatingBox({ rating, setIsEditing, username, isMyRating }) {
   const [localRating, setLocalRating] = useState({});
+  const [statusText, setStatusText] = useState(null);
 
   useEffect(() => {
     if (rating) {
       setLocalRating(rating);
+      setStatusText(
+        rating.Finished ? "finished" : rating.dnf ? "DNF" : null
+      );
     }
   }, [rating]);
 
-  const finishedStatusText = () => {
-    if (localRating.Finished) "finished";
-    else if (localRating.dnf) "DNF";
-    else null;
-  };
- 
 
   return (
     <div className="d-flex flex-column mb-2 custom-comment-box-1">
       <div className="d-flex flex-row justify-content-between me-2">
         <p className="lead" style={{ fontWeight: "bold" }}>
-        {isMyRating ? "my rating" : localRating?.User_Id}
+          {isMyRating ? "my rating" : localRating?.User_Id}
         </p>
         {isMyRating ? (
           <span onClick={() => setIsEditing(true)} role="button">
@@ -40,7 +38,7 @@ function RatingBox({ rating, setIsEditing, username, isMyRating }) {
           </p>
           <p>{localRating?.Comment || ""}</p>
         </div>
-        <p className="d-flex justify-content-end">{finishedStatusText()}</p>
+        <p className="d-flex justify-content-end">{statusText}</p>
       </div>
     </div>
   );

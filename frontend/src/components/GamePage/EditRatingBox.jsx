@@ -1,15 +1,32 @@
 import { useState, useEffect } from "react";
 
-function EditRatingBox({ rating, setIsEditing, username, isMyRating }) {
+function EditRatingBox({ rating, setIsEditing, username }) {
   const ratingValues = [1, 2, 3, 4, 5];
   const [localRating, setLocalRating] = useState({});
 
-  
   useEffect(() => {
     if (rating) {
       setLocalRating(rating);
     }
   }, [rating]);
+
+  function updateLocal(property, value) {
+    setLocalRating((prevRating) => ({
+      ...prevRating,
+      [property]: value,
+    }));
+  }
+
+  function handleToggle(property) {
+    setLocalRating((prevRating) => ({
+      ...prevRating,
+      Finished: property === "Finished",
+      dnf: property === "dnf",
+    }));
+  }
+
+
+  function saveRating() {}
 
   return (
     <div className="d-flex flex-column mb-2 custom-comment-box-2">
@@ -35,7 +52,7 @@ function EditRatingBox({ rating, setIsEditing, username, isMyRating }) {
             <select
               className="custom-select ms-2"
               value={localRating.Rating || "no rating"}
-              onChange={(e) => setRating(e.target.value)}
+              onChange={(e) => updateLocal("Rating", e.target.value)}
             >
               <option key={0} value="no rating">
                 no rating
@@ -53,17 +70,15 @@ function EditRatingBox({ rating, setIsEditing, username, isMyRating }) {
           className="form-control ms-3"
           type="text"
           value={localRating.Comment || ""}
-          onChange={(e) => setComment(e.target.value)}
+          onChange={(e) => updateLocal("Comment", e.target.value)}
         />
         <div className="d-flex flex-column ms-3">
           <div className="d-flex flex-row">
             <input
               value="finished"
               type="checkbox"
-              checked={isFinished === true}
-              onChange={() => {
-                isFinished ? setFinishedStatus(false) : setFinishedStatus(true);
-              }}
+              checked={localRating.Finished === true}
+              onChange={() => handleToggle("Finished")}
             />
             <span className="ms-1" style={{ fontSize: "70%" }}>
               finished
@@ -73,10 +88,8 @@ function EditRatingBox({ rating, setIsEditing, username, isMyRating }) {
             <input
               value="dnf"
               type="checkbox"
-              checked={isDNF === true}
-              onChange={() =>
-                isDNF ? setDnfStatus(false) : setDnfStatus(true)
-              }
+              checked={localRating.dnf === true}
+              onChange={() => handleToggle("dnf")}
             />
             <span className="ms-1" style={{ fontSize: "70%" }}>
               DNF

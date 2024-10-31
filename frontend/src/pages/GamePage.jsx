@@ -6,29 +6,20 @@ import { calculateAvgRating } from "../utils/gamePageFunctions";
 import { useParams } from "react-router-dom";
 import { gameDetailsCommunity } from "../api/gameDetails";
 
-export default function GamePage({
-  loginref,
-  allGamesWithStatus,
-}) {
+export default function GamePage({ loginref, allGamesWithStatus }) {
   const [gameData, setGameData] = useState(null);
   const { gameId } = useParams();
   const [isEditing, setIsEditing] = useState(false);
 
   const [localCommunityRatings, setLocalCommunityRatings] = useState([]);
-  const [averageRating, setAverageRating] = useState(null);
-  const [isChangingStatus, setIsChangingStatus] = useState(false);
-  const [statusChangeSuccess, setStatusChangeSuccess] = useState(false);
 
   useEffect(() => {
     async function fetchRatings() {
       const response = await gameDetailsCommunity(Number(gameId));
       setLocalCommunityRatings(response);
-    console.log(response);
     }
     fetchRatings();
-    
-  }, [gameId]); 
-
+  }, [gameId]);
 
   useEffect(() => {
     if (allGamesWithStatus) {
@@ -36,7 +27,6 @@ export default function GamePage({
       setGameData(game);
     }
   }, [gameId, allGamesWithStatus]);
-
 
   if (!gameData) return <div>Loading game details...</div>;
 
@@ -225,8 +215,6 @@ export default function GamePage({
       />
     );
   }
-  console.log(localCommunityRatings);
-
 
   return (
     <div className="container justify-content-center custom-game-page-container">
@@ -286,37 +274,39 @@ export default function GamePage({
             {loginref.current ? (
               isEditing ? (
                 <EditRatingBox
-                  rating={localCommunityRatings.find(
-                    (r) => r.User_Id === loginref.current
-                  ) || null}
+                  rating={
+                    localCommunityRatings.find(
+                      (r) => r.User_Id === loginref.current
+                    ) || null
+                  }
                   setIsEditing={setIsEditing}
                   username={loginref.current}
-                  isMyRating={true}
                 />
               ) : (
                 <RatingBox
-                  rating={localCommunityRatings.find(
-                    (r) => r.User_Id === loginref.current
-                  ) || null}
+                  rating={
+                    localCommunityRatings.find(
+                      (r) => r.User_Id === loginref.current
+                    ) || null
+                  }
                   setIsEditing={setIsEditing}
                   username={loginref.current}
                   isMyRating={true}
                 />
               )
-            ) : 
-            null}
+            ) : null}
             {/* noe jeg kan forbedre her? */}
             {/* This displays all ratings for the game except for the user's rating (to avoid getting two ratings from the user) */}
             {localCommunityRatings
-            .filter((r)=> (r?.User_Id !== loginref.current))
-            .map((rating, index) => (
-              <RatingBox
-                key={index}
-                rating={rating || {}}
-                setIsEditing={setIsEditing}
-                username={loginref.current}
-              />
-            ))}
+              .filter((r) => r?.User_Id !== loginref.current)
+              .map((rating, index) => (
+                <RatingBox
+                  key={index}
+                  rating={rating || {}}
+                  setIsEditing={setIsEditing}
+                  username={loginref.current}
+                />
+              ))}
           </div>
         </div>
       </div>
