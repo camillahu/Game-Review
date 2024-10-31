@@ -12,12 +12,12 @@ export default function UserDetails() {
   const gamesOwnedNum = allGames.get("ownedUserGames")?.length || 0; //setter variablene til 0 dersom den er null
   const gamesPlayedNum = allGames.get("playedUserGames")?.length || 0;
 
-  function viewFavoriteGame() {
-    if (userInfo.FavoriteGame_Id) {
-      gameref.current = userInfo.FavoriteGame_Id;
-      // handlePageChange("gamePage");
-    }
-  }
+  // function viewFavoriteGame() {
+  //   if (userInfo.FavoriteGame_Id) {
+  //     gameref.current = userInfo.FavoriteGame_Id;
+  //     // handlePageChange("gamePage");
+  //   }
+  // }
 
   useEffect(() => {
     async function fetchDetails() {

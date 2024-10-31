@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import RatingBox from "../components/GamePage/RatingBox";
 import StatusButtons from "../components/GamePage/AddGameButtons";
 import EditRatingBox from "../components/GamePage/EditRatingBox";
-import { calculateAvgRating } from "../utils/gamePageFunctions";
+import { calculateAvgRating } from "../utils/gamePageFunctions.js";
 import { useParams } from "react-router-dom";
 import { gameDetailsCommunity } from "../api/gameDetails";
 
@@ -111,53 +111,6 @@ export default function GamePage({ loginref, allGamesWithStatus }) {
   //   }
   // }
 
-  // async function changeGameStatus(clickedStatus) {
-  //   if (isChangingStatus) return;
-
-  //   try {
-  //     setIsChangingStatus(true);
-  //     let statusChanged = false;
-
-  //     switch (clickedStatus) {
-  //       case "owned":
-  //         gameCategories.isOwned
-  //           ? await removeStatus("owned")
-  //           : await addStatus("owned");
-  //         if (gameCategories.isWishlist) await removeStatus("wishlist");
-  //         statusChanged = true;
-  //         break;
-  //       case "wishlist":
-  //         gameCategories.isWishlist
-  //           ? await removeStatus("wishlist")
-  //           : await addStatus("wishlist");
-  //         if (gameCategories.isOwned) await removeStatus("owned");
-  //         statusChanged = true;
-  //         break;
-  //       case "played":
-  //         gameCategories.isPlayed
-  //           ? await removeStatus("played")
-  //           : await addStatus("played");
-  //         if (gameCategories.isCurrentlyPlaying)
-  //           await removeStatus("currentlyPlaying");
-  //         statusChanged = true;
-  //         break;
-  //       case "currentlyPlaying":
-  //         gameCategories.isCurrentlyPlaying
-  //           ? await removeStatus("currentlyPlaying")
-  //           : await addStatus("currentlyPlaying");
-  //         if (gameCategories.isPlayed) await removeStatus("played");
-  //         statusChanged = true;
-  //         break;
-  //       default:
-  //         console.error("Invalid status");
-  //     }
-  //     if (statusChanged) setStatusChangeSuccess(true);
-  //   } catch (error) {
-  //     console.error("Error changing game status", error);
-  //   } finally {
-  //     setIsChangingStatus(false);
-  //   }
-  // }
 
   // async function removeStatus(chosenTable) {
   //   try {

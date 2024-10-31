@@ -188,39 +188,6 @@ router.get("/gameDetailsCommunity", async (req, res) => {
   }
 });
 
-// router.get("/gameDetailsUser", async (req, res) => {
-//   const { gameId, username } = req.query;
-
-//   try {
-//     await dbCon();
-
-//     const result = await sql.query`
-//       SELECT [User_Id], Game_Id, Rating, Comment, Finished, dnf
-//       FROM [GameReviewExpressDb].[dbo].[Game_Ratings_Comments]
-//       WHERE Game_Id = ${gameId} AND [User_Id] = ${username};`;
-
-//     const games = result.recordset;
-
-//     if (games.length > 0) {
-//       res.json(games[0]);
-//     } else {
-//       res.json({
-//         User_Id: username,
-//         Game_Id: gameId,
-//         Rating: null,
-//         Comment: null,
-//         Finished: null,
-//         dnf: null,
-//       });
-//     }
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send("Database connection error");
-//   } finally {
-//     closeDbCon();
-//   }
-// });
-
 router.post("/postRatingComment", async (req, res) => {
   const { gameId, username, newRating, newComment, isFinished, isDNF } =
     req.body;
@@ -449,35 +416,24 @@ router.get("/ratingsByGame", async (req, res) => {
 
 router.get("/userDetails", async (req, res) => {
   const { username } = req.query;
-
   try {
     await dbCon();
-
     const result =
-      await sql.query` SELECT Users.[Username], Users.[ImgPath] AS ProfilePic, Users.[Bio] , Users.[FavoriteGame_Id], 
+      await sql.query` SELECT Users.[ImgPath] AS ProfilePic, Users.[Bio] , Users.[FavoriteGame_Id], 
                                     Users.[Birthday], Users.[Country], Games.[Title], Games.[ImgPath] AS FaveGamePic
                                     FROM [GameReviewExpressDb].[dbo].[Users]
                                     LEFT JOIN Games ON Games.Id= [Users].FavoriteGame_Id
                                     WHERE Username = ${username}
     `;
-
     const info = result.recordset[0];
-
     if (!info) {
       return res.status(404).json({ message: "User not found" });
     }
-
-    const birthday = info.Birthday ? info.Birthday : null;
-
+    // const birthday = info?.Birthday
     const responseObject = {
+      ...info,
       Username: username,
-      ProfilePic: info.ProfilePic ?? null,
-      Bio: info.Bio ?? null,
-      FavoriteGame_Id: info.FavoriteGame_Id ?? null,
-      Birthday: birthday ?? null,
-      Country: info.Country ?? null,
-      FaveGameTitle: info.Title ?? null,
-      FaveGamePic: info.FaveGamePic ?? null,
+      // Birthday: birthday ?? null,
     };
 
     res.status(200).json(responseObject);

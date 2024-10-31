@@ -1,5 +1,5 @@
 import { Pie, Bar } from "react-chartjs-2";
-import { genresForPieChart, userRatings } from "../api/userGames.js";
+import { genresForPieChart, userRatings } from "../api/userDetails";
 import {
   Chart,
   ArcElement,
@@ -22,7 +22,7 @@ Chart.register(
 );
 Chart.defaults.color = "HSL(30, 20%, 70%)";
 
-function PieChart({ username }) {
+function Stats({ username }) {
   const [pieData, setPieData] = useState(null);
   const [barData, setBarData] = useState(null);
 
@@ -185,4 +185,4 @@ function PieChart({ username }) {
   );
 }
 
-export default PieChart;
+export default Stats;

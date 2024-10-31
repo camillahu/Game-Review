@@ -3,13 +3,12 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import GameCard from "../components/GameCard";
 
 
-function MyGames({statusNames, userGames}) {
+function MyGames({userGames}) {
   const [localGames, setLocalGames] = useState([]);
-  const [localStatusNames, setLocalStatusNames] = useState([]);
+  const statusNames = ["Owned", "Wishlist", "Played", "Currently Playing"]
   const [filteredGames, setFilteredGames] = useState([]);
 
   const [selectedView, setSelectedView] = useState("All Games");
-
 
     useEffect(() => { 
     //getting the result of fetchGames + fetchGameStatus in App, and setting the local state.
@@ -17,16 +16,7 @@ function MyGames({statusNames, userGames}) {
     setLocalGames(userGames);
   }, [userGames]);
 
-  
-  
   useEffect(() => {
-    //this gets the status names ("owned", "played", "wishlist" or "currently playing") and Id from the db
-    //and sets the local state. 
-    setLocalStatusNames(statusNames ?? []);
-  }, [statusNames]);
-
-  useEffect(() => {
-    
     if (selectedView === "All Games") {
       setFilteredGames(localGames);
     } else {
@@ -36,8 +26,6 @@ function MyGames({statusNames, userGames}) {
       setFilteredGames(filtered);
     }
   }, [selectedView, localGames]);
-  
-  
 
   return (
     <div className="p-2 container">
@@ -54,10 +42,10 @@ function MyGames({statusNames, userGames}) {
           onChange={(e) => setSelectedView(e.target.value)}
         >
           <option value="All Games">All My Games</option>
-          {localStatusNames.map((sn) => (
-            <option key={sn.Id} value={sn.Name}>
+          {statusNames.map((name, index) => (
+            <option key={index+1} value={name}>
               {" "}
-              {sn.Name}
+              {name}
             </option>
           ))}
         </select>

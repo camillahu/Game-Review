@@ -17,13 +17,6 @@ function StatusButtons({ statuses }) {
     { name: "Currently Playing", color: "HSL(280, 50%, 70%)",  opposite: "Played"  },
   ];
 
-  const oppositeStatuses = {
-    Owned: "Wishlist",
-    Wishlist: "Owned",
-    Played: "Currently Playing",
-    "Currently Playing": "Played",
-  };
-
   //tar inn statusnavnet man trykker på og bruker find for å matche med statusOptions-arrayet, for å sette inn i selectedStatus.
   //setter oppositeStatus til opposite-propertien til den valgte statusen. 
   //Sjekker om statusName finnes i localstatuses eller ikke(setter isSelected til true/false).

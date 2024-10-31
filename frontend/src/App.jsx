@@ -12,19 +12,18 @@ import EditProfile from "./pages/EditProfile";
 import NoPage from "./pages/NoPage";
 import React, { useState, useRef, createContext, useEffect } from "react";
 import { gamesAndGenres, genres } from "./api/gamesAndGenres";
-import { userGamesByStatus } from "./api/userGames";
-import { statusNames } from "./api/gameStatus";
+import { userDetails, userGamesByStatus } from "./api/userDetails.js";
 
+import {profileFunctions} from "./utils/userFunctions.js"
 
 function App() {
   const loginref = useRef("camillzy");
   const [allGames, setAllGames] = useState([]);
   const [allGamesWithStatus, setAllGamesWithStatus] = useState([]);
   const [allGenres, setAllGenres] = useState([]);
-  const [allStatusNames, setAllStatusNames] = useState([]);
   const [userGameStatus, setUserGameStatus] = useState([]);
   const [userGames, setUserGames] = useState([]);
-  
+  const [userInfo, setUserInfo] = useState({});
 
   useEffect(() => {
     //fetching all games from the db with their respective genres as a string.
@@ -69,19 +68,6 @@ function App() {
   }, [loginref]);
 
   useEffect(() => {
-    //fetching all statuses from the db to view in the select in MyGames.
-    async function fetchStatusNames() {
-      try {
-        const response = await statusNames();
-        setAllStatusNames(response);
-      } catch (error) {
-        console.error("Error fetching genres", error);
-      }
-    }
-    fetchStatusNames();
-  }, []);
-
-  useEffect(() => {
     //populates the Statuses array with "owned", "wishlist", "playing" or "currently playing"
     //if the user is logged in(checked by seeing if userGameStatus has length)
     //and the user has put a status on the game. If not, Statuses is set to an empty array.
@@ -100,6 +86,8 @@ function App() {
   }, [allGames, userGameStatus]);
 
   useEffect(() => {
+    //making a temporary Set of game-id's if the user has statuses on any games
+    // filtering all games by which games has an Id that exists on the temporary Set
     if (userGameStatus.length) {
       const userGameIds = new Set(
         userGameStatus.map((status) => status.GameId)
@@ -112,7 +100,19 @@ function App() {
       setUserGames(filteredGames);
     }
   }, [allGamesWithStatus, userGameStatus]);
-  
+
+  useEffect(() => {
+    async function fetchUserInfo() {
+      const result = await userDetails(loginref.current);
+      const allDataForProfile = 
+      {...result,
+        GamesOwned: profileFunctions(userGames, "Owned"),
+        GamesPlayed: profileFunctions(userGames, "Played"),
+       }
+      setUserInfo(allDataForProfile);
+    }
+    fetchUserInfo()
+  }, [loginref, userInfo]);
 
   return (
     <>
@@ -131,9 +131,7 @@ function App() {
             <Route path="signup" element={<SignUp />} />
             <Route
               path="my-games"
-              element={
-                <MyGames statusNames={allStatusNames} userGames={userGames} />
-              }
+              element={<MyGames userGames={userGames} />}
             />
             <Route path="login" element={<LogIn loginref={loginref} />} />
             <Route
@@ -142,11 +140,10 @@ function App() {
                 <GamePage
                   loginref={loginref}
                   allGamesWithStatus={allGamesWithStatus}
-            
                 />
               }
             />
-            <Route path="profile" element={<Profile loginref={loginref} />} />
+            <Route path="profile" element={<Profile loginref={loginref} userInfo={userInfo}/>} />
             <Route
               path="edit-profile"
               element={<EditProfile loginref={loginref} />}
@@ -161,6 +158,5 @@ function App() {
 
 export default App;
 // endre sql- en db for alle spillstatuser, en db som matcher de med username og gameID
-// react router
 // lagre all info i app- spillinfo og eventuelt userinfo sånn at man ikke trenger mange spørringer.
 // legge til proxy i viteconfig
