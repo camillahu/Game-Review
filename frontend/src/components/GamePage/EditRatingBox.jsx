@@ -26,7 +26,7 @@ function EditRatingBox({ rating, setIsEditing, username }) {
   }
 
 
-  function saveRating() {}
+  // function saveRating() {}
 
   return (
     <div className="d-flex flex-column mb-2 custom-comment-box-2">

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import RatingBox from "../components/GamePage/RatingBox";
-import AddGameButtons from "../components/GamePage/AddGameButtons";
+import StatusButtons from "../components/GamePage/AddGameButtons";
 import EditRatingBox from "../components/GamePage/EditRatingBox";
 import { calculateAvgRating } from "../utils/gamePageFunctions";
 import { useParams } from "react-router-dom";
@@ -175,43 +175,11 @@ export default function GamePage({ loginref, allGamesWithStatus }) {
   //   }
   // }
 
-  // function userCommentBox() {
-  //   if (!loginref.current) return null
-  //     return isEditing ? (
-  //       <EditRatingBox
-  //         // updateMyRating={updateMyRating}
-  //         rating={myLocalRating.Rating}
-  //         comment={myLocalRating.Comment}
-  //         isFinished={myLocalRating.Finished}
-  //         isDNF={myLocalRating.dnf}
-  //         // setRating={handleRatingChange}
-  //         // setComment={handleCommentChange}
-  //         // setFinishedStatus={handleFinishedChange}
-  //         // setDnfStatus={handleDnfChange}
-  //       />
-  //     ) : (
-  //       <RatingBox
-  //         loggedInUser={loginref.current}
-  //         username={myRatingComment.User_Id}
-  //         rating={myRatingComment.Rating}
-  //         comment={myRatingComment.Comment}
-  //         isFinished={myRatingComment.Finished}
-  //         isDNF={myRatingComment.dnf}
-  //         handleEditingStatus={handleEditingStatus}
-  //       />
-  //     )
-  //   }
 
   function gameStatusVisability() {
     if (!loginref.current) return null;
     return (
-      <AddGameButtons
-        isOwned={gameData.Statuses?.includes("Owned") ? true : false}
-        isWishlist={gameData.Statuses?.includes("Wishlist") ? true : false}
-        isPlayed={gameData.Statuses?.includes("Played") ? true : false}
-        isCurrentlyPlaying={
-          gameData.Statuses?.includes("Currently Playing") ? true : false
-        }
+      <StatusButtons statuses={gameData.Statuses}
       />
     );
   }
