@@ -481,7 +481,7 @@ router.get("/genresForPieChart", async (req, res) => {
   }
 });
 
-router.get("/userRatings", async (req, res) => {
+router.get("/ratingsForBarChart", async (req, res) => {
   const { username } = req.query;
 
   try {

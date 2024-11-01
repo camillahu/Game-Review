@@ -59,9 +59,9 @@ export async function userDetails(username) {
    
   
   
-  export async function userRatings(username) {
+  export async function ratingsForBarChart(username) {
     try {
-      const response = await fetch(`http://localhost:3000/localdb/userRatings?username=${username}`, {
+      const response = await fetch(`http://localhost:3000/localdb/ratingsForBarChart?username=${username}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

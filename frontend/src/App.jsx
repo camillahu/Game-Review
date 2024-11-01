@@ -12,9 +12,9 @@ import EditProfile from "./pages/EditProfile";
 import NoPage from "./pages/NoPage";
 import React, { useState, useRef, createContext, useEffect } from "react";
 import { gamesAndGenres, genres } from "./api/gamesAndGenres";
-import { userDetails, userGamesByStatus } from "./api/userDetails.js";
+import { userDetails, userGamesByStatus, ratingsForBarChart } from "./api/userDetails.js";
 
-import {profileFunctions} from "./utils/userFunctions.js"
+import {profileFunctions, pieChartFunction} from "./utils/userFunctions.js"
 
 function App() {
   const loginref = useRef("camillzy");
@@ -71,19 +71,16 @@ function App() {
     //populates the Statuses array with "owned", "wishlist", "playing" or "currently playing"
     //if the user is logged in(checked by seeing if userGameStatus has length)
     //and the user has put a status on the game. If not, Statuses is set to an empty array.
-
     const gamesWithStatuses = allGames.map((game) => {
       const statusesForGame = userGameStatus?.length
         ? userGameStatus
             .filter((status) => status.GameId === game.Id)
             .map((status) => status.Name)
         : [];
-
       return { ...game, Statuses: statusesForGame };
     });
-
     setAllGamesWithStatus(gamesWithStatuses);
-  }, [allGames, userGameStatus]);
+  }, [userGameStatus]);
 
   useEffect(() => {
     //making a temporary Set of game-id's if the user has statuses on any games
@@ -92,28 +89,31 @@ function App() {
       const userGameIds = new Set(
         userGameStatus.map((status) => status.GameId)
       );
-
       const filteredGames = allGamesWithStatus.filter((game) =>
         userGameIds.has(game.Id)
       );
-
-      setUserGames(filteredGames);
+      setUserGames(filteredGames)
     }
   }, [allGamesWithStatus, userGameStatus]);
 
   useEffect(() => {
     async function fetchUserInfo() {
-      const result = await userDetails(loginref.current);
+      const [result, ratings] = await Promise.all([userDetails(loginref.current), ratingsForBarChart(loginref.current)]);
+      
       const allDataForProfile = 
       {...result,
         GamesOwned: profileFunctions(userGames, "Owned"),
         GamesPlayed: profileFunctions(userGames, "Played"),
+        GenresForPie: pieChartFunction(userGames),
+        RatingsForBar: ratings,
        }
       setUserInfo(allDataForProfile);
     }
+    
     fetchUserInfo()
-  }, [loginref, userInfo]);
-
+    
+  }, [loginref, userGames]);
+ 
   return (
     <>
       <BrowserRouter>
@@ -144,6 +144,7 @@ function App() {
               }
             />
             <Route path="profile" element={<Profile loginref={loginref} userInfo={userInfo}/>} />
+            {/* {console.log(userInfo)} */}
             <Route
               path="edit-profile"
               element={<EditProfile loginref={loginref} />}

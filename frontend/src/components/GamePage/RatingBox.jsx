@@ -36,7 +36,7 @@ function RatingBox({ rating, setIsEditing, username, isMyRating }) {
                 : "you have not rated this game yet."
               : `${localRating.Rating}★`}
           </p>
-          <p>{localRating?.Comment || ""}</p>
+          <p>{localRating.Rating ? localRating?.Comment || "no comment" : ""}</p>
         </div>
         <p className="d-flex justify-content-end">{statusText}</p>
       </div>

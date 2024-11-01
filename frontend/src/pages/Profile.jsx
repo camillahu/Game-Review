@@ -1,13 +1,17 @@
 import {useState, useEffect } from "react";
 import Stats from "../components/Graphs.jsx";
+import { Link } from "react-router-dom";
 
 export default function Profile({loginref, userInfo}) {
+
 
   const [localUserInfo, setLocalUserInfo] = useState({});
 
   useEffect(()=> {
     setLocalUserInfo(userInfo)
   }, [userInfo])
+
+
 
   
 
@@ -81,13 +85,17 @@ export default function Profile({loginref, userInfo}) {
             <div
               className="square-box-4"
               style={{ border: "5px, solid, HSL(340, 20%, 50%)" }}
-            >
-              <img
+            ><Link
+            to={`/game-page/${userInfo.FavoriteGame_Id}`}
+          >
+            <img
                 className="img-fluid img-cover"
                 src={userInfo.FaveGamePic || "img/noFaveGame.webp"}
                 alt="game img"
                 // onClick={viewFavoriteGame}
               />
+          </Link>
+              
             </div>
           </div>
         </div>
@@ -96,7 +104,7 @@ export default function Profile({loginref, userInfo}) {
             Stats
           </h3>
           <div className="mt-4" style={{size: "50%"}}>
-            <Stats username={loginref.current} />
+            <Stats pieData={localUserInfo.GenresForPie} barData={localUserInfo.RatingsForBar} />
           </div>
         </div>
       </div>
