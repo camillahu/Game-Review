@@ -1,38 +1,36 @@
 import React, { useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
 import { login } from "../api/loginAuth.js";
-import { useContext } from "react";
-import {checkWhiteSpace} from "../utils/formControl.js" 
+import { checkWhiteSpace } from "../utils/formControl.js";
+import { Link } from "react-router-dom";
 
+function LogInBox({ setErrorMsg }) {
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [formData, setFormData] = useState({ username: "", password: "" });
 
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
 
-function LogInBox() {
-  const [inputName, setInputName] = useState();
-  const [inputPassword, setInputPassword] = useState();
-  const [passwordVisable, setPasswordVisability] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
-  const { loginref, handlePageChange } = useContext(contextStuff);
-
-  function handleNameChange(event) {
-    setInputName(event.target.value);
-  }
-
-  function handlePasswordChange(event) {
-    setInputPassword(event.target.value);
-  }
-
-  function togglePasswordVisability() {
-    setPasswordVisability(!passwordVisable);
-  }
-
-  async function submitForm() {
-
-    if( inputName === undefined || inputPassword === undefined) {
-      setErrorMsg("enter both username and password");
+  const sendInput = (e) => {
+    e.preventDefault();
+    const validInputs = checkWhiteSpace(formData.username) && checkWhiteSpace(formData.password);
+    if (!validInputs || inputName === undefined || inputPassword === undefined) {
+      setErrorMsg("invalid username or password format")
       return;
     }
-    else if (checkWhiteSpace(inputName) || checkWhiteSpace(inputPassword)) {
+    console.log(formData);
+  };
+
+  async function submitForm() {
+    if (inputName === undefined || inputPassword === undefined) {
+      setErrorMsg("enter both username and password");
+      return;
+    } else if (checkWhiteSpace(inputName) || checkWhiteSpace(inputPassword)) {
       setErrorMsg("enter both username and password without whitespace");
       return;
     }
@@ -41,8 +39,7 @@ function LogInBox() {
       const response = await login(inputName, inputPassword); //sender parametre til logInAuth sin login-funksjon
       if (response.error) {
         setErrorMsg("Invalid password or username");
-      }
-      else {
+      } else {
         loginref.current = inputName;
         handlePageChange("profile");
       }
@@ -53,68 +50,46 @@ function LogInBox() {
   }
 
   return (
-    <div className="container d-flex justify-content-center align-items-center min-vh-100">
-      <div
-        className="card"
-        style={{
-          width: "25rem",
-          backgroundColor: "HSL(210, 15%, 25%)",
-          border: "5px solid HSL(210, 15%, 50%)",
-        }}
-      >
-        <div className="card-body">
-          <h3
-            className="card-title text-center mb-5 h3"
-            style={{ color: "HSL(0, 0%, 80%)" }}
+    <form onSubmit={sendInput}>
+      <div>
+        <input
+          name="username"
+          type="text"
+          placeholder="username"
+          className="form-control mb-2"
+          onChange={handleChange}
+          value={formData.username}
+        />
+        <input
+          name="password"
+          type={passwordVisible ? "text" : "password"}
+          className="form-control mb-2"
+          placeholder="password"
+          onChange={handleChange}
+          value={formData.password}
+        />
+        <div className="d-flex justify-content-between mb-4">
+          <button
+            type="button"
+            onClick={togglePasswordVisibility}
+            className="btn btn-outline-light btn-sm"
           >
-            GameReview!
-          </h3>
-          <form>
-            <div>
-              <input
-                type="text"
-                className="form-control mb-2"
-                placeholder="username"
-                onChange={handleNameChange}
-              />
+            {passwordVisible ? "Hide password" : "Show Password"}
+          </button>
 
-              <input
-                type={passwordVisable ? "text" : "password"}
-                className="form-control mb-5"
-                placeholder="password"
-                onChange={handlePasswordChange}
-              />
-              <div className="d-flex justify-content-between mb-4">
-                <button
-                  type="button"
-                  onClick={togglePasswordVisability}
-                  className="btn btn-outline-light btn-sm"
-                >
-                  {passwordVisable ? "Hide password" : "Show Password"}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={submitForm}
-                  className="btn btn-outline-light btn-sm "
-                >
-                  Login
-                </button>
-              </div>
-              <a
-                role="button"
-                className="card-link"
-                style={{ color: "HSL(0, 0%, 80%)" }}
-                onClick={() => handlePageChange("signup")}
-              >
-                Don't have an account? Sign up here!
-              </a>
-              <div>{errorMsg}</div>
-            </div>
-          </form>
+          <button type="submit" className="btn btn-outline-light btn-sm ">
+            Login
+          </button>
+          <Link
+            className="card-link"
+            style={{ color: "HSL(0, 0%, 80%)" }}
+            to={`/account/signup`}
+          >
+            Don't have an account? Sign up here!
+          </Link>
         </div>
       </div>
-    </div>
+    </form>
   );
 }
 

@@ -19,7 +19,7 @@ const Layout = ({ loginref }) => {
             />
 
             <NavbarItem
-              toPath="/login"
+              toPath="/account/login"
               text="Sign in"
               selectedItem={selectedItem}
               setSelectedItem={setSelectedItem}
@@ -52,7 +52,7 @@ const Layout = ({ loginref }) => {
           />
 
           <NavbarItem
-            toPath="/login"
+            toPath="/account/login"
             text="Sign out"
             selectedItem={selectedItem}
             setSelectedItem={setSelectedItem}

@@ -2,19 +2,20 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom"; //npm i -D react-router-dom@latest
 import Layout from "./pages/Layout";
-import SignUp from "./pages/SignUp";
+
 import MyGames from "./pages/MyGames";
-import LogIn from "./pages/LogIn";
 import Home from "./pages/Home";
 import GamePage from "./pages/GamePage";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
 import NoPage from "./pages/NoPage";
+import LoginSignup from "./pages/LoginSignup.jsx";
 import React, { useState, useRef, createContext, useEffect } from "react";
 import { gamesAndGenres, genres } from "./api/gamesAndGenres";
 import { userDetails, userGamesByStatus, ratingsForBarChart } from "./api/userDetails.js";
 
 import {profileFunctions, pieChartFunction} from "./utils/userFunctions.js"
+
 
 function App() {
   const loginref = useRef("camillzy");
@@ -128,12 +129,11 @@ function App() {
                 />
               }
             />
-            <Route path="signup" element={<SignUp />} />
+            <Route path="account/:choice" element={<LoginSignup loginref={loginref} />}  />
             <Route
               path="my-games"
               element={<MyGames userGames={userGames} />}
             />
-            <Route path="login" element={<LogIn loginref={loginref} />} />
             <Route
               path="game-page/:gameId"
               element={
