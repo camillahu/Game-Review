@@ -2,25 +2,40 @@ const express = require("express");
 const sql = require("mssql");
 const { dbCon, closeDbCon } = require("../dbcon.js");
 const router = express.Router();
+const bcrypt = require('bcrypt')
 
 router.use(express.json());
 
-
 router.post("/login", async (req, res) => {
+  const { username, password } = req.body;
+
   try {
-    const { username, password } = req.body; // bruker object destructoring til å hente ut username og password som blir sendt fra klienten.
-    await dbCon();
+    const pool = await dbCon();
+    const ps = new sql.PreparedStatement(pool);
 
-    const result =
-      await sql.query`SELECT Username, UserPassword FROM Users WHERE Username = ${username}`; //mssql sin query gjør det trygt å bruke parameteret slikt i følge chatgpt.
+    ps.input("username", sql.VarChar)
 
-    let user = result.recordset[0];
-    if (!user) return res.status(404).json({ message: "user not found" });
-    if (password === user.UserPassword) {
-      return res.status(200).json({ message: "login successful" });
-    } else {
-      return res.status(401).json({ message: "invalid credentials" });
-    }
+    const query =
+      `SELECT Username, UserPassword FROM Users WHERE Username = @username`;
+
+      await ps.prepare(query);
+      const result = await ps.execute({ username });
+  
+      await ps.unprepare();
+
+      if (result.recordset.length === 0) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+
+      const user = result.recordset[0];
+      const passwordMatch = await bcrypt.compare(password, user.UserPassword);
+
+      if (passwordMatch) {
+        return res.status(200).json({ message: "login successful" });
+      } else {
+        return res.status(401).json({ message: "invalid credentials" });
+      }
+
   } catch (err) {
     console.error(err);
     res.status(500).send("database connection error");

@@ -16,24 +16,25 @@ export default function LoginSignup({loginref}) {
     <div>
       <div className="container d-flex justify-content-center align-items-center min-vh-100">
         <div
-          className="card"
+          className="d-flex flex-column p-4"
           style={{
             width: "30rem",
-            height: "40rem",
+            height: "30rem",
             backgroundColor: "HSL(210, 15%, 25%)",
             border: "5px solid HSL(210, 15%, 50%)",
           }}
         >
-          <div className="card-body">
-            <h3
-              className="card-title text-center mb-5 h3"
+           <h3
+              className="card-title text-center h3"
               style={{ color: "HSL(0, 0%, 80%)" }}
             >
               GameReview!
             </h3>
-            {toggleChoice()}
+          <div className="card-body d-flex flex-column justify-content-center">
+           
+            <div>{toggleChoice()}</div>
           </div>
-          <div>{errorMsg}</div>
+          <div className="font-monospace" style={{color: "HSL(1, 80%, 80%"}} >{errorMsg}</div>
         </div>
       </div>
     </div>

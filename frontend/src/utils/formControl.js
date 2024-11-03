@@ -1,5 +1,6 @@
 export function checkWhiteSpace(str) {
-  return /\s/.test(str);
+  return str.trim().length > 0;
+  // /\s/.test(str);
 }
 
 export function checkPassword(inputPassword1, inputPassword2) {
