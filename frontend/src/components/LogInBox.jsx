@@ -3,7 +3,7 @@ import { login } from "../api/loginAuth.js";
 import { checkWhiteSpace } from "../utils/formControl.js";
 import { Link, useNavigate } from "react-router-dom";
 
-function LogInBox({ setErrorMsg }) {
+function LogInBox({ setErrorMsg, loginref }) {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [formData, setFormData] = useState({ username: "", password: "" });
   const navigate = useNavigate();
@@ -24,7 +24,6 @@ function LogInBox({ setErrorMsg }) {
       setErrorMsg("Invalid username or password format")
       return;
     } else submitForm();
-    console.log(formData);
   };
 
   async function submitForm() {
@@ -33,6 +32,7 @@ function LogInBox({ setErrorMsg }) {
       if (response.error) {
         setErrorMsg("Invalid password or username");
       } else {
+        loginref.current = formData.username;
         navigate("/");
       }
     } catch (err) {

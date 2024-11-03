@@ -9,7 +9,7 @@ export default function LoginSignup({loginref}) {
   const [errorMsg, setErrorMsg] = useState("");
   
   const toggleChoice = () => {
-    return choice === "login" ? <LogInBox setErrorMsg= {setErrorMsg} /> : <SignUpBox setErrorMsg={setErrorMsg} />;
+    return choice === "login" ? <LogInBox setErrorMsg= {setErrorMsg} loginref={loginref} /> : <SignUpBox setErrorMsg={setErrorMsg} />;
   };
 
   return (
