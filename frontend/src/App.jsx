@@ -21,7 +21,8 @@ import {
 import { profileFunctions, pieChartFunction } from "./utils/userFunctions.js";
 
 function App() {
-  const loginref = useRef(null);
+  // const loginref = useRef(null);
+  const [loggedInUser, setLoggedInUser] = useState(null);
   const [allGames, setAllGames] = useState([]);
   const [allGamesWithStatus, setAllGamesWithStatus] = useState([]);
   const [allGenres, setAllGenres] = useState([]);
@@ -29,7 +30,6 @@ function App() {
   const [userGames, setUserGames] = useState([]);
   const [userInfo, setUserInfo] = useState({});
 
-  
 
   useEffect(() => {
     //fetching all games from the db with their respective genres as a string.
@@ -40,6 +40,7 @@ function App() {
       } catch (error) {
         console.error("Error fetching all games", error);
       }
+      console.log("henter alle spill")
     }
     fetchGames();
   }, []);
@@ -53,6 +54,7 @@ function App() {
       } catch (error) {
         console.error("Error fetching genres", error);
       }
+      console.log("henter alle sjangre")
     }
     fetchGenres();
   }, []);
@@ -60,24 +62,25 @@ function App() {
   useEffect(() => {
     //if a user is logged in, this fetches all rows with their username linked to any game+status combo.
     //this sends an array of objects with the gameId and status name e.g. "owned", "played", "wishlist" or "currently playing"
-    if (loginref.current) {
+    if (loggedInUser) {
       async function fetchGameStatus() {
         try {
-          const response = await userGamesByStatus(loginref.current);
+          const response = await userGamesByStatus(loggedInUser);
           setUserGameStatus(response);
         } catch (error) {
           console.error("Error fetching game statuses", error);
         }
+        console.log("henter alle sjanre hvis brukeren er logga inn")
       }
       fetchGameStatus();
     }
-  }, [loginref.current]);
+  }, [loggedInUser]);
 
   useEffect(() => {
     //populates the Statuses array with "owned", "wishlist", "played" or "currently playing"
     //if the user is logged in and userGameStatus is populated.
     //If not, Statuses is set to an empty array.
-    if (loginref.current && userGameStatus.length > 0) {
+    if (loggedInUser && userGameStatus.length > 0) {
       const gamesWithStatuses = allGames.map((game) => {
         const statusesForGame = userGameStatus
               .filter((status) => status.GameId === game.Id)
@@ -85,15 +88,17 @@ function App() {
         return { ...game, Statuses: statusesForGame };
       });
       setAllGamesWithStatus(gamesWithStatuses);
+      console.log("lager sjanger-array hvis brukeren er logga inn")
     } else {
-      setAllGamesWithStatus(allGames); // Show all games if not logged in
+      setAllGamesWithStatus(allGames);
+      console.log("lager ikke sjanger-array hvis brukeren er logga inn") // Show all games if not logged in
     }
-  }, [userGameStatus, loginref.current, allGames]);
+  }, [userGameStatus, loggedInUser, allGames]);
 
   useEffect(() => {
     //making a temporary Set of game-id's if the user has statuses on any games
     // filtering all games by which games has an Id that exists on the temporary Set
-    if (loginref.current && userGameStatus.length > 0) {
+    if (loggedInUser && userGameStatus.length > 0) {
       const userGameIds = new Set(
         userGameStatus.map((status) => status.GameId)
       );
@@ -102,14 +107,14 @@ function App() {
       );
       setUserGames(filteredGames);
     }
-  }, [allGamesWithStatus, userGameStatus, loginref.current]);
+  }, [allGamesWithStatus, userGameStatus, loggedInUser]);
 
   useEffect(() => {
-    if (loginref.current) {
+    if (loggedInUser) {
       async function fetchUserInfo() {
         const [result, ratings] = await Promise.all([
-          userDetails(loginref.current),
-          ratingsForBarChart(loginref.current),
+          userDetails(loggedInUser),
+          ratingsForBarChart(loggedInUser),
         ]);
 
         const allDataForProfile = {
@@ -119,18 +124,19 @@ function App() {
           GenresForPie: pieChartFunction(userGames),
           RatingsForBar: ratings,
         };
+        console.log(allDataForProfile);
         setUserInfo(allDataForProfile);
       }
 
       fetchUserInfo();
     }
-  }, [loginref.current, userGames]);
+  }, [loggedInUser, userGames]);
 
   return (
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Layout loginref={loginref} />}>
+          <Route path="/" element={<Layout loggedInUser ={loggedInUser} />}>
             <Route
               index
               element={
@@ -142,7 +148,7 @@ function App() {
             />
             <Route
               path="account/:choice"
-              element={<LoginSignup loginref={loginref} />}
+              element={<LoginSignup setLoggedInUser={setLoggedInUser} />}
             />
             <Route
               path="my-games"
@@ -152,18 +158,18 @@ function App() {
               path="game-page/:gameId"
               element={
                 <GamePage
-                  loginref={loginref}
+                loggedInUser={loggedInUser}
                   allGamesWithStatus={allGamesWithStatus}
                 />
               }
             />
             <Route
               path="profile"
-              element={<Profile loginref={loginref} userInfo={userInfo} />}
+              element={<Profile loggedInUser={loggedInUser} userInfo={userInfo} />}
             />
             <Route
               path="edit-profile"
-              element={<EditProfile loginref={loginref} />}
+              element={<EditProfile loggedInUser={loggedInUser} />}
             />
             <Route path="*" element={<NoPage />} />
           </Route>

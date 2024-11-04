@@ -3,13 +3,13 @@ import { useParams } from "react-router-dom";
 import LogInBox from "../components/LogInBox.jsx";
 import SignUpBox from "../components/SignUpBox.jsx";
 
-export default function LoginSignup({loginref}) {
+export default function LoginSignup({setLoggedInUser}) {
   const { choice } = useParams();
   
   const [errorMsg, setErrorMsg] = useState("");
   
   const toggleChoice = () => {
-    return choice === "login" ? <LogInBox setErrorMsg= {setErrorMsg} loginref={loginref} /> : <SignUpBox setErrorMsg={setErrorMsg} />;
+    return choice === "login" ? <LogInBox setErrorMsg= {setErrorMsg} setLoggedInUser={setLoggedInUser} /> : <SignUpBox setErrorMsg={setErrorMsg} />;
   };
 
   return (

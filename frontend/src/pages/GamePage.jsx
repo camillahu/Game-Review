@@ -6,7 +6,7 @@ import { calculateAvgRating } from "../utils/gamePageFunctions.js";
 import { useParams } from "react-router-dom";
 import { gameDetailsCommunity } from "../api/gameDetails";
 
-export default function GamePage({ loginref, allGamesWithStatus }) {
+export default function GamePage({ loggedInUser, allGamesWithStatus }) {
   const [gameData, setGameData] = useState(null);
   const { gameId } = useParams();
   const [isEditing, setIsEditing] = useState(false);
@@ -130,7 +130,7 @@ export default function GamePage({ loginref, allGamesWithStatus }) {
 
 
   function gameStatusVisability() {
-    if (!loginref.current) return null;
+    if (!loggedInUser) return null;
     return (
       <StatusButtons statuses={gameData.Statuses}
       />
@@ -192,26 +192,26 @@ export default function GamePage({ loginref, allGamesWithStatus }) {
           <div className="d-flex flex-column ">
             {/* This only shows the user's rating if they are logged in, and it toggles between 
             edit and non-edit based on the boolean isEditing, which is controlled by the two components below.   */}
-            {loginref.current ? (
+            {loggedInUser ? (
               isEditing ? (
                 <EditRatingBox
                   rating={
                     localCommunityRatings.find(
-                      (r) => r.User_Id === loginref.current
+                      (r) => r.User_Id === loggedInUser
                     ) || null
                   }
                   setIsEditing={setIsEditing}
-                  username={loginref.current}
+                  username={loggedInUser}
                 />
               ) : (
                 <RatingBox
                   rating={
                     localCommunityRatings.find(
-                      (r) => r.User_Id === loginref.current
+                      (r) => r.User_Id === loggedInUser
                     ) || null
                   }
                   setIsEditing={setIsEditing}
-                  username={loginref.current}
+                  username={loggedInUser}
                   isMyRating={true}
                 />
               )
@@ -219,13 +219,13 @@ export default function GamePage({ loginref, allGamesWithStatus }) {
             {/* noe jeg kan forbedre her? */}
             {/* This displays all ratings for the game except for the user's rating (to avoid getting two ratings from the user) */}
             {localCommunityRatings
-              .filter((r) => r?.User_Id !== loginref.current)
+              .filter((r) => r?.User_Id !== loggedInUser)
               .map((rating, index) => (
                 <RatingBox
                   key={index}
                   rating={rating || {}}
                   setIsEditing={setIsEditing}
-                  username={loginref.current}
+                  username={loggedInUser}
                 />
               ))}
           </div>

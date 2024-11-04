@@ -13,6 +13,7 @@ function Home({allGamesResult, allGenresResult}) {
     //getting the result of fetchGames in App, and setting the local state.
     //this prevents having to fetch every time a component changes.
     setLocalGames(allGamesResult);
+    console.log("render home page")
   }, [allGamesResult]);
 
   useEffect(() => {

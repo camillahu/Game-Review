@@ -2,7 +2,7 @@ import {useState, useEffect } from "react";
 import Stats from "../components/Graphs.jsx";
 import { Link } from "react-router-dom";
 
-export default function Profile({loginref, userInfo}) {
+export default function Profile({loggedInUser, userInfo}) {
 
 
   const [localUserInfo, setLocalUserInfo] = useState({});
@@ -22,7 +22,7 @@ export default function Profile({loginref, userInfo}) {
           className="display-5"
           style={{ color: "HSL(30, 20%, 85%)", fontWeight: 500 }}
         >
-          {loginref.current}
+          {loggedInUser}
         </h2>
       </div>
       <div className="d-flex flex-column m-4">
@@ -49,7 +49,7 @@ export default function Profile({loginref, userInfo}) {
                     <br />
                   </strong>
                   &nbsp;&nbsp;&nbsp;
-                  {userInfo.Birthday ? new Date(userInfo.Birthday).toLocaleDateString("en-GB", {
+                  {localUserInfo.Birthday ? new Date(userInfo.Birthday).toLocaleDateString("en-GB", {
                     day: "numeric",
                     month: "long",
                     year: "numeric",
@@ -60,14 +60,14 @@ export default function Profile({loginref, userInfo}) {
                     Country:
                     <br />
                   </strong>
-                  &nbsp;&nbsp;&nbsp;{userInfo.Country ?? 'Not specified'}
+                  &nbsp;&nbsp;&nbsp;{localUserInfo.Country ?? 'Not specified'}
                 </p>
               </div>
             </div>
 
             <p className="lead custom-bio-box">
               <strong>Bio:</strong> <br />
-              {userInfo.Bio ?? "No bio yet"}
+              {localUserInfo.Bio ?? "No bio yet"}
             </p>
           </div>
           <div className="d-flex justify-content-start square-box-3 flex-column">
@@ -86,11 +86,11 @@ export default function Profile({loginref, userInfo}) {
               className="square-box-4"
               style={{ border: "5px, solid, HSL(340, 20%, 50%)" }}
             ><Link
-            to={`/game-page/${userInfo.FavoriteGame_Id}`}
+            to={`/game-page/${localUserInfo.FavoriteGame_Id}`}
           >
             <img
                 className="img-fluid img-cover"
-                src={userInfo.FaveGamePic || "img/noFaveGame.webp"}
+                src={localUserInfo.FaveGamePic || "img/noFaveGame.webp"}
                 alt="game img"
                 // onClick={viewFavoriteGame}
               />
