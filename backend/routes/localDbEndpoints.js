@@ -45,29 +45,37 @@ router.post("/login", async (req, res) => {
 });
 
 router.post("/signup", async (req, res) => {
+  const { username, password } = req.body;
+  const hashedPassword = await bcrypt.hash(password, 10)
+
   try {
-    console.log("Received data:", req.body);
-    const { username, password } = req.body;
-    await dbCon();
+    
+    const pool = await dbCon();
+    const ps = new sql.PreparedStatement(pool);
 
-    const userNameExists = async (username) => {
-      const usernameExistsResult =
-        await sql.query`SELECT Username FROM Users WHERE Username = ${username}`;
-      return usernameExistsResult.recordset.length > 0;
-    };
+    ps.input("username", sql.VarChar)
+    ps.input("hashedPassword", sql.VarChar)
 
-    if (await userNameExists(username)) {
-      return res.status(400).json({ message: "Username already exists" });
-    }
+    const userNameExistsQuery =
+      `SELECT Username FROM Users WHERE Username = @username`;
 
-    if (!password || password.length < 8) {
-      // putte passord regex her?
-      return res.status(400).json({ message: "Invalid password" });
-    }
+      await ps.prepare(userNameExistsQuery);
+      const userNameExists = await ps.execute({ username });
+  
+      await ps.unprepare();
 
-    const result =
-      await sql.query`INSERT INTO USERS (Username, UserPassword) VALUES (${username}, ${password})`;
-      return res.status(201).json({ message: "User created successfully" });
+      if (userNameExists.recordset.length !== 0) {
+        return res.status(401).json({ message: "Username already exists" });
+      }
+
+    const insertQuery = `INSERT INTO USERS (Username, UserPassword) VALUES (@username, @hashedPassword)`;
+    
+    await ps.prepare(insertQuery);
+    const result = await ps.execute({ username, hashedPassword });
+
+    await ps.unprepare();
+
+    return res.status(201).json({ message: "User created successfully" });
 
   } catch (err) {
     console.error(err);

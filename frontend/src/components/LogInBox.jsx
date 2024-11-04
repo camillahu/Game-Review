@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { login } from "../api/loginAuth.js";
+import { login } from "../api/LoginSignupAuth.js";
 import { checkWhiteSpace } from "../utils/formControl.js";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -70,7 +70,7 @@ function LogInBox({ setErrorMsg, setLoggedInUser }) {
           </button>
 
           <button type="submit" className="btn btn-outline-light btn-sm ">
-            Login
+            Log in
           </button>
         </div>
         <Link

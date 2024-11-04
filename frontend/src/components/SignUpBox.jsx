@@ -1,142 +1,112 @@
 import React, { useState } from "react";
-import { signup } from "../api/signupAuth.js";
+import { signup } from "../api/LoginSignupAuth.js";
 import { checkPassword, checkUsername } from "../utils/formControl.js";
-import { Link, useNavigate } from "react-router-dom";
+import { Link} from "react-router-dom";
 
-function SignUpBox({ setErrorMsg, loginref }) {
-  // const [passwordVisible, setPasswordVisible] = useState(false);
-  // const [formData, setFormData] = useState({ username: "", password1: "", password2: "" });
-  // const navigate = useNavigate();
+function SignUpBox({ setErrorMsg }) {
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [formData, setFormData] = useState({
+    username: "",
+    password1: "",
+    password2: "",
+  });
 
-  // const togglePasswordVisibility = () => {
-  //   setPasswordVisible(!passwordVisible);
-  // };
 
-  // const handleChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFormData((prevData) => ({ ...prevData, [name]: value }));
-  // };
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
 
-  // const sendInput = (e) => {
-  //   e.preventDefault();
-  //   const usernameResult = checkUsername(formData.username);
-  //   const passwordResult = checkPassword(
-  //     formData.password1,
-  //     formData.password2
-  //   );
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
 
-  //   if (!inputName || !inputPassword1) {
-  //     setErrorMsg("Please enter both username and password");
-  //     return; //returnerer tidlig om dette skjer.
-  //   }
+  const sendInput = (e) => {
+    e.preventDefault();
+    setErrorMsg("");
+    const usernameResult = checkUsername(formData.username);
+    const passwordResult = checkPassword(
+      formData.password1,
+      formData.password2
+    );
 
-  //   if (!validInputs) {
-  //     setErrorMsg("Invalid username or password format");
-  //     return;
-  //   } else submitForm();
-  // };
+    if (!usernameResult || !passwordResult) {
+      setErrorMsg("Please enter both username and password");
+      return;
+    } else if (usernameResult.error) {
+      setErrorMsg(usernameResult.error);
+      return;
+    } else if (passwordResult.error) {
+      setErrorMsg(passwordResult.error);
+      return;
+    } else submitForm(usernameResult.value, passwordResult.value);
+  };
 
-  //   async function submitForm() { //refaktorert funksjon for bedre error-handling.
-  //     setErrorMsg1("");
-  //     setErrorMsg2("");
-
-  //     const usernameResult = checkUsername(inputName);
-  //     if(usernameResult.error) {
-  //       setErrorMsg1(usernameResult.error); //setter staten på en mer dynamisk måte.
-  //       return;
-  //     }
-
-  //     const passwordResult = checkPassword(inputPassword1, inputPassword2);
-  //     if(passwordResult.error) {
-  //       setErrorMsg2(passwordResult.error);
-  //       return;
-  //     }
-
-  //     try {
-  //       const response = await signup(usernameResult.value, passwordResult.value);
-  //       if (response.error) {
-  //         setErrorMsg1(response.error);
-  //       } else {
-  //         setErrorMsg1("User created successfully. Please proceed to log in");
-  //       }
-  //     } catch (error) {
-  //       setErrorMsg1("A server error occurred. Please try again later.");
-  //       console.error(error);
-  //     }
-  //   }
+  async function submitForm(username, password) {
+    try {
+      const response = await signup(username, password);
+      if (response.error) {
+        setErrorMsg(response.error);
+      } else {
+        setErrorMsg("User created successfully. Please proceed to log in");
+      }
+    } catch (error) {
+      setErrorMsg("A server error occurred. Please try again later.");
+      console.error(error);
+    }
+  }
 
   return (
-    <></>
-    //     <div className="container d-flex justify-content-center align-items-center min-vh-100">
-    //       <div
-    //         className="card"
-    //         style={{
-    //           width: "25rem",
-    //           backgroundColor: "HSL(210, 15%, 25%)",
-    //           border: "5px solid HSL(210, 15%, 50%)",
-    //         }}
-    //       >
-    // //         <div className="card-body">
-    // //           <h3
-    //             className="card-title text-center mb-5 h3"
-    //             style={{ color: "HSL(0, 0%, 80%)" }}
-    //           >
-    //             GameReview!
-    //           </h3>
-    //           <form>
-    //             <div className="mb-5">
-    //               <input
-    //                 type="text"
-    //                 className="form-control mb-2"
-    //                 placeholder="username"
-    //                 onChange={handleNameChange}
-    //               />
+    <form onSubmit={sendInput}>
+      <div className="d-flex flex-column">
+        <input
+          name="username"
+          type="text"
+          className="form-control mb-2"
+          placeholder="username"
+          onChange={handleChange}
+          value={formData.username}
+        />
 
-    //               <input
-    //                 type={passwordVisable ? "text" : "password"}
-    //                 className="form-control mb-2"
-    //                 placeholder="password"
-    //                 onChange={handlePasswordChange1}
-    //               />
+        <input
+          name="password1"
+          type={passwordVisible ? "text" : "password"}
+          className="form-control mb-2"
+          placeholder="password"
+          onChange={handleChange}
+          value={formData.password1}
+        />
 
-    //               <input
-    //                 type={passwordVisable ? "text" : "password"}
-    //                 className="form-control mb-4"
-    //                 placeholder="repeat password"
-    //                 onChange={handlePasswordChange2}
-    //               />
-    //               <div className="d-flex justify-content-between mb-4">
-    //                 <button
-    //                   type="button"
-    //                   onClick={togglePasswordVisability}
-    //                   className="btn btn-outline-light btn-sm"
-    //                 >
-    //                   {passwordVisable ? "Hide password" : "Show Password"}
-    //                 </button>
+        <input
+        name="password2"
+          type={passwordVisible ? "text" : "password"}
+          className="form-control mb-4"
+          placeholder="repeat password"
+          onChange={handleChange}
+          value={formData.password2}
+        />
+        <div className="d-flex justify-content-between mb-4 ms-2 me-2">
+          <button
+            type="button"
+            onClick={togglePasswordVisibility}
+            className="btn btn-outline-light btn-sm"
+          >
+            {passwordVisible ? "Hide password" : "Show Password"}
+          </button>
 
-    //                 <button
-    //                   type="button"
-    //                   onClick={submitForm}
-    //                   className="btn btn-outline-light btn-sm"
-    //                 >
-    //                   Sign up
-    //                 </button>
-    //               </div>
-    //               <a
-    //                 role="button"
-    //                 className="card-link"
-    //                 style={{ color: "HSL(0, 0%, 80%)" }}
-    //                 onClick={() => handlePageChange("login")}
-    //               >
-    //                 Already have an account? Log in here!
-    //               </a>
-    //               <div>{errorMsg1}</div>
-    //               <div>{errorMsg2}</div>
-    //             </div>
-    //           </form>
-    //         </div>
-    //       </div>
-    //     </div>
+          <button type="submit" className="btn btn-outline-light btn-sm ">
+            Sign up
+          </button>
+        </div>
+        <Link
+          className="card-link"
+          style={{ color: "HSL(0, 0%, 80%)" }}
+          to={`/account/login`}
+        >
+          Already have an account? Log in here!
+        </Link>
+      </div>
+    </form>
   );
 }
 

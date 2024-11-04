@@ -10,9 +10,9 @@ export default function NavbarItem({
   const select = () => {
     setSelectedItem(toPath);
   };
-  if (toPath === selectedItem) {
-    return <span className="lead pe-none fw-bold link-dark">{text}</span>;
-  }
+  // if (toPath === selectedItem) {
+  //   return <span className="lead pe-none fw-bold link-dark">{text}</span>;
+  // }
   return (
     <span>
       <Link
